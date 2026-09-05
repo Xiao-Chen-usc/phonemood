@@ -20,6 +20,15 @@ class SessionEngineTest {
         assertEquals(min(20), result.sessions.first().end)
         assertTrue(result.checkpoints.isEmpty())
     }
+    @Test fun `overnight gap between polls excludes locked time and retains checkpoint identity`() {
+        val beforeLock = listOf(start, event(0, "RESUME"), event(31, "LOCK"))
+        val previous = engine.rebuild(beforeLock, min(32))
+        val recovered = engine.rebuild(beforeLock + event(600, "RESUME"), min(610))
+        assertEquals(min(41), recovered.sessions.sumOf { it.active })
+        assertEquals(2, recovered.sessions.size)
+        assertEquals(min(31), recovered.sessions.first().end)
+        assertEquals(previous.checkpoints, recovered.checkpoints)
+    }
     @Test fun `app switches preserve session and create separate segments`() {
         val result = engine.rebuild(listOf(start, event(0, "RESUME", "reddit"), event(12, "RESUME", "chrome"), event(21, "RESUME", "youtube")), min(30))
         assertEquals(1, result.sessions.size); assertEquals(3, result.segments.size)

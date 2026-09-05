@@ -82,7 +82,7 @@
     <string name="shorter_breaks_stay_in_the_same_session_break_time_never_counts_as_active_u">Shorter breaks stay in the same session. Break time never counts as active use.</string>
     <string name="reliability">RELIABILITY</string>
     <string name="keep_your_rhythm_in_the_background">Keep your rhythm in the background</string>
-    <string name="some_phones_restrict_background_activity_battery_settings_can_help_phonemoo">Some phones restrict background activity. Battery settings can help PhoneMood stay available. Check-ins may arrive a few seconds after the threshold.</string>
+    <string name="some_phones_restrict_background_activity_battery_settings_can_help_phonemoo">Monitoring polls while the phone is unlocked and interactive, pauses periodic checks while off or locked, and catches up when you return. Battery saver may delay check-ins by about 30 seconds or longer. Adjust battery settings if background recording frequently stops.</string>
     <string name="open_battery_settings">Open battery settings</string>
     <string name="personal_means_private">Personal means private.</string>
     <string name="no_account_no_cloud_no_ads_phonemood_works_offline_and_keeps_its_records_on">No account. No cloud. No ads. PhoneMood works offline and keeps its records on this device. You decide when to share an export.</string>

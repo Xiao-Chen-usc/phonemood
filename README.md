@@ -1,5 +1,7 @@
 # PhoneMood｜手机情绪觉察
 
+电池策略优化：息屏或锁屏停止定时查询，恢复使用时补读；系统省电模式降低查询频率。详见 [电池策略](docs/BATTERY_STRATEGY.md)。
+
 1.3 更新：首次授权返回后自动开始统计，并新增快捷权限配置与后台电池设置引导。详见 [更新说明](docs/AUTOMATIC_SETUP.md)。
 
 一个完全本地运行的 Android 应用，用来帮助你观察「手机主动使用时间」与「自我报告情绪」之间的关系。
@@ -23,9 +25,12 @@
 在项目目录执行：
 
 ```bash
+git pull --ff-only
 ./gradlew :app:assembleDebug :app:testDebugUnitTest
 ./scripts/run-emulator.sh app/build/outputs/apk/debug/app-debug.apk
 ```
+
+第一条命令从 GitHub 下载最新源码；后两条命令编译、测试并在模拟器中安装最新构建。
 
 也可以用 Android Studio 打开项目目录，运行 `app` 配置。
 
@@ -97,9 +102,12 @@ Requirements: JDK 17+, Android SDK 35, and an Android 10/API 29 or newer emulato
 From the project directory:
 
 ```bash
+git pull --ff-only
 ./gradlew :app:assembleDebug :app:testDebugUnitTest
 ./scripts/run-emulator.sh app/build/outputs/apk/debug/app-debug.apk
 ```
+
+The first command downloads the latest source from GitHub. The remaining commands build, test, install, and launch that source in the emulator.
 
 You can also open the project in Android Studio and run the `app` configuration. The first run requires Usage Access, notification permission, and Display over other apps permission. See [`docs/DEVICE_TESTING.md`](docs/DEVICE_TESTING.md) for the full checklist.
 

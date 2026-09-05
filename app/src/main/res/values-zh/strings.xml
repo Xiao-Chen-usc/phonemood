@@ -82,7 +82,7 @@
     <string name="shorter_breaks_stay_in_the_same_session_break_time_never_counts_as_active_u">较短的休息仍属于同一段使用过程。休息时间不会计入使用时长。</string>
     <string name="reliability">后台运行</string>
     <string name="keep_your_rhythm_in_the_background">让后台记录稳定运行</string>
-    <string name="some_phones_restrict_background_activity_battery_settings_can_help_phonemoo">部分手机会限制后台活动。可通过电池设置帮助 PhoneMood 保持运行。提醒可能在达到时长后延迟几秒出现。</string>
+    <string name="some_phones_restrict_background_activity_battery_settings_can_help_phonemoo">统计会在亮屏解锁时运行，息屏或锁屏后暂停定时查询，恢复使用时补读记录。系统省电模式下提醒可能延迟约 30 秒或更久。仅在后台记录经常中断时调整电池设置。</string>
     <string name="open_battery_settings">打开电池设置</string>
     <string name="personal_means_private">私人记录，安心保存</string>
     <string name="no_account_no_cloud_no_ads_phonemood_works_offline_and_keeps_its_records_on">无需账号、没有云端、没有广告。PhoneMood 离线运行，记录只保存在这台设备上。何时导出分享，由你决定。</string>

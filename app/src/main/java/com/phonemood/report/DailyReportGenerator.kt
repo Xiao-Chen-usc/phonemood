@@ -6,6 +6,7 @@ import android.provider.MediaStore
 import android.util.AtomicFile
 import androidx.room.withTransaction
 import com.phonemood.data.*
+import com.phonemood.monitoring.PollingPolicy
 import kotlinx.coroutines.sync.withLock
 import kotlinx.serialization.json.*
 import java.io.File
@@ -66,7 +67,15 @@ class DailyReportGenerator(private val context: Context, private val repository:
                 put("day_attribution", "Calendar days use the zone at first monitoring start. Each timeline segment preserves its observed zone; recovered event zones are explicitly inferred.")
                 put("checkpoint_definition", "Threshold crossing in cumulative session active time. prompt_timestamp is the threshold time; notification_delivered_at is actual delivery.")
                 put("late_response_policy", "Responses belong to the day of their checkpoint, even when answered later.")
-                put("poll_interval_seconds", 10)
+                put("poll_interval_seconds", PollingPolicy.ACTIVE_MS / 1_000)
+                put("polling_policy", buildJsonObject {
+                    put("mode", "adaptive")
+                    put("power_save_interval_seconds", PollingPolicy.POWER_SAVE_MS / 1_000)
+                    put("screen_off_or_locked_interval_seconds", JsonNull)
+                    put("screen_off_or_locked_policy", "No periodic service polling; catch up on screen-on or unlock. Independent report work may also reconcile events.")
+                    put("screen_on_or_unlock_triggers_poll", true)
+                    put("timing", "Best effort; Android may defer background execution.")
+                })
                 put("default_exclusions", JsonArray(listOf("PhoneMood", "Launcher", "System UI", "Keyboard", "Permission Controller").map(::JsonPrimitive)))
                 put("configuration_at_day_start", JsonObject(configAtStart.mapValues { JsonPrimitive(it.value.newValue) }))
             })
