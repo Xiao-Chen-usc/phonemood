@@ -8,6 +8,25 @@
 
 它不需要账号、服务器、遥测、广告 SDK 或网络权限。所有使用记录、情绪评分和报告都保存在手机本地。
 
+![PhoneMood Today 首页](docs/screenshots/today-monitoring.png)
+
+## 它有什么好处？
+
+PhoneMood 把“我好像刷了很久手机”变成可以回看的事实，再用一个很短的 1–10 分问题，帮助你注意当下的精神状态。它不要求你立刻停止使用手机，也不把手机使用简单地定义成好或坏。
+
+- **在当下提醒你觉察自己**：连续实际使用一段时间后，问你现在感觉如何，帮助你发现疲惫、焦虑、无聊或投入感和使用时长之间的关系。
+- **不打断当前任务**：问卷以悬浮卡片显示在当前 App 上方，点一个分数就能完成；你也可以稍后提醒或关闭。
+- **更接近真实使用习惯**：App 切换会继续累计，短暂锁屏或息屏不会被误算为使用时间；较长的休息才会开始新的使用段落。
+- **帮助你看到自己的模式**：Today、Timeline 和报告把使用时间、使用过的 App 和情绪评分放在一起，方便你回顾一天中哪些时段最容易陷入手机。
+- **数据留在自己的设备上**：没有账号、云端同步或网络上传，适合重视隐私、希望先从自我观察开始的人。
+- **由你决定提醒节奏**：可以调整提醒间隔、休息重置时间、排除 App，随时暂停监控。
+
+![PhoneMood 悬浮问卷](docs/screenshots/overlay-chrome-preview.png)
+
+![PhoneMood 每日报告](docs/screenshots/reports.png)
+
+PhoneMood 是一个自我观察工具，不是医疗诊断工具，也不会根据手机使用时间推断你的心理状况。它的价值在于提供一个温和、可重复、由你自己解释的记录方式。
+
 ## 下载安装包
 
 如果你只想安装和体验 App，可以直接下载仓库根目录的 Android 安装包：
@@ -92,6 +111,25 @@ Downloads/PhoneMoodHealth/YYYY-MM-DD-phone-mood.json
 PhoneMood is a local-only Android app for noticing the relationship between active phone use and self-reported mood.
 
 It requires no account, server, telemetry, advertising SDK, or network permission. Usage records, mood ratings, and reports stay on the device.
+
+![PhoneMood Today screen](docs/screenshots/today-monitoring.png)
+
+## Why use PhoneMood?
+
+PhoneMood turns the feeling of “I have been on my phone for a long time” into something you can review, then pairs it with a short 1–10 check-in about how you feel. It helps you notice patterns without judging phone use as simply good or bad.
+
+- **Builds awareness in the moment**: after a period of active use, it asks how you feel so you can notice links between time, fatigue, anxiety, boredom, and engagement.
+- **Keeps you in the current task**: the check-in appears as a floating card over the app you are using. Tap one number, snooze it, or dismiss it.
+- **Reflects real usage more carefully**: app switches continue the same session, while short screen-off breaks are excluded from active time; longer breaks start a new session.
+- **Makes personal patterns visible**: Today, Timeline, and reports put usage duration, app activity, and mood ratings together for reflection.
+- **Keeps data on your device**: there is no account, cloud sync, or network upload.
+- **Lets you choose the rhythm**: adjust prompt intervals, break thresholds, app exclusions, or pause monitoring whenever you want.
+
+![PhoneMood floating check-in](docs/screenshots/overlay-chrome-preview.png)
+
+![PhoneMood daily report](docs/screenshots/reports.png)
+
+PhoneMood is a self-observation tool, not a medical diagnostic system. It provides a gentle, repeatable record that you interpret for yourself.
 
 ## Download the Android installer
 
