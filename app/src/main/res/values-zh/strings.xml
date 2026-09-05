@@ -86,7 +86,7 @@
     <string name="open_battery_settings">打开电池设置</string>
     <string name="personal_means_private">私人记录，安心保存</string>
     <string name="no_account_no_cloud_no_ads_phonemood_works_offline_and_keeps_its_records_on">无需账号、没有云端、没有广告。PhoneMood 离线运行，记录只保存在这台设备上。何时导出分享，由你决定。</string>
-    <string name="phonemood_1_1_made_for_a_little_awareness">PHONEMOOD 1.2 · 为多一点觉察而做</string>
+    <string name="phonemood_1_1_made_for_a_little_awareness">PHONEMOOD 1.3 · 为多一点觉察而做</string>
     <string name="monitoring_alternate">正在记录</string>
     <string name="on_your_terms">按你的节奏</string>
     <string name="today_s_active_phone_time">今日手机使用时长</string>
@@ -136,9 +136,9 @@
     <string name="mood_check_ins">心情提醒</string>
     <string name="a_quick_check_in_after_active_phone_use">使用手机一段时间后，简单记录心情</string>
     <string name="phonemood_floating_card_preview">PhoneMood 悬浮卡片预览</string>
-    <string name="phonemood_is_listening_locally">PhoneMood 正在本机记录</string>
+    <string name="phonemood_is_listening_locally">PhoneMood · 使用时长统计</string>
     <string name="switch_to_another_app_a_preview_appears_in_5_seconds">请切换到其他应用，5 秒后显示预览。</string>
-    <string name="your_next_check_in_follows_active_phone_use_tap_to_pause">按实际使用时长提醒。轻点进入应用可暂停记录。</string>
+    <string name="your_next_check_in_follows_active_phone_use_tap_to_pause">本机统计 · 轻点管理</string>
     <string name="a_little_check_in_with_yourself">关照一下此刻的心情</string>
     <string name="allow_floating_cards_and_unlock_your_phone_to_preview">请允许悬浮卡片，并解锁手机后预览。</string>
     <string name="start_interval">开始记录后，每实际使用手机 %1$d 分钟，温和提醒你记录心情。</string>
@@ -166,4 +166,11 @@
     <string name="language">语言</string>
     <string name="follow_system">跟随 Android 系统语言</string>
     <string name="monitor_error">记录已中断。请检查使用情况访问权限，然后重新开始记录。</string>
+    <string name="setup_title">一次配置，自动记录</string>
+    <string name="setup_ready">权限已配置完成</string>
+    <string name="setup_explanation">首次允许使用情况访问权限并返回后，会自动开始统计。切换到其他应用时继续后台记录。快捷配置会依次打开尚未开启的权限。在悬浮权限列表中，只需允许 PhoneMood，不需要允许其他应用。手动暂停后会保持暂停。</string>
+    <string name="setup_status">使用情况：%1$s\n通知：%2$s\n悬浮卡片：%3$s\n电池优化豁免：%4$s</string>
+    <string name="setup_action">快捷配置权限</string>
+    <string name="setup_in_progress">请按系统提示授权</string>
+    <string name="setup_unavailable">无法打开此设置页面，请使用下方的单项权限入口。</string>
 </resources>

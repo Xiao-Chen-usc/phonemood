@@ -14,13 +14,20 @@ import kotlinx.coroutines.sync.withLock
 class MoodNotificationManager(private val context: Context) {
     private val manager = context.getSystemService(NotificationManager::class.java)
     fun createChannels() {
-        manager.createNotificationChannel(NotificationChannel("monitor", context.getString(R.string.usage_monitoring), NotificationManager.IMPORTANCE_LOW))
-        manager.createNotificationChannel(NotificationChannel("mood", context.getString(R.string.mood_check_ins), NotificationManager.IMPORTANCE_HIGH).apply { description = context.getString(R.string.a_quick_check_in_after_active_phone_use) })
+        manager.createNotificationChannel(NotificationChannel("monitor", context.getString(R.string.usage_monitoring), NotificationManager.IMPORTANCE_LOW).apply {
+            setSound(null, null); enableVibration(false); setShowBadge(false)
+            lockscreenVisibility = Notification.VISIBILITY_SECRET
+        })
+        manager.createNotificationChannel(NotificationChannel("mood", context.getString(R.string.mood_check_ins), NotificationManager.IMPORTANCE_HIGH).apply {
+            description = context.getString(R.string.a_quick_check_in_after_active_phone_use)
+            lockscreenVisibility = Notification.VISIBILITY_SECRET
+        })
     }
     fun canPrompt() = NotificationManagerCompat.from(context).areNotificationsEnabled() && manager.getNotificationChannel("mood")?.importance != NotificationManager.IMPORTANCE_NONE
     fun ongoing(preview: Boolean = false): Notification = NotificationCompat.Builder(context, "monitor")
         .setSmallIcon(R.drawable.ic_notification).setContentTitle(if (preview) context.getString(R.string.phonemood_floating_card_preview) else context.getString(R.string.phonemood_is_listening_locally))
         .setContentText(if (preview) context.getString(R.string.switch_to_another_app_a_preview_appears_in_5_seconds) else context.getString(R.string.your_next_check_in_follows_active_phone_use_tap_to_pause))
+        .setVisibility(NotificationCompat.VISIBILITY_SECRET).setOnlyAlertOnce(true).setShowWhen(false)
         .setOngoing(true).setSilent(true).setContentIntent(PendingIntent.getActivity(context, 0, Intent(context, MainActivity::class.java), PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)).build()
     suspend fun deliver(repository: Repository, allowPrompt: Boolean = true, silentCheckpointId: String? = null) = repository.mutex.withLock {
         val now = System.currentTimeMillis()
@@ -29,11 +36,12 @@ class MoodNotificationManager(private val context: Context) {
             if (now - checkpoint.promptTimestampUtc > 5 * 60_000) {
                 repository.dao.updateCheckpoint(checkpoint.copy(responseStatus = "MISSED"))
                 cancel(checkpoint.checkpointId)
-            } else if (checkpoint.notifiedUtc == null && canPrompt() && allowPrompt && repository.dao.state()?.monitoringEnabled == true) {
+            } else if (checkpoint.notifiedUtc == null && canPrompt() && allowPrompt && screenAvailable() && repository.dao.state()?.monitoringEnabled == true) {
                 val intent = Intent(context, MoodRatingActivity::class.java).setData(Uri.parse("phonemood://checkpoint/${Uri.encode(checkpoint.checkpointId)}")).putExtra("checkpointId", checkpoint.checkpointId)
                 val notification = NotificationCompat.Builder(context, "mood").setSmallIcon(R.drawable.ic_notification)
                     .setContentTitle(context.getString(R.string.a_little_check_in_with_yourself))
                     .setContentText(context.getString(R.string.notification_minutes, checkpoint.checkpointMinutes))
+                    .setVisibility(NotificationCompat.VISIBILITY_SECRET)
                     .setContentIntent(PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE))
                     .setSilent(checkpoint.checkpointId == silentCheckpointId).setAutoCancel(true).setOnlyAlertOnce(true).setTimeoutAfter((5 * 60_000 - (now - checkpoint.promptTimestampUtc)).coerceAtLeast(1)).build()
                 try {
@@ -47,6 +55,8 @@ class MoodNotificationManager(private val context: Context) {
             repository.dao.insertGap(MonitoringGap("notifications:$bucket", bucket, now, "NOTIFICATIONS_UNAVAILABLE"))
         }
     }
+    private fun screenAvailable() = context.getSystemService(android.os.PowerManager::class.java).isInteractive &&
+        !context.getSystemService(KeyguardManager::class.java).isKeyguardLocked
     /** Update only notifications that still exist, quietly, without changing delivery facts. */
     suspend fun refreshLanguage(repository: Repository) = repository.mutex.withLock {
         createChannels()
@@ -61,6 +71,7 @@ class MoodNotificationManager(private val context: Context) {
                 val notification = Notification.Builder.recoverBuilder(context, active.notification)
                     .setContentTitle(context.getString(R.string.a_little_check_in_with_yourself))
                     .setContentText(context.getString(R.string.notification_minutes, checkpoint.checkpointMinutes))
+                    .setVisibility(Notification.VISIBILITY_SECRET)
                     .setOnlyAlertOnce(true).setTimeoutAfter(remaining).build()
                 try { manager.notify(active.tag, active.id, notification) } catch (_: SecurityException) { }
             }

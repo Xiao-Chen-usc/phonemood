@@ -86,7 +86,7 @@
     <string name="open_battery_settings">Open battery settings</string>
     <string name="personal_means_private">Personal means private.</string>
     <string name="no_account_no_cloud_no_ads_phonemood_works_offline_and_keeps_its_records_on">No account. No cloud. No ads. PhoneMood works offline and keeps its records on this device. You decide when to share an export.</string>
-    <string name="phonemood_1_1_made_for_a_little_awareness">PHONEMOOD 1.2  ·  MADE FOR A LITTLE AWARENESS</string>
+    <string name="phonemood_1_1_made_for_a_little_awareness">PHONEMOOD 1.3  ·  MADE FOR A LITTLE AWARENESS</string>
     <string name="monitoring_alternate">Monitoring</string>
     <string name="on_your_terms">On your terms</string>
     <string name="today_s_active_phone_time">TODAY’S ACTIVE PHONE TIME</string>
@@ -136,9 +136,9 @@
     <string name="mood_check_ins">Mood check-ins</string>
     <string name="a_quick_check_in_after_active_phone_use">A quick check-in after active phone use</string>
     <string name="phonemood_floating_card_preview">PhoneMood floating-card preview</string>
-    <string name="phonemood_is_listening_locally">PhoneMood is listening locally</string>
+    <string name="phonemood_is_listening_locally">PhoneMood · Usage tracking</string>
     <string name="switch_to_another_app_a_preview_appears_in_5_seconds">Switch to another app. A preview appears in 5 seconds.</string>
-    <string name="your_next_check_in_follows_active_phone_use_tap_to_pause">Your next check-in follows active phone use. Tap to pause.</string>
+    <string name="your_next_check_in_follows_active_phone_use_tap_to_pause">On-device statistics · Tap to manage</string>
     <string name="a_little_check_in_with_yourself">A little check-in with yourself</string>
     <string name="allow_floating_cards_and_unlock_your_phone_to_preview">Allow floating cards and unlock your phone to preview.</string>
     <string name="start_interval">Start monitoring for a gentle mood check-in every %1$d minutes of active phone use.</string>
@@ -166,4 +166,11 @@
     <string name="language">Language</string>
     <string name="follow_system">Follow Android system language</string>
     <string name="monitor_error">Monitoring was interrupted. Check Usage Access and resume monitoring.</string>
+    <string name="setup_title">Set up once, record automatically</string>
+    <string name="setup_ready">Permissions are ready</string>
+    <string name="setup_explanation">On first setup, recording starts automatically when Usage Access is granted and you return here. It continues while you use other apps. This guide opens the remaining permissions in order. On the floating permission list, allow PhoneMood only — you do not need to allow other apps. A manual pause stays paused.</string>
+    <string name="setup_status">Usage: %1$s\nNotifications: %2$s\nFloating cards: %3$s\nBattery exemption: %4$s</string>
+    <string name="setup_action">Quick permission setup</string>
+    <string name="setup_in_progress">Follow the system prompts</string>
+    <string name="setup_unavailable">This settings screen is unavailable. Use the individual permission controls below.</string>
 </resources>

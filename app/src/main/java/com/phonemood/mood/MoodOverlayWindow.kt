@@ -77,9 +77,12 @@ class MoodOverlayWindow(context: Context) {
             text = if (preview) context.getString(R.string.close_preview) else context.getString(R.string.later_1_minute); isAllCaps = false
             setTextColor(forest); background = background(Color.TRANSPARENT); isEnabled = preview || canSnooze
             contentDescription = if (preview) context.getString(R.string.close_preview) else context.getString(R.string.remind_me_in_one_minute)
-            setOnClickListener { if (preview) onDismiss() else onLater() }
+            setOnClickListener { if (preview) onDismiss() else if (canSnooze) onLater() }
         }
-        if (preview || canSnooze) { buttons += later; card.addView(later, LinearLayout.LayoutParams(-1, dp(48))) }
+        // Keep the action discoverable for accessibility even near the end of the
+        // five-minute lifetime; it is disabled when snoozing is no longer valid.
+        buttons += later
+        card.addView(later, LinearLayout.LayoutParams(-1, dp(48)))
         val scroll = ScrollView(context).apply { isFillViewport = false; addView(card); clipToPadding = false }
         val metrics = context.resources.displayMetrics
         val width = minOf(dp(380), metrics.widthPixels - dp(32))

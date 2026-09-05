@@ -64,7 +64,9 @@ class MainActivity : ComponentActivity() {
     override fun onResume() {
         super.onResume()
         lifecycleScope.launch {
-            if (phoneMood.repository.configuration().enabled && hasUsageAccess()) {
+            val repository = phoneMood.repository
+            withContext(Dispatchers.IO) { repository.enableOnFirstPermission(hasUsageAccess()) }
+            if (repository.configuration().enabled && hasUsageAccess()) {
                 runCatching { ContextCompat.startForegroundService(this@MainActivity, Intent(this@MainActivity, UsageMonitorService::class.java)) }
             }
         }
@@ -151,6 +153,7 @@ fun PhoneMoodScreen() {
         Box(Modifier.fillMaxSize().padding(padding), contentAlignment = Alignment.TopCenter) {
             LazyColumn(modifier = Modifier.widthIn(max = 720.dp).fillMaxSize(), state = scrollState, contentPadding = PaddingValues(start = 24.dp, end = 24.dp, top = 18.dp, bottom = 28.dp), verticalArrangement = Arrangement.spacedBy(22.dp)) {
                 item { Brand(config.enabled && usageAccess && state?.error == null && now - (state?.lastHeartbeatUtc ?: 0) < 45_000) }
+                if (tab == 0 || tab == 3) item { PermissionSetupCard() }
                 item {
                     Column(verticalArrangement = Arrangement.spacedBy(7.dp)) {
                         Text(when (tab) { 0 -> LocalDate.now().format(DateTimeFormatter.ofLocalizedDate(java.time.format.FormatStyle.FULL).withLocale(configuration.locales[0])).uppercase(); 1 -> context.getString(R.string.a_little_more_awareness); 2 -> context.getString(R.string.your_data_in_your_hands); else -> context.getString(R.string.make_space_for_yourself) }, style = MaterialTheme.typography.labelSmall, color = Muted)

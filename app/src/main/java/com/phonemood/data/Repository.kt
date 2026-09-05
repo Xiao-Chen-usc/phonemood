@@ -22,10 +22,14 @@ class Repository(val context: Context, val db: PhoneMoodDatabase, val settings: 
             reset = history["sessionResetMinutes"]?.newValue?.toInt() ?: saved.reset,
             excluded = history["excludedPackages"]?.newValue?.split(',')?.filter { it.isNotBlank() }?.toSet() ?: saved.excluded)
     }
-    suspend fun configure(next: Configuration) = mutex.withLock {
+    suspend fun enableOnFirstPermission(hasAccess: Boolean) = mutex.withLock {
+        if (hasAccess && dao.state()?.firstStartedUtc == null) configureLocked(configuration().copy(enabled = true))
+    }
+    suspend fun configure(next: Configuration) = mutex.withLock { configureLocked(next) }
+    private suspend fun configureLocked(next: Configuration) {
         require(next.interval in 5..180 && next.reset in 1..30)
         val old = configuration()
-        if (old == next) { settings.save(next); return@withLock }
+        if (old == next) { settings.save(next); return }
         val now = System.currentTimeMillis()
         db.withTransaction {
             val changes = listOf(Triple("overlayEnabled", old.overlayEnabled.toString(), next.overlayEnabled.toString()), Triple("monitoringEnabled", old.enabled.toString(), next.enabled.toString()), Triple("moodIntervalMinutes", old.interval.toString(), next.interval.toString()), Triple("sessionResetMinutes", old.reset.toString(), next.reset.toString()), Triple("excludedPackages", old.excluded.sorted().joinToString(","), next.excluded.sorted().joinToString(",")))
