@@ -8,6 +8,14 @@
 
 它不需要账号、服务器、遥测、广告 SDK 或网络权限。所有使用记录、情绪评分和报告都保存在手机本地。
 
+## 下载安装包
+
+如果你只想安装和体验 App，可以直接下载仓库根目录的 Android 安装包：
+
+[下载 PhoneMood 1.3.2 Android 安装包](https://github.com/Xiao-Chen-usc/phonemood/raw/main/PhoneMood-1.3.2-debug.apk)
+
+这是一个用于测试的 debug APK，适用于 Android 10（API 29）或更高版本。下载后在 Android 手机上打开并安装；首次使用需要授予 Usage Access、通知和悬浮窗权限。安装包约 60 MB。
+
 ## 功能
 
 - 统计主动使用时间和各 App 使用情况
@@ -84,6 +92,14 @@ Downloads/PhoneMoodHealth/YYYY-MM-DD-phone-mood.json
 PhoneMood is a local-only Android app for noticing the relationship between active phone use and self-reported mood.
 
 It requires no account, server, telemetry, advertising SDK, or network permission. Usage records, mood ratings, and reports stay on the device.
+
+## Download the Android installer
+
+To install and try the app, download the Android installer from the repository root:
+
+[Download PhoneMood 1.3.2 Android APK](https://github.com/Xiao-Chen-usc/phonemood/raw/main/PhoneMood-1.3.2-debug.apk)
+
+This is a debug APK for testing on Android 10/API 29 or newer. After downloading, open it on an Android device and grant Usage Access, notification, and Display over other apps permissions on first use. The installer is approximately 60 MB.
 
 ## Features
 
