@@ -1,0 +1,123 @@
+{
+    "schema_version": "1.0",
+    "record_type": "daily_phone_usage_and_mood",
+    "date": "2026-09-05",
+    "measurement": {
+        "mood_scale": {
+            "min": 1,
+            "max": 10,
+            "higher_is_better": true
+        },
+        "mood_interval_minutes": 30,
+        "session_reset_minutes": 5,
+        "reporting_zone": "America/Los_Angeles",
+        "day_start": {
+            "utc": "2026-09-05T07:00:00Z",
+            "local": "2026-09-05T00:00-07:00",
+            "zone_id": "America/Los_Angeles"
+        },
+        "day_end_exclusive": {
+            "utc": "2026-09-06T07:00:00Z",
+            "local": "2026-09-06T00:00-07:00",
+            "zone_id": "America/Los_Angeles"
+        },
+        "duration_definition": "Sum of non-excluded foreground segments; screen-off, locked and excluded-app time do not count. Segments are clipped to this reporting day.",
+        "day_attribution": "Calendar days use the zone at first monitoring start. Each timeline segment preserves its observed zone; recovered event zones are explicitly inferred.",
+        "checkpoint_definition": "Threshold crossing in cumulative session active time. prompt_timestamp is the threshold time; notification_delivered_at is actual delivery.",
+        "late_response_policy": "Responses belong to the day of their checkpoint, even when answered later.",
+        "poll_interval_seconds": 10,
+        "default_exclusions": [
+            "PhoneMood",
+            "Launcher",
+            "System UI",
+            "Keyboard",
+            "Permission Controller"
+        ],
+        "configuration_at_day_start": {}
+    },
+    "daily_summary": {
+        "active_duration_ms": 41286,
+        "active_minutes": 0.6881,
+        "session_count": 1,
+        "checkpoint_count": 0,
+        "answered_count": 0,
+        "missed_count": 0,
+        "average_mood": null
+    },
+    "app_usage": [
+        {
+            "package_name": "com.android.settings",
+            "app_name": "Settings",
+            "active_duration_ms": 41286
+        }
+    ],
+    "sessions": [
+        {
+            "session_id": "1788630353813:com.android.settings",
+            "start": {
+                "utc": "2026-09-05T17:45:53.813Z",
+                "local": "2026-09-05T10:45:53.813-07:00",
+                "zone_id": "America/Los_Angeles"
+            },
+            "end": null,
+            "status": "INTERRUPTED",
+            "active_duration_ms_in_day": 41286,
+            "active_duration_ms_whole_session": 41286
+        }
+    ],
+    "timeline": [
+        {
+            "id": "1788630353813:com.android.settings:1788630353813:com.android.settings",
+            "start": {
+                "utc": "2026-09-05T17:45:53.813Z",
+                "local": "2026-09-05T10:45:53.813-07:00",
+                "zone_id": "America/Los_Angeles"
+            },
+            "end": {
+                "utc": "2026-09-05T17:46:35.099Z",
+                "local": "2026-09-05T10:46:35.099-07:00",
+                "zone_id": "America/Los_Angeles"
+            },
+            "duration_ms": 41286,
+            "package_name": "com.android.settings",
+            "app_name": "Settings",
+            "session_id": "1788630353813:com.android.settings",
+            "zone_inferred": false
+        }
+    ],
+    "mood_contexts": [],
+    "data_quality": {
+        "status": "PARTIAL",
+        "observed_from": {
+            "utc": "2026-09-05T17:45:53.421Z",
+            "local": "2026-09-05T10:45:53.421-07:00",
+            "zone_id": "America/Los_Angeles"
+        },
+        "observed_through": {
+            "utc": "2026-09-05T17:48:24.782Z",
+            "local": "2026-09-05T10:48:24.782-07:00",
+            "zone_id": "America/Los_Angeles"
+        },
+        "monitoring_gaps": [],
+        "configuration_events": [
+            {
+                "timestamp": {
+                    "utc": "2026-09-05T17:45:53.421Z",
+                    "local": "2026-09-05T10:45:53.421-07:00",
+                    "zone_id": "America/Los_Angeles"
+                },
+                "setting": "monitoringEnabled",
+                "old_value": "false",
+                "new_value": "true"
+            }
+        ],
+        "zone_inferred_segment_count": 0,
+        "limitations": [
+            "UsageStats can be delayed or incomplete; an empty query does not prove complete coverage.",
+            "Recovered usage events do not contain historical timezone offsets. Their zone is inferred from the recovery-time device zone.",
+            "Foreground activity transitions approximate interaction; split-screen and picture-in-picture are not separately attributed.",
+            "User pause/resume boundaries are recorded as configuration events. No usage is inferred while paused."
+        ]
+    },
+    "generated_at": "2026-09-05T17:48:26.958Z"
+}
