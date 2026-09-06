@@ -32,8 +32,9 @@ class Repository(val context: Context, val db: PhoneMoodDatabase, val settings: 
         if (old == next) { settings.save(next); return }
         val now = System.currentTimeMillis()
         db.withTransaction {
+            val firstConfiguration = dao.state()?.firstStartedUtc == null
             val changes = listOf(Triple("overlayEnabled", old.overlayEnabled.toString(), next.overlayEnabled.toString()), Triple("monitoringEnabled", old.enabled.toString(), next.enabled.toString()), Triple("moodIntervalMinutes", old.interval.toString(), next.interval.toString()), Triple("sessionResetMinutes", old.reset.toString(), next.reset.toString()), Triple("excludedPackages", old.excluded.sorted().joinToString(","), next.excluded.sorted().joinToString(",")))
-            changes.filter { it.second != it.third }.forEach { dao.insertConfiguration(ConfigurationEvent("$now:${it.first}", now, it.first, it.second, it.third)) }
+            changes.filter { it.second != it.third || firstConfiguration }.forEach { dao.insertConfiguration(ConfigurationEvent("$now:${it.first}", now, it.first, it.second, it.third)) }
             val state = dao.state() ?: MonitorState()
             if (old.copy(overlayEnabled = next.overlayEnabled) == next) {
                 // Presentation-only settings must not interrupt or reset active-use accounting.
@@ -89,6 +90,15 @@ class Repository(val context: Context, val db: PhoneMoodDatabase, val settings: 
                 if (tooLate) dao.insertGap(MonitoringGap("recovery:$from", from, start, "PROCESS_RECOVERY_TOO_LATE"))
             }
             dao.insertEvents(read.map { it.entity() })
+            if (!tooLate && state.error == null && now >= from) {
+                val anchor = dao.lastEvent(from)
+                val evidenceStart = if (anchor?.type in setOf("RESUME", "PAUSE", "LOCK", "SHUTDOWN")) from
+                    else read.firstOrNull { it.type in setOf("RESUME", "PAUSE", "LOCK", "SHUTDOWN") && it.at >= from }?.at
+                if (evidenceStart != null && evidenceStart < now) {
+                    val last = dao.lastCoverage()
+                    dao.saveCoverage(UsageCoverageEvidence(if (last?.endUtc == evidenceStart) last.startUtc else evidenceStart, now, now))
+                }
+            }
             val result = rebuild(now)
             dao.saveState(state.copy(lastProcessedTimestampUtc = maxOf(state.lastProcessedTimestampUtc, read.maxOfOrNull { it.at } ?: from), lastSuccessfulQueryUtc = now, lastHeartbeatUtc = now, currentSessionId = result.sessions.lastOrNull { it.status != "CLOSED" }?.id, sourceRevision = state.sourceRevision + 1, error = null))
         }

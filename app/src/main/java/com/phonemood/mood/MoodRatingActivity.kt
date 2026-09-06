@@ -2,6 +2,9 @@ package com.phonemood.mood
 
 import com.phonemood.R
 import android.os.Bundle
+import android.widget.Toast
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.contentDescription
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -47,20 +50,19 @@ class MoodRatingActivity : ComponentActivity() {
                         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) { IconButton(onClick = { finish() }) { Icon(Icons.Outlined.Close, getString(R.string.not_now)) } }
                         Spacer(Modifier.height(16.dp))
                         Box(Modifier.size(96.dp).background(Sage, CircleShape), contentAlignment = Alignment.Center) { Icon(Icons.Outlined.SentimentSatisfiedAlt, null, Modifier.size(52.dp), tint = Forest) }
-                        Text(getString(R.string.a_moment_for_you_alternate), style = MaterialTheme.typography.labelSmall, color = Muted)
                         Text(getString(R.string.how_are_you_feeling_right_now_alternate), style = MaterialTheme.typography.headlineLarge, textAlign = TextAlign.Center)
                         Text(minutes?.let { getString(R.string.rating_minutes, it) } ?: getString(R.string.let_s_check_in), textAlign = TextAlign.Center, color = Muted, style = MaterialTheme.typography.bodyLarge)
                         Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                             (0..1).forEach { row -> Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                                 (1..5).forEach { column -> val score = row * 5 + column
-                                    OutlinedButton(modifier = Modifier.weight(1f).height(54.dp), contentPadding = PaddingValues(0.dp), enabled = valid && !saving, onClick = {
+                                    OutlinedButton(modifier = Modifier.weight(1f).height(54.dp).semantics { contentDescription = getString(R.string.score_accessibility, score) }, contentPadding = PaddingValues(0.dp), enabled = valid && !saving, onClick = {
                                         scope.launch {
                                             saving = true
                                             try {
                                                 val saved = withContext(Dispatchers.IO) { phoneMood.repository.respond(id, score) }
                                                 check(saved) { getString(R.string.this_check_in_is_no_longer_available) }
                                                 MoodNotificationManager(this@MoodRatingActivity).cancel(id)
-                                                phoneMood.reconcileSoon(); finish()
+                                                phoneMood.reconcileSoon(); Toast.makeText(this@MoodRatingActivity, getString(R.string.mood_saved, score), Toast.LENGTH_SHORT).show(); finish()
                                             } catch (e: Exception) { error = getString(R.string.could_not_save_please_try_again); saving = false }
                                         }
                                     }) { Text("$score", fontSize = 21.sp, fontFamily = FontFamily.Serif) }

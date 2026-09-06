@@ -59,7 +59,7 @@ class DailyReportGenerator(private val context: Context, private val repository:
             put("schema_version", "1.0"); put("record_type", "daily_phone_usage_and_mood"); put("date", date.toString())
             put("measurement", buildJsonObject {
                 put("mood_scale", buildJsonObject { put("min", 1); put("max", 10); put("higher_is_better", true) })
-                put("mood_interval_minutes", configAtStart["moodIntervalMinutes"]?.newValue?.toInt() ?: 30)
+                put("mood_interval_minutes", configAtStart["moodIntervalMinutes"]?.newValue?.toInt() ?: 15)
                 put("session_reset_minutes", configAtStart["sessionResetMinutes"]?.newValue?.toInt() ?: 5)
                 put("reporting_zone", zone.id)
                 put("day_start", stamp(bounds.first)); put("day_end_exclusive", stamp(bounds.last + 1))

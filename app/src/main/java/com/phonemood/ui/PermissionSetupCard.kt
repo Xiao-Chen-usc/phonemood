@@ -62,6 +62,7 @@ fun PermissionSetupCard() {
             }
         } catch (_: Exception) { waiting = false; step = -1; failed = true }
     }
+    var showHelp by rememberSaveable { mutableStateOf(false) }
     val done = usage && notifications && overlay && battery
     SoftCard(Sage) {
         Text(context.getString(if (done) R.string.setup_ready else R.string.setup_title), style = MaterialTheme.typography.titleLarge)
@@ -72,6 +73,8 @@ fun PermissionSetupCard() {
             context.getString(if (overlay) R.string.allowed else R.string.permission_needed),
             context.getString(if (battery) R.string.allowed else R.string.permission_needed)), style = MaterialTheme.typography.bodySmall)
         if (!done) Button(onClick = { failed = false; step = 0 }, enabled = step !in 0..3) { Text(context.getString(if (step in 0..3) R.string.setup_in_progress else R.string.setup_action)) }
+        TextButton(onClick = { showHelp = !showHelp }) { Text(context.getString(R.string.setup_steps_help)) }
+        if (showHelp) Text(context.getString(R.string.setup_steps_explanation), style = MaterialTheme.typography.bodyMedium)
         if (failed) Text(context.getString(R.string.setup_unavailable), color = MaterialTheme.colorScheme.error)
     }
 }

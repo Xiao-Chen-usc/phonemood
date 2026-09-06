@@ -31,9 +31,15 @@ class MoodNotificationManager(private val context: Context) {
         .setOngoing(true).setSilent(true).setContentIntent(PendingIntent.getActivity(context, 0, Intent(context, MainActivity::class.java), PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)).build()
     suspend fun deliver(repository: Repository, allowPrompt: Boolean = true, silentCheckpointId: String? = null) = repository.mutex.withLock {
         val now = System.currentTimeMillis()
+        val latestForegroundPackage = repository.dao.events().lastOrNull { it.type == "RESUME" }?.packageName
         val pending = repository.dao.checkpoints().filter { it.responseStatus == "PENDING" }
         pending.forEach { checkpoint ->
-            if (now - checkpoint.promptTimestampUtc > 5 * 60_000) {
+            val promptState = repository.dao.promptState(checkpoint.checkpointId)
+            val deferredApp = checkpoint.foregroundPackage == latestForegroundPackage && promptState?.dismissed != true
+            val effectivePromptTime = promptState?.overlayShownUtc ?: checkpoint.promptTimestampUtc
+            if (deferredApp) {
+                // Keep the prompt pending until the user leaves YouTube.
+            } else if (now - effectivePromptTime > 5 * 60_000) {
                 repository.dao.updateCheckpoint(checkpoint.copy(responseStatus = "MISSED"))
                 cancel(checkpoint.checkpointId)
             } else if (checkpoint.notifiedUtc == null && canPrompt() && allowPrompt && screenAvailable() && repository.dao.state()?.monitoringEnabled == true) {
@@ -43,7 +49,7 @@ class MoodNotificationManager(private val context: Context) {
                     .setContentText(context.getString(R.string.notification_minutes, checkpoint.checkpointMinutes))
                     .setVisibility(NotificationCompat.VISIBILITY_SECRET)
                     .setContentIntent(PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE))
-                    .setSilent(checkpoint.checkpointId == silentCheckpointId).setAutoCancel(true).setOnlyAlertOnce(true).setTimeoutAfter((5 * 60_000 - (now - checkpoint.promptTimestampUtc)).coerceAtLeast(1)).build()
+                    .setSilent(checkpoint.checkpointId == silentCheckpointId).setAutoCancel(true).setOnlyAlertOnce(true).setTimeoutAfter((5 * 60_000 - (now - effectivePromptTime)).coerceAtLeast(1)).build()
                 try {
                     manager.notify(checkpoint.checkpointId, 2, notification)
                     repository.dao.updateCheckpoint(checkpoint.copy(notifiedUtc = now))

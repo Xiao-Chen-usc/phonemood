@@ -11,6 +11,10 @@
         <intent><action android:name="android.view.InputMethod" /></intent>
     </queries>
     <application android:name=".PhoneMoodApp" android:allowBackup="false" android:fullBackupContent="false" android:dataExtractionRules="@xml/data_extraction_rules" android:label="PhoneMood" android:icon="@drawable/ic_phonemood" android:theme="@style/Theme.PhoneMood" android:supportsRtl="true">
+        <meta-data android:name="autoStoreLocales" android:value="true" />
+        <provider android:name="androidx.core.content.FileProvider" android:authorities="${applicationId}.files" android:exported="false" android:grantUriPermissions="true">
+            <meta-data android:name="android.support.FILE_PROVIDER_PATHS" android:resource="@xml/analysis_file_paths" />
+        </provider>
         <activity android:name=".ui.MainActivity" android:exported="true">
             <intent-filter><action android:name="android.intent.action.MAIN" /><category android:name="android.intent.category.LAUNCHER" /></intent-filter>
         </activity>

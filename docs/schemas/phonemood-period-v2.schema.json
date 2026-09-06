@@ -1,0 +1,1608 @@
+{
+  "type": "object",
+  "properties": {
+    "record_type": {
+      "const": "phonemood_period_export"
+    },
+    "schema_version": {
+      "const": "2.0"
+    },
+    "calculation_version": {
+      "const": "2.0"
+    },
+    "analysis_version": {
+      "const": "1.0"
+    },
+    "export_metadata": {
+      "type": "object",
+      "properties": {
+        "generated_at_utc": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "source_revision": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "source_app_version": {
+          "type": "string"
+        },
+        "data_origin": {
+          "enum": [
+            "USER_RECORDS",
+            "SYNTHETIC_TEST_FIXTURE"
+          ]
+        }
+      },
+      "required": [
+        "generated_at_utc",
+        "source_revision",
+        "source_app_version",
+        "data_origin"
+      ],
+      "additionalProperties": false
+    },
+    "period": {
+      "type": "object",
+      "properties": {
+        "calendar_days": {
+          "enum": [
+            1,
+            7,
+            30
+          ]
+        },
+        "start_date": {
+          "type": "string",
+          "format": "date"
+        },
+        "end_date_inclusive": {
+          "type": "string",
+          "format": "date"
+        },
+        "reporting_zone_id": {
+          "type": "string"
+        },
+        "range": {
+          "$ref": "#/$defs/range"
+        },
+        "includes_ongoing_day": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "calendar_days",
+        "start_date",
+        "end_date_inclusive",
+        "reporting_zone_id",
+        "range",
+        "includes_ongoing_day"
+      ],
+      "additionalProperties": false
+    },
+    "measurement": {
+      "type": "object",
+      "properties": {
+        "mood_scale": {
+          "type": "object",
+          "properties": {
+            "min": {
+              "const": 1
+            },
+            "max": {
+              "const": 10
+            },
+            "higher_is_better": {
+              "const": true
+            }
+          },
+          "required": [
+            "min",
+            "max",
+            "higher_is_better"
+          ],
+          "additionalProperties": false
+        },
+        "exposure_window_ms": {
+          "const": 1800000
+        },
+        "exposure_anchor": {
+          "const": "ANSWER_TIME"
+        },
+        "app_model_window": {
+          "const": "BETWEEN_ANSWERS"
+        },
+        "interval_convention": {
+          "const": "START_INCLUSIVE_END_EXCLUSIVE"
+        },
+        "prompt_sampling": {
+          "const": "ACTIVE_USE_THRESHOLD"
+        },
+        "daily_summary_population": {
+          "const": "COMPLETE_FINISHED_DAYS"
+        },
+        "percentile_method": {
+          "const": "LINEAR_TYPE_7"
+        },
+        "default_settings": {
+          "type": "object",
+          "properties": {
+            "mood_interval_minutes": {
+              "const": 30
+            },
+            "session_reset_minutes": {
+              "const": 5
+            },
+            "excluded_packages": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "required": [
+            "mood_interval_minutes",
+            "session_reset_minutes",
+            "excluded_packages"
+          ],
+          "additionalProperties": false
+        },
+        "configuration_events": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "at_utc": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "setting": {
+                "type": "string"
+              },
+              "old_value": {
+                "type": "string"
+              },
+              "new_value": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "at_utc",
+              "setting",
+              "old_value",
+              "new_value"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "required": [
+        "mood_scale",
+        "exposure_window_ms",
+        "exposure_anchor",
+        "app_model_window",
+        "interval_convention",
+        "prompt_sampling",
+        "daily_summary_population",
+        "percentile_method",
+        "default_settings",
+        "configuration_events"
+      ],
+      "additionalProperties": false
+    },
+    "data_quality": {
+      "type": "object",
+      "properties": {
+        "complete_finished_days": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "days_with_records": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "period_answer_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "valid_rating_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "delivered_prompt_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "answered_delivered_prompt_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "response_rate": {
+          "anyOf": [
+            {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "response_rate_definition": {
+          "type": "string"
+        },
+        "coverage_intervals": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/coverage_interval"
+          }
+        },
+        "warnings": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "complete_finished_days",
+        "days_with_records",
+        "period_answer_count",
+        "valid_rating_count",
+        "delivered_prompt_count",
+        "answered_delivered_prompt_count",
+        "response_rate",
+        "response_rate_definition",
+        "coverage_intervals",
+        "warnings"
+      ],
+      "additionalProperties": false
+    },
+    "summary": {
+      "type": "object",
+      "properties": {
+        "recorded_active_ms": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "apps": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/app_time"
+          }
+        },
+        "daily_statistics": {
+          "type": "object",
+          "properties": {
+            "n_days": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "dates": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "format": "date"
+              }
+            },
+            "mean_active_ms": {
+              "anyOf": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "median_active_ms": {
+              "anyOf": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "p25_active_ms": {
+              "anyOf": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "p75_active_ms": {
+              "anyOf": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          },
+          "required": [
+            "n_days",
+            "dates",
+            "mean_active_ms",
+            "median_active_ms",
+            "p25_active_ms",
+            "p75_active_ms"
+          ],
+          "additionalProperties": false
+        },
+        "mood": {
+          "type": "object",
+          "properties": {
+            "n_answers": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "mean_score": {
+              "anyOf": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          },
+          "required": [
+            "n_answers",
+            "mean_score"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "recorded_active_ms",
+        "apps",
+        "daily_statistics",
+        "mood"
+      ],
+      "additionalProperties": false
+    },
+    "days": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "date": {
+            "type": "string",
+            "format": "date"
+          },
+          "range": {
+            "$ref": "#/$defs/range"
+          },
+          "is_ongoing": {
+            "type": "boolean"
+          },
+          "coverage": {
+            "$ref": "#/$defs/coverage"
+          },
+          "recorded_active_ms": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 0
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "apps": {
+            "type": "array",
+            "items": {
+              "$ref": "#/$defs/app_time"
+            }
+          },
+          "answered_mood_count": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "mean_mood_score": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "eligible_for_daily_statistics": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "date",
+          "range",
+          "is_ongoing",
+          "coverage",
+          "recorded_active_ms",
+          "apps",
+          "answered_mood_count",
+          "mean_mood_score",
+          "eligible_for_daily_statistics"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "apps": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "display_name": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "display_name"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "usage_segments": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/segment"
+      }
+    },
+    "sessions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "start_utc": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "end_utc": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "status": {
+            "type": "string"
+          },
+          "active_ms_in_period": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "active_ms_at_snapshot": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "started_before_period": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "id",
+          "start_utc",
+          "end_utc",
+          "status",
+          "active_ms_in_period",
+          "active_ms_at_snapshot",
+          "started_before_period"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "mood_observations": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/observation"
+      }
+    },
+    "context": {
+      "type": "object",
+      "properties": {
+        "range": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/range"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "usage_segments": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/segment"
+          }
+        },
+        "coverage_intervals": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/coverage_interval"
+          }
+        },
+        "prior_mood_observations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/observation"
+          }
+        },
+        "inclusion_reason": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "range",
+        "usage_segments",
+        "coverage_intervals",
+        "prior_mood_observations",
+        "inclusion_reason"
+      ],
+      "additionalProperties": false
+    },
+    "analysis_matrix": {
+      "type": "object",
+      "properties": {
+        "row_unit": {
+          "const": "ONE_ANSWERED_MOOD_OBSERVATION_IN_PERIOD"
+        },
+        "rows": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/row"
+          }
+        }
+      },
+      "required": [
+        "row_unit",
+        "rows"
+      ],
+      "additionalProperties": false
+    },
+    "transitions": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/transition"
+      }
+    },
+    "statistical_analysis": {
+      "type": "object",
+      "properties": {
+        "policy_version": {
+          "const": "1.0"
+        },
+        "models": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/model"
+          }
+        },
+        "findings": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/finding"
+          }
+        },
+        "top_app_finding_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "policy_snapshot": {
+          "$ref": "#/$defs/policy"
+        }
+      },
+      "required": [
+        "policy_version",
+        "models",
+        "findings",
+        "top_app_finding_ids",
+        "policy_snapshot"
+      ],
+      "additionalProperties": false
+    },
+    "user_insights": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "finding_id": {
+            "type": "string"
+          },
+          "template_key": {
+            "type": "string"
+          },
+          "arguments": {
+            "type": "object",
+            "properties": {
+              "difference": {
+                "anyOf": [
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "comparison_value": {
+                "anyOf": [
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "comparison_unit": {
+                "enum": [
+                  "DAYS",
+                  "MINUTES"
+                ]
+              },
+              "observations": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "app_id": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              }
+            },
+            "required": [
+              "difference",
+              "comparison_value",
+              "comparison_unit",
+              "observations",
+              "app_id"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "finding_id",
+          "template_key",
+          "arguments"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "data_dictionary": {
+      "type": "object",
+      "properties": {
+        "definitions": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "limitations": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "definitions",
+        "limitations"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "record_type",
+    "schema_version",
+    "calculation_version",
+    "analysis_version",
+    "export_metadata",
+    "period",
+    "measurement",
+    "data_quality",
+    "summary",
+    "days",
+    "apps",
+    "usage_segments",
+    "sessions",
+    "mood_observations",
+    "context",
+    "analysis_matrix",
+    "transitions",
+    "statistical_analysis",
+    "user_insights",
+    "data_dictionary"
+  ],
+  "additionalProperties": false,
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://phonemood.local/schemas/period-v2.0.json",
+  "title": "PhoneMood period export 2.0",
+  "$defs": {
+    "range": {
+      "type": "object",
+      "properties": {
+        "start_utc": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "end_utc_exclusive": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "start_utc",
+        "end_utc_exclusive"
+      ],
+      "additionalProperties": false
+    },
+    "app_time": {
+      "type": "object",
+      "properties": {
+        "app_id": {
+          "type": "string"
+        },
+        "active_ms": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "app_id",
+        "active_ms"
+      ],
+      "additionalProperties": false
+    },
+    "coverage": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "enum": [
+            "COMPLETE",
+            "PARTIAL",
+            "NOT_OBSERVED",
+            "UNKNOWN"
+          ]
+        },
+        "verified_ms": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "unknown_ms": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "not_monitored_ms": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "reasons": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "status",
+        "verified_ms",
+        "unknown_ms",
+        "not_monitored_ms",
+        "reasons"
+      ],
+      "additionalProperties": false
+    },
+    "coverage_interval": {
+      "type": "object",
+      "properties": {
+        "range": {
+          "$ref": "#/$defs/range"
+        },
+        "state": {
+          "enum": [
+            "VERIFIED",
+            "UNKNOWN",
+            "NOT_MONITORED"
+          ]
+        },
+        "reason": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "range",
+        "state",
+        "reason"
+      ],
+      "additionalProperties": false
+    },
+    "segment": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "source_id": {
+          "type": "string"
+        },
+        "range": {
+          "$ref": "#/$defs/range"
+        },
+        "app_id": {
+          "type": "string"
+        },
+        "session_id": {
+          "type": "string"
+        },
+        "observed_zone_id": {
+          "type": "string"
+        },
+        "zone_inferred": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "id",
+        "source_id",
+        "range",
+        "app_id",
+        "session_id",
+        "observed_zone_id",
+        "zone_inferred"
+      ],
+      "additionalProperties": false
+    },
+    "observation": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "session_id": {
+          "type": "string"
+        },
+        "scope": {
+          "enum": [
+            "PERIOD",
+            "CONTEXT_ONLY"
+          ]
+        },
+        "checkpoint_at_utc": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "checkpoint_active_minutes": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "notification_at_utc": {
+          "anyOf": [
+            {
+              "type": "string",
+              "format": "date-time"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "overlay_first_shown_at_utc": {
+          "anyOf": [
+            {
+              "type": "string",
+              "format": "date-time"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "response_state": {
+          "type": "string"
+        },
+        "response": {
+          "anyOf": [
+            {
+              "type": "object",
+              "properties": {
+                "answered_at_utc": {
+                  "type": "string",
+                  "format": "date-time"
+                },
+                "answer_zone_id": {
+                  "type": "string"
+                },
+                "score": {
+                  "type": "integer"
+                },
+                "latency_from_checkpoint_ms": {
+                  "type": "integer"
+                },
+                "latency_from_first_delivery_ms": {
+                  "anyOf": [
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "answered_at_utc",
+                "answer_zone_id",
+                "score",
+                "latency_from_checkpoint_ms",
+                "latency_from_first_delivery_ms"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "id",
+        "session_id",
+        "scope",
+        "checkpoint_at_utc",
+        "checkpoint_active_minutes",
+        "notification_at_utc",
+        "overlay_first_shown_at_utc",
+        "response_state",
+        "response"
+      ],
+      "additionalProperties": false
+    },
+    "membership": {
+      "type": "object",
+      "properties": {
+        "model_id": {
+          "type": "string"
+        },
+        "included": {
+          "type": "boolean"
+        },
+        "exclusion_reasons": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "model_id",
+        "included",
+        "exclusion_reasons"
+      ],
+      "additionalProperties": false
+    },
+    "row": {
+      "type": "object",
+      "properties": {
+        "observation_id": {
+          "type": "string"
+        },
+        "session_id": {
+          "type": "string"
+        },
+        "answered_at_utc": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "report_date": {
+          "type": "string",
+          "format": "date"
+        },
+        "mood_score": {
+          "type": "integer"
+        },
+        "window": {
+          "$ref": "#/$defs/range"
+        },
+        "coverage": {
+          "$ref": "#/$defs/coverage"
+        },
+        "phone_active_ms": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "apps": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/app_time"
+          }
+        },
+        "session_active_ms_at_answer": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "session_coverage_complete": {
+          "type": "boolean"
+        },
+        "quality_flags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "model_membership": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/membership"
+          }
+        }
+      },
+      "required": [
+        "observation_id",
+        "session_id",
+        "answered_at_utc",
+        "report_date",
+        "mood_score",
+        "window",
+        "coverage",
+        "phone_active_ms",
+        "apps",
+        "session_active_ms_at_answer",
+        "session_coverage_complete",
+        "quality_flags",
+        "model_membership"
+      ],
+      "additionalProperties": false
+    },
+    "transition": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "start_observation_id": {
+          "type": "string"
+        },
+        "end_observation_id": {
+          "type": "string"
+        },
+        "session_id": {
+          "type": "string"
+        },
+        "range": {
+          "$ref": "#/$defs/range"
+        },
+        "start_score": {
+          "type": "integer"
+        },
+        "end_score": {
+          "type": "integer"
+        },
+        "mood_delta": {
+          "type": "integer"
+        },
+        "elapsed_ms": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "phone_active_ms": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "non_active_ms": {
+          "type": "integer"
+        },
+        "apps": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/app_time"
+          }
+        },
+        "coverage": {
+          "$ref": "#/$defs/coverage"
+        },
+        "usable": {
+          "type": "boolean"
+        },
+        "exclusion_reasons": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "model_membership": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/membership"
+          }
+        }
+      },
+      "required": [
+        "id",
+        "start_observation_id",
+        "end_observation_id",
+        "session_id",
+        "range",
+        "start_score",
+        "end_score",
+        "mood_delta",
+        "elapsed_ms",
+        "phone_active_ms",
+        "non_active_ms",
+        "apps",
+        "coverage",
+        "usable",
+        "exclusion_reasons",
+        "model_membership"
+      ],
+      "additionalProperties": false
+    },
+    "model": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "outcome": {
+          "enum": [
+            "DAILY_MINUTES",
+            "MOOD_SCORE",
+            "MOOD_SCORE_WITHIN_SESSION",
+            "END_MOOD_SCORE"
+          ]
+        },
+        "status": {
+          "enum": [
+            "OK",
+            "NOT_ESTIMABLE"
+          ]
+        },
+        "sample_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "terms": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "coefficients": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          }
+        },
+        "covariance": {
+          "type": "array",
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "number"
+            }
+          }
+        },
+        "degrees_of_freedom": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "standard_error_method": {
+          "anyOf": [
+            {
+              "enum": [
+                "HC3",
+                "DAY_CLUSTER_CR1"
+              ]
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "dropped_controls": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "warnings": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "id",
+        "outcome",
+        "status",
+        "sample_ids",
+        "terms",
+        "coefficients",
+        "covariance",
+        "degrees_of_freedom",
+        "standard_error_method",
+        "dropped_controls",
+        "warnings"
+      ],
+      "additionalProperties": false
+    },
+    "finding": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "model_id": {
+          "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "DAILY_USE_TREND",
+            "SESSION_LENGTH",
+            "APP_USAGE"
+          ]
+        },
+        "app_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "status": {
+          "enum": [
+            "INSUFFICIENT_DATA",
+            "NO_NOTICEABLE_TENDENCY",
+            "MIXED_TENDENCY",
+            "EARLY_HIGHER",
+            "EARLY_LOWER"
+          ]
+        },
+        "difference": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "comparison_value": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "n": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "groups": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "consistency": {
+          "anyOf": [
+            {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "ci_low": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "ci_high": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "p": {
+          "anyOf": [
+            {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "q": {
+          "anyOf": [
+            {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "template_key": {
+          "type": "string"
+        },
+        "reasons": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "sensitivity_model_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "block_refits": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "excluded_block": {
+                "type": "string"
+              },
+              "difference": {
+                "anyOf": [
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "agrees": {
+                "type": "boolean"
+              },
+              "status": {
+                "enum": [
+                  "OK",
+                  "NOT_ESTIMABLE"
+                ]
+              }
+            },
+            "required": [
+              "excluded_block",
+              "difference",
+              "agrees",
+              "status"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "comparison_unit": {
+          "enum": [
+            "DAYS",
+            "MINUTES"
+          ]
+        },
+        "contrast_outcome": {
+          "enum": [
+            "DAILY_MINUTES_CHANGE",
+            "WITHIN_SESSION_MOOD_CHANGE",
+            "EXTRA_MOOD_CHANGE"
+          ]
+        }
+      },
+      "required": [
+        "id",
+        "model_id",
+        "kind",
+        "app_id",
+        "status",
+        "difference",
+        "comparison_value",
+        "n",
+        "groups",
+        "consistency",
+        "ci_low",
+        "ci_high",
+        "p",
+        "q",
+        "template_key",
+        "reasons",
+        "sensitivity_model_id",
+        "block_refits",
+        "comparison_unit",
+        "contrast_outcome"
+      ],
+      "additionalProperties": false
+    },
+    "policy": {
+      "type": "object",
+      "properties": {
+        "minimum_ratings": {
+          "const": 20
+        },
+        "max_pair_ms": {
+          "const": 7200000
+        },
+        "max_response_latency_ms": {
+          "const": 300000
+        },
+        "minimum_complete_trend_days": {
+          "const": 3
+        },
+        "near_zero_mood_points": {
+          "const": 0.2
+        },
+        "block_consistency_threshold": {
+          "const": 0.8
+        },
+        "app_min_exposed_rows": {
+          "const": 5
+        },
+        "app_min_matched_rows": {
+          "const": 10
+        },
+        "app_min_comparison_minutes": {
+          "const": 2
+        },
+        "app_match_total_minutes_tolerance": {
+          "const": 5
+        },
+        "app_match_elapsed_minutes_tolerance": {
+          "const": 10
+        },
+        "app_match_start_score_tolerance": {
+          "const": 1
+        },
+        "app_comparison": {
+          "type": "string"
+        },
+        "time_sensitivity_min_rows": {
+          "const": 40
+        },
+        "time_sensitivity_min_days": {
+          "const": 7
+        },
+        "time_sensitivity_min_4h_bins": {
+          "const": 3
+        },
+        "require_significance_for_display": {
+          "const": false
+        },
+        "require_fdr_for_display": {
+          "const": false
+        },
+        "solver": {
+          "const": "SVD_SCALED_INDEPENDENT_COLUMNS"
+        },
+        "rank_tolerance": {
+          "const": 1e-09
+        },
+        "daily_min_change_minutes": {
+          "const": 15
+        },
+        "daily_relative_change_threshold": {
+          "const": 0.1
+        },
+        "contrast_cap_minutes": {
+          "const": 30
+        },
+        "cluster_min_days": {
+          "const": 20
+        },
+        "minimum_blocks_for_deletion_check": {
+          "const": 3
+        },
+        "max_condition_number": {
+          "const": 100000000.0
+        },
+        "session_weight": {
+          "const": "ONE_OVER_SESSION_RATING_COUNT"
+        },
+        "block_selection": {
+          "const": "DAY_IF_AT_LEAST_3_ELSE_SESSION"
+        },
+        "daily_drift_sensitivity": {
+          "const": "NOT_IMPLEMENTED_IN_V1"
+        },
+        "sampling": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "minimum_ratings",
+        "max_pair_ms",
+        "max_response_latency_ms",
+        "minimum_complete_trend_days",
+        "near_zero_mood_points",
+        "block_consistency_threshold",
+        "app_min_exposed_rows",
+        "app_min_matched_rows",
+        "app_min_comparison_minutes",
+        "app_match_total_minutes_tolerance",
+        "app_match_elapsed_minutes_tolerance",
+        "app_match_start_score_tolerance",
+        "app_comparison",
+        "time_sensitivity_min_rows",
+        "time_sensitivity_min_days",
+        "time_sensitivity_min_4h_bins",
+        "require_significance_for_display",
+        "require_fdr_for_display",
+        "solver",
+        "rank_tolerance",
+        "daily_min_change_minutes",
+        "daily_relative_change_threshold",
+        "contrast_cap_minutes",
+        "cluster_min_days",
+        "minimum_blocks_for_deletion_check",
+        "max_condition_number",
+        "session_weight",
+        "block_selection",
+        "daily_drift_sensitivity",
+        "sampling"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

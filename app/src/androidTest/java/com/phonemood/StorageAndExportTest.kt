@@ -7,6 +7,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.phonemood.data.*
 import com.phonemood.report.*
 import com.phonemood.settings.SettingsStore
+import com.phonemood.analysis.*
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.json.*
 import org.junit.*
@@ -92,5 +93,25 @@ class StorageAndExportTest {
         val quality = record["data_quality"]!!.jsonObject
         assertEquals("PARTIAL", quality["status"]!!.jsonPrimitive.content)
         assertEquals("USAGE_ACCESS_REVOKED", quality["monitoring_gaps"]!!.jsonArray.single().jsonObject["reason"]!!.jsonPrimitive.content)
+    }
+
+    @Test fun periodReadIncludesPreviousAnswerAndClipsCrossMidnightUsage() = runBlocking {
+        val midnight=start+86_400_000
+        db.dao().insertSessions(listOf(PhoneSession("boundary",midnight-3_600_000,midnight+1_200_000,4_800_000,"CLOSED",90)))
+        db.dao().insertSegments(listOf(UsageSegment("boundary-usage",midnight-3_600_000,midnight+1_200_000,"test.app","Test app","boundary","UTC",false)))
+        db.dao().insertCheckpoints(listOf(
+            MoodCheckpoint("prior","boundary",30,midnight-1_800_000,"test.app","UTC","ANSWERED"),
+            MoodCheckpoint("current","boundary",60,midnight+600_000,"test.app","UTC","ANSWERED")))
+        db.dao().insertResponse(MoodResponse("prior",midnight-1_800_000,8,"UTC"))
+        db.dao().insertResponse(MoodResponse("current",midnight+600_000,6,"UTC"))
+        db.dao().saveCoverage(UsageCoverageEvidence(start,midnight+1_800_000,midnight+1_800_000))
+        val data=PeriodDatasetBuilder.build(repository.analysisFacts(1,midnight+1_800_000),1)
+        assertEquals(1,data.rows.size)
+        assertEquals(1_200_000L,data.daily.single().activeMs)
+        assertEquals(40.0,data.transitions.single().elapsedMinutes,0.0)
+        assertTrue(data.transitions.single().usable)
+        assertEquals(4_200_000L,data.rows.single().sessionMs)
+        val doc=PeriodExport.document(data,StatisticalEngine.analyze(data),"1.4.0")
+        assertEquals("prior",doc.getValue("context").jsonObject.getValue("prior_mood_observations").jsonArray.single().jsonObject.getValue("id").jsonPrimitive.content)
     }
 }

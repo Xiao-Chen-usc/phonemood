@@ -77,7 +77,13 @@ class UsageMonitorService : Service() {
                 try {
                     phoneMood.repository.poll()
                     val visibleCheckpoint = overlays.reconcile()
-                    notifications.deliver(phoneMood.repository, silentCheckpointId = visibleCheckpoint)
+                    // Any fullscreen video surface may hide an attached overlay. Keep the
+                    // heads-up notification audible while the same app remains foreground.
+                    val silentCheckpoint = visibleCheckpoint?.takeUnless { id ->
+                        phoneMood.repository.dao.checkpoint(id)?.foregroundPackage ==
+                            phoneMood.repository.dao.events().lastOrNull { it.type == "RESUME" }?.packageName
+                    }
+                    notifications.deliver(phoneMood.repository, silentCheckpointId = silentCheckpoint)
                     if (reportDay != LocalDate.now()) { phoneMood.reconcileSoon(); reportDay = LocalDate.now() }
                 } catch (e: CancellationException) { throw e }
                 catch (e: Exception) {
@@ -101,6 +107,8 @@ class UsageMonitorService : Service() {
         getSystemService(android.app.NotificationManager::class.java).notify(1, notifications.ongoing(previewJob?.isActive == true))
     }
     override fun onDestroy() { scope.cancel(); overlays.destroy(); unregisterReceiver(screenReceiver); super.onDestroy() }
-    companion object { const val ACTION_PREVIEW = "com.phonemood.PREVIEW_OVERLAY" }
+    companion object {
+        const val ACTION_PREVIEW = "com.phonemood.PREVIEW_OVERLAY"
+    }
     override fun onBind(intent: Intent?): IBinder? = null
 }

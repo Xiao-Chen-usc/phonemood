@@ -25,9 +25,18 @@ class MoodOverlayController(
         }
         if (withContext(Dispatchers.Main.immediate) { window.checkpointId } == PREVIEW_ID) return@withLock null
         val presentations = repository.dao.promptStates().associateBy { it.checkpointId }
+        val latestForegroundPackage = repository.dao.events().lastOrNull { it.type == "RESUME" }?.packageName
         val checkpoint = repository.dao.checkpoints().lastOrNull { c ->
             val p = presentations[c.checkpointId]
-            OverlayPolicy.eligible(now, c.promptTimestampUtc, c.responseStatus, p?.dismissed ?: false, p?.snoozedUntilUtc)
+            val ordinary = OverlayPolicy.eligible(now, c.promptTimestampUtc, c.responseStatus, p?.dismissed ?: false, p?.snoozedUntilUtc)
+            val sameForegroundApp = c.foregroundPackage == latestForegroundPackage
+            val deferredApp = c.responseStatus == "PENDING" &&
+                latestForegroundPackage != null && !sameForegroundApp &&
+                p?.dismissed != true && p?.snoozedUntilUtc == null
+            // An overlay can be accepted by WindowManager yet hidden by a fullscreen
+            // video surface. Keep the pending checkpoint until the foreground app
+            // changes, then present it again instead of losing it as MISSED.
+            (ordinary || deferredApp) && !(sameForegroundApp && !ordinary)
         }
         if (checkpoint == null) { withContext(Dispatchers.Main.immediate) { window.hide() }; return@withLock null }
         val wasVisible = withContext(Dispatchers.Main.immediate) { window.checkpointId == checkpoint.checkpointId }
@@ -39,8 +48,10 @@ class MoodOverlayController(
         }
         val previous = presentations[checkpoint.checkpointId] ?: MoodPromptState(checkpoint.checkpointId)
         if (shown) {
-            if (previous.overlayShownUtc == null || previous.lastOverlayError != null) repository.dao.savePromptState(previous.copy(overlayShownUtc = previous.overlayShownUtc ?: now, lastOverlayError = null))
-            if (!wasVisible) expireAfter(checkpoint.checkpointId, checkpoint.promptTimestampUtc + OverlayPolicy.PROMPT_LIFETIME_MS - now)
+            val shownAt = if (!wasVisible) now else previous.overlayShownUtc ?: now
+            if (previous.overlayShownUtc == null || previous.lastOverlayError != null || !wasVisible) repository.dao.savePromptState(previous.copy(overlayShownUtc = shownAt, lastOverlayError = null))
+            val lifetimeStart = shownAt
+            if (!wasVisible) expireAfter(checkpoint.checkpointId, lifetimeStart + OverlayPolicy.PROMPT_LIFETIME_MS - now)
             checkpoint.checkpointId
         } else {
             repository.dao.savePromptState(previous.copy(lastOverlayError = "WINDOW_NOT_ATTACHED"))
@@ -53,7 +64,10 @@ class MoodOverlayController(
             try {
                 check(repository.respond(id, score)) { context.getString(R.string.this_check_in_is_no_longer_available) }
                 MoodNotificationManager(context).cancel(id)
-                withContext(Dispatchers.Main.immediate) { if (window.checkpointId == id) window.hide() }
+                withContext(Dispatchers.Main.immediate) {
+                    if (window.checkpointId == id) window.hide()
+                    Toast.makeText(context, context.getString(R.string.mood_saved, score), Toast.LENGTH_SHORT).show()
+                }
                 reportsChanged()
             } catch (e: CancellationException) { throw e }
             catch (_: Exception) { withContext(Dispatchers.Main.immediate) { if (window.checkpointId == id) window.error(context.getString(R.string.could_not_save_please_tap_again)) } }
@@ -92,5 +106,7 @@ class MoodOverlayController(
     fun hidePreview() { if (window.checkpointId == PREVIEW_ID) window.hide() }
     fun hideForScreenOff() { window.hide() }
     fun destroy() { scope.cancel(); window.hide() }
-    companion object { const val PREVIEW_ID = "phonemood-preview" }
+    companion object {
+        const val PREVIEW_ID = "phonemood-preview"
+    }
 }

@@ -1,0 +1,5317 @@
+{
+    "record_type": "phonemood_period_export",
+    "schema_version": "2.0",
+    "calculation_version": "2.0",
+    "analysis_version": "1.0",
+    "export_metadata": {
+        "generated_at_utc": "2026-09-06T23:00:00Z",
+        "source_revision": 42,
+        "source_app_version": "1.4.0",
+        "data_origin": "SYNTHETIC_TEST_FIXTURE"
+    },
+    "period": {
+        "calendar_days": 1,
+        "start_date": "2026-09-06",
+        "end_date_inclusive": "2026-09-06",
+        "reporting_zone_id": "UTC",
+        "range": {
+            "start_utc": "2026-09-06T00:00:00Z",
+            "end_utc_exclusive": "2026-09-06T23:00:00Z"
+        },
+        "includes_ongoing_day": true
+    },
+    "measurement": {
+        "mood_scale": {
+            "min": 1,
+            "max": 10,
+            "higher_is_better": true
+        },
+        "exposure_window_ms": 1800000,
+        "exposure_anchor": "ANSWER_TIME",
+        "app_model_window": "BETWEEN_ANSWERS",
+        "interval_convention": "START_INCLUSIVE_END_EXCLUSIVE",
+        "prompt_sampling": "ACTIVE_USE_THRESHOLD",
+        "daily_summary_population": "COMPLETE_FINISHED_DAYS",
+        "percentile_method": "LINEAR_TYPE_7",
+        "default_settings": {
+            "mood_interval_minutes": 30,
+            "session_reset_minutes": 5,
+            "excluded_packages": []
+        },
+        "configuration_events": []
+    },
+    "data_quality": {
+        "complete_finished_days": 0,
+        "days_with_records": 1,
+        "period_answer_count": 24,
+        "valid_rating_count": 24,
+        "delivered_prompt_count": 24,
+        "answered_delivered_prompt_count": 24,
+        "response_rate": 1.0,
+        "response_rate_definition": "Unique checkpoints first delivered in the period, answered by snapshot time; notification and overlay deduplicated.",
+        "coverage_intervals": [
+            {
+                "range": {
+                    "start_utc": "2026-09-06T00:00:00Z",
+                    "end_utc_exclusive": "2026-09-06T23:00:00Z"
+                },
+                "state": "VERIFIED",
+                "reason": "ANCHORED_QUERY_CHAIN_V1"
+            }
+        ],
+        "warnings": [
+            "USAGE_TRIGGERED_SAMPLING",
+            "OBSERVATIONAL_NOT_CAUSAL"
+        ]
+    },
+    "summary": {
+        "recorded_active_ms": 43200000,
+        "apps": [
+            {
+                "app_id": "other",
+                "active_ms": 36900000
+            },
+            {
+                "app_id": "x",
+                "active_ms": 6300000
+            }
+        ],
+        "daily_statistics": {
+            "n_days": 0,
+            "dates": [],
+            "mean_active_ms": null,
+            "median_active_ms": null,
+            "p25_active_ms": null,
+            "p75_active_ms": null
+        },
+        "mood": {
+            "n_answers": 24,
+            "mean_score": 7.083333333333333
+        }
+    },
+    "days": [
+        {
+            "date": "2026-09-06",
+            "range": {
+                "start_utc": "2026-09-06T00:00:00Z",
+                "end_utc_exclusive": "2026-09-06T23:00:00Z"
+            },
+            "is_ongoing": true,
+            "coverage": {
+                "status": "COMPLETE",
+                "verified_ms": 82800000,
+                "unknown_ms": 0,
+                "not_monitored_ms": 0,
+                "reasons": []
+            },
+            "recorded_active_ms": 43200000,
+            "apps": [
+                {
+                    "app_id": "other",
+                    "active_ms": 36900000
+                },
+                {
+                    "app_id": "x",
+                    "active_ms": 6300000
+                }
+            ],
+            "answered_mood_count": 24,
+            "mean_mood_score": 7.083333333333333,
+            "eligible_for_daily_statistics": false
+        }
+    ],
+    "apps": [
+        {
+            "id": "other",
+            "display_name": "Other app"
+        },
+        {
+            "id": "x",
+            "display_name": "Example X"
+        }
+    ],
+    "usage_segments": [
+        {
+            "id": "29:0:0:o:1788652800000:1788654600000",
+            "source_id": "29:0:0:o",
+            "range": {
+                "start_utc": "2026-09-06T00:00:00Z",
+                "end_utc_exclusive": "2026-09-06T00:30:00Z"
+            },
+            "app_id": "other",
+            "session_id": "29:0",
+            "observed_zone_id": "UTC",
+            "zone_inferred": false
+        },
+        {
+            "id": "29:0:1:x:1788654600000:1788655500000",
+            "source_id": "29:0:1:x",
+            "range": {
+                "start_utc": "2026-09-06T00:30:00Z",
+                "end_utc_exclusive": "2026-09-06T00:45:00Z"
+            },
+            "app_id": "x",
+            "session_id": "29:0",
+            "observed_zone_id": "UTC",
+            "zone_inferred": false
+        },
+        {
+            "id": "29:0:1:o:1788655500000:1788656400000",
+            "source_id": "29:0:1:o",
+            "range": {
+                "start_utc": "2026-09-06T00:45:00Z",
+                "end_utc_exclusive": "2026-09-06T01:00:00Z"
+            },
+            "app_id": "other",
+            "session_id": "29:0",
+            "observed_zone_id": "UTC",
+            "zone_inferred": false
+        },
+        {
+            "id": "29:0:2:o:1788656400000:1788658200000",
+            "source_id": "29:0:2:o",
+            "range": {
+                "start_utc": "2026-09-06T01:00:00Z",
+                "end_utc_exclusive": "2026-09-06T01:30:00Z"
+            },
+            "app_id": "other",
+            "session_id": "29:0",
+            "observed_zone_id": "UTC",
+            "zone_inferred": false
+        },
+        {
+            "id": "29:0:3:o:1788658200000:1788660000000",
+            "source_id": "29:0:3:o",
+            "range": {
+                "start_utc": "2026-09-06T01:30:00Z",
+                "end_utc_exclusive": "2026-09-06T02:00:00Z"
+            },
+            "app_id": "other",
+            "session_id": "29:0",
+            "observed_zone_id": "UTC",
+            "zone_inferred": false
+        },
+        {
+            "id": "29:0:4:x:1788660000000:1788660900000",
+            "source_id": "29:0:4:x",
+            "range": {
+                "start_utc": "2026-09-06T02:00:00Z",
+                "end_utc_exclusive": "2026-09-06T02:15:00Z"
+            },
+            "app_id": "x",
+            "session_id": "29:0",
+            "observed_zone_id": "UTC",
+            "zone_inferred": false
+        },
+        {
+            "id": "29:0:4:o:1788660900000:1788661800000",
+            "source_id": "29:0:4:o",
+            "range": {
+                "start_utc": "2026-09-06T02:15:00Z",
+                "end_utc_exclusive": "2026-09-06T02:30:00Z"
+            },
+            "app_id": "other",
+            "session_id": "29:0",
+            "observed_zone_id": "UTC",
+            "zone_inferred": false
+        },
+        {
+            "id": "29:0:5:o:1788661800000:1788663600000",
+            "source_id": "29:0:5:o",
+            "range": {
+                "start_utc": "2026-09-06T02:30:00Z",
+                "end_utc_exclusive": "2026-09-06T03:00:00Z"
+            },
+            "app_id": "other",
+            "session_id": "29:0",
+            "observed_zone_id": "UTC",
+            "zone_inferred": false
+        },
+        {
+            "id": "29:1:0:o:1788674400000:1788676200000",
+            "source_id": "29:1:0:o",
+            "range": {
+                "start_utc": "2026-09-06T06:00:00Z",
+                "end_utc_exclusive": "2026-09-06T06:30:00Z"
+            },
+            "app_id": "other",
+            "session_id": "29:1",
+            "observed_zone_id": "UTC",
+            "zone_inferred": false
+        },
+        {
+            "id": "29:1:1:o:1788676200000:1788678000000",
+            "source_id": "29:1:1:o",
+            "range": {
+                "start_utc": "2026-09-06T06:30:00Z",
+                "end_utc_exclusive": "2026-09-06T07:00:00Z"
+            },
+            "app_id": "other",
+            "session_id": "29:1",
+            "observed_zone_id": "UTC",
+            "zone_inferred": false
+        },
+        {
+            "id": "29:1:2:o:1788678000000:1788679800000",
+            "source_id": "29:1:2:o",
+            "range": {
+                "start_utc": "2026-09-06T07:00:00Z",
+                "end_utc_exclusive": "2026-09-06T07:30:00Z"
+            },
+            "app_id": "other",
+            "session_id": "29:1",
+            "observed_zone_id": "UTC",
+            "zone_inferred": false
+        },
+        {
+            "id": "29:1:3:x:1788679800000:1788680700000",
+            "source_id": "29:1:3:x",
+            "range": {
+                "start_utc": "2026-09-06T07:30:00Z",
+                "end_utc_exclusive": "2026-09-06T07:45:00Z"
+            },
+            "app_id": "x",
+            "session_id": "29:1",
+            "observed_zone_id": "UTC",
+            "zone_inferred": false
+        },
+        {
+            "id": "29:1:3:o:1788680700000:1788681600000",
+            "source_id": "29:1:3:o",
+            "range": {
+                "start_utc": "2026-09-06T07:45:00Z",
+                "end_utc_exclusive": "2026-09-06T08:00:00Z"
+            },
+            "app_id": "other",
+            "session_id": "29:1",
+            "observed_zone_id": "UTC",
+            "zone_inferred": false
+        },
+        {
+            "id": "29:1:4:o:1788681600000:1788683400000",
+            "source_id": "29:1:4:o",
+            "range": {
+                "start_utc": "2026-09-06T08:00:00Z",
+                "end_utc_exclusive": "2026-09-06T08:30:00Z"
+            },
+            "app_id": "other",
+            "session_id": "29:1",
+            "observed_zone_id": "UTC",
+            "zone_inferred": false
+        },
+        {
+            "id": "29:1:5:o:1788683400000:1788685200000",
+            "source_id": "29:1:5:o",
+            "range": {
+                "start_utc": "2026-09-06T08:30:00Z",
+                "end_utc_exclusive": "2026-09-06T09:00:00Z"
+            },
+            "app_id": "other",
+            "session_id": "29:1",
+            "observed_zone_id": "UTC",
+            "zone_inferred": false
+        },
+        {
+            "id": "29:2:0:o:1788696000000:1788697800000",
+            "source_id": "29:2:0:o",
+            "range": {
+                "start_utc": "2026-09-06T12:00:00Z",
+                "end_utc_exclusive": "2026-09-06T12:30:00Z"
+            },
+            "app_id": "other",
+            "session_id": "29:2",
+            "observed_zone_id": "UTC",
+            "zone_inferred": false
+        },
+        {
+            "id": "29:2:1:o:1788697800000:1788699600000",
+            "source_id": "29:2:1:o",
+            "range": {
+                "start_utc": "2026-09-06T12:30:00Z",
+                "end_utc_exclusive": "2026-09-06T13:00:00Z"
+            },
+            "app_id": "other",
+            "session_id": "29:2",
+            "observed_zone_id": "UTC",
+            "zone_inferred": false
+        },
+        {
+            "id": "29:2:2:x:1788699600000:1788700500000",
+            "source_id": "29:2:2:x",
+            "range": {
+                "start_utc": "2026-09-06T13:00:00Z",
+                "end_utc_exclusive": "2026-09-06T13:15:00Z"
+            },
+            "app_id": "x",
+            "session_id": "29:2",
+            "observed_zone_id": "UTC",
+            "zone_inferred": false
+        },
+        {
+            "id": "29:2:2:o:1788700500000:1788701400000",
+            "source_id": "29:2:2:o",
+            "range": {
+                "start_utc": "2026-09-06T13:15:00Z",
+                "end_utc_exclusive": "2026-09-06T13:30:00Z"
+            },
+            "app_id": "other",
+            "session_id": "29:2",
+            "observed_zone_id": "UTC",
+            "zone_inferred": false
+        },
+        {
+            "id": "29:2:3:o:1788701400000:1788703200000",
+            "source_id": "29:2:3:o",
+            "range": {
+                "start_utc": "2026-09-06T13:30:00Z",
+                "end_utc_exclusive": "2026-09-06T14:00:00Z"
+            },
+            "app_id": "other",
+            "session_id": "29:2",
+            "observed_zone_id": "UTC",
+            "zone_inferred": false
+        },
+        {
+            "id": "29:2:4:o:1788703200000:1788705000000",
+            "source_id": "29:2:4:o",
+            "range": {
+                "start_utc": "2026-09-06T14:00:00Z",
+                "end_utc_exclusive": "2026-09-06T14:30:00Z"
+            },
+            "app_id": "other",
+            "session_id": "29:2",
+            "observed_zone_id": "UTC",
+            "zone_inferred": false
+        },
+        {
+            "id": "29:2:5:x:1788705000000:1788705900000",
+            "source_id": "29:2:5:x",
+            "range": {
+                "start_utc": "2026-09-06T14:30:00Z",
+                "end_utc_exclusive": "2026-09-06T14:45:00Z"
+            },
+            "app_id": "x",
+            "session_id": "29:2",
+            "observed_zone_id": "UTC",
+            "zone_inferred": false
+        },
+        {
+            "id": "29:2:5:o:1788705900000:1788706800000",
+            "source_id": "29:2:5:o",
+            "range": {
+                "start_utc": "2026-09-06T14:45:00Z",
+                "end_utc_exclusive": "2026-09-06T15:00:00Z"
+            },
+            "app_id": "other",
+            "session_id": "29:2",
+            "observed_zone_id": "UTC",
+            "zone_inferred": false
+        },
+        {
+            "id": "29:3:0:o:1788717600000:1788719400000",
+            "source_id": "29:3:0:o",
+            "range": {
+                "start_utc": "2026-09-06T18:00:00Z",
+                "end_utc_exclusive": "2026-09-06T18:30:00Z"
+            },
+            "app_id": "other",
+            "session_id": "29:3",
+            "observed_zone_id": "UTC",
+            "zone_inferred": false
+        },
+        {
+            "id": "29:3:1:x:1788719400000:1788720300000",
+            "source_id": "29:3:1:x",
+            "range": {
+                "start_utc": "2026-09-06T18:30:00Z",
+                "end_utc_exclusive": "2026-09-06T18:45:00Z"
+            },
+            "app_id": "x",
+            "session_id": "29:3",
+            "observed_zone_id": "UTC",
+            "zone_inferred": false
+        },
+        {
+            "id": "29:3:1:o:1788720300000:1788721200000",
+            "source_id": "29:3:1:o",
+            "range": {
+                "start_utc": "2026-09-06T18:45:00Z",
+                "end_utc_exclusive": "2026-09-06T19:00:00Z"
+            },
+            "app_id": "other",
+            "session_id": "29:3",
+            "observed_zone_id": "UTC",
+            "zone_inferred": false
+        },
+        {
+            "id": "29:3:2:o:1788721200000:1788723000000",
+            "source_id": "29:3:2:o",
+            "range": {
+                "start_utc": "2026-09-06T19:00:00Z",
+                "end_utc_exclusive": "2026-09-06T19:30:00Z"
+            },
+            "app_id": "other",
+            "session_id": "29:3",
+            "observed_zone_id": "UTC",
+            "zone_inferred": false
+        },
+        {
+            "id": "29:3:3:o:1788723000000:1788724800000",
+            "source_id": "29:3:3:o",
+            "range": {
+                "start_utc": "2026-09-06T19:30:00Z",
+                "end_utc_exclusive": "2026-09-06T20:00:00Z"
+            },
+            "app_id": "other",
+            "session_id": "29:3",
+            "observed_zone_id": "UTC",
+            "zone_inferred": false
+        },
+        {
+            "id": "29:3:4:x:1788724800000:1788725700000",
+            "source_id": "29:3:4:x",
+            "range": {
+                "start_utc": "2026-09-06T20:00:00Z",
+                "end_utc_exclusive": "2026-09-06T20:15:00Z"
+            },
+            "app_id": "x",
+            "session_id": "29:3",
+            "observed_zone_id": "UTC",
+            "zone_inferred": false
+        },
+        {
+            "id": "29:3:4:o:1788725700000:1788726600000",
+            "source_id": "29:3:4:o",
+            "range": {
+                "start_utc": "2026-09-06T20:15:00Z",
+                "end_utc_exclusive": "2026-09-06T20:30:00Z"
+            },
+            "app_id": "other",
+            "session_id": "29:3",
+            "observed_zone_id": "UTC",
+            "zone_inferred": false
+        },
+        {
+            "id": "29:3:5:o:1788726600000:1788728400000",
+            "source_id": "29:3:5:o",
+            "range": {
+                "start_utc": "2026-09-06T20:30:00Z",
+                "end_utc_exclusive": "2026-09-06T21:00:00Z"
+            },
+            "app_id": "other",
+            "session_id": "29:3",
+            "observed_zone_id": "UTC",
+            "zone_inferred": false
+        }
+    ],
+    "sessions": [
+        {
+            "id": "0:0",
+            "start_utc": "2026-08-08T00:00:00Z",
+            "end_utc": "2026-08-08T03:00:00Z",
+            "status": "CLOSED",
+            "active_ms_in_period": 0,
+            "active_ms_at_snapshot": 10800000,
+            "started_before_period": true
+        },
+        {
+            "id": "0:1",
+            "start_utc": "2026-08-08T06:00:00Z",
+            "end_utc": "2026-08-08T09:00:00Z",
+            "status": "CLOSED",
+            "active_ms_in_period": 0,
+            "active_ms_at_snapshot": 10800000,
+            "started_before_period": true
+        },
+        {
+            "id": "0:2",
+            "start_utc": "2026-08-08T12:00:00Z",
+            "end_utc": "2026-08-08T15:00:00Z",
+            "status": "CLOSED",
+            "active_ms_in_period": 0,
+            "active_ms_at_snapshot": 10800000,
+            "started_before_period": true
+        },
+        {
+            "id": "0:3",
+            "start_utc": "2026-08-08T18:00:00Z",
+            "end_utc": "2026-08-08T21:00:00Z",
+            "status": "CLOSED",
+            "active_ms_in_period": 0,
+            "active_ms_at_snapshot": 10800000,
+            "started_before_period": true
+        },
+        {
+            "id": "1:0",
+            "start_utc": "2026-08-09T00:00:00Z",
+            "end_utc": "2026-08-09T03:00:00Z",
+            "status": "CLOSED",
+            "active_ms_in_period": 0,
+            "active_ms_at_snapshot": 10800000,
+            "started_before_period": true
+        },
+        {
+            "id": "1:1",
+            "start_utc": "2026-08-09T06:00:00Z",
+            "end_utc": "2026-08-09T09:00:00Z",
+            "status": "CLOSED",
+            "active_ms_in_period": 0,
+            "active_ms_at_snapshot": 10800000,
+            "started_before_period": true
+        },
+        {
+            "id": "1:2",
+            "start_utc": "2026-08-09T12:00:00Z",
+            "end_utc": "2026-08-09T15:00:00Z",
+            "status": "CLOSED",
+            "active_ms_in_period": 0,
+            "active_ms_at_snapshot": 10800000,
+            "started_before_period": true
+        },
+        {
+            "id": "1:3",
+            "start_utc": "2026-08-09T18:00:00Z",
+            "end_utc": "2026-08-09T21:00:00Z",
+            "status": "CLOSED",
+            "active_ms_in_period": 0,
+            "active_ms_at_snapshot": 10800000,
+            "started_before_period": true
+        },
+        {
+            "id": "2:0",
+            "start_utc": "2026-08-10T00:00:00Z",
+            "end_utc": "2026-08-10T03:00:00Z",
+            "status": "CLOSED",
+            "active_ms_in_period": 0,
+            "active_ms_at_snapshot": 10800000,
+            "started_before_period": true
+        },
+        {
+            "id": "2:1",
+            "start_utc": "2026-08-10T06:00:00Z",
+            "end_utc": "2026-08-10T09:00:00Z",
+            "status": "CLOSED",
+            "active_ms_in_period": 0,
+            "active_ms_at_snapshot": 10800000,
+            "started_before_period": true
+        },
+        {
+            "id": "2:2",
+            "start_utc": "2026-08-10T12:00:00Z",
+            "end_utc": "2026-08-10T15:00:00Z",
+            "status": "CLOSED",
+            "active_ms_in_period": 0,
+            "active_ms_at_snapshot": 10800000,
+            "started_before_period": true
+        },
+        {
+            "id": "2:3",
+            "start_utc": "2026-08-10T18:00:00Z",
+            "end_utc": "2026-08-10T21:00:00Z",
+            "status": "CLOSED",
+            "active_ms_in_period": 0,
+            "active_ms_at_snapshot": 10800000,
+            "started_before_period": true
+        },
+        {
+            "id": "3:0",
+            "start_utc": "2026-08-11T00:00:00Z",
+            "end_utc": "2026-08-11T03:00:00Z",
+            "status": "CLOSED",
+            "active_ms_in_period": 0,
+            "active_ms_at_snapshot": 10800000,
+            "started_before_period": true
+        },
+        {
+            "id": "3:1",
+            "start_utc": "2026-08-11T06:00:00Z",
+            "end_utc": "2026-08-11T09:00:00Z",
+            "status": "CLOSED",
+            "active_ms_in_period": 0,
+            "active_ms_at_snapshot": 10800000,
+            "started_before_period": true
+        },
+        {
+            "id": "3:2",
+            "start_utc": "2026-08-11T12:00:00Z",
+            "end_utc": "2026-08-11T15:00:00Z",
+            "status": "CLOSED",
+            "active_ms_in_period": 0,
+            "active_ms_at_snapshot": 10800000,
+            "started_before_period": true
+        },
+        {
+            "id": "3:3",
+            "start_utc": "2026-08-11T18:00:00Z",
+            "end_utc": "2026-08-11T21:00:00Z",
+            "status": "CLOSED",
+            "active_ms_in_period": 0,
+            "active_ms_at_snapshot": 10800000,
+            "started_before_period": true
+        },
+        {
+            "id": "4:0",
+            "start_utc": "2026-08-12T00:00:00Z",
+            "end_utc": "2026-08-12T03:00:00Z",
+            "status": "CLOSED",
+            "active_ms_in_period": 0,
+            "active_ms_at_snapshot": 10800000,
+            "started_before_period": true
+        },
+        {
+            "id": "4:1",
+            "start_utc": "2026-08-12T06:00:00Z",
+            "end_utc": "2026-08-12T09:00:00Z",
+            "status": "CLOSED",
+            "active_ms_in_period": 0,
+            "active_ms_at_snapshot": 10800000,
+            "started_before_period": true
+        },
+        {
+            "id": "4:2",
+            "start_utc": "2026-08-12T12:00:00Z",
+            "end_utc": "2026-08-12T15:00:00Z",
+            "status": "CLOSED",
+            "active_ms_in_period": 0,
+            "active_ms_at_snapshot": 10800000,
+            "started_before_period": true
+        },
+        {
+            "id": "4:3",
+            "start_utc": "2026-08-12T18:00:00Z",
+            "end_utc": "2026-08-12T21:00:00Z",
+            "status": "CLOSED",
+            "active_ms_in_period": 0,
+            "active_ms_at_snapshot": 10800000,
+            "started_before_period": true
+        },
+        {
+            "id": "5:0",
+            "start_utc": "2026-08-13T00:00:00Z",
+            "end_utc": "2026-08-13T03:00:00Z",
+            "status": "CLOSED",
+            "active_ms_in_period": 0,
+            "active_ms_at_snapshot": 10800000,
+            "started_before_period": true
+        },
+        {
+            "id": "5:1",
+            "start_utc": "2026-08-13T06:00:00Z",
+            "end_utc": "2026-08-13T09:00:00Z",
+            "status": "CLOSED",
+            "active_ms_in_period": 0,
+            "active_ms_at_snapshot": 10800000,
+            "started_before_period": true
+        },
+        {
+            "id": "5:2",
+            "start_utc": "2026-08-13T12:00:00Z",
+            "end_utc": "2026-08-13T15:00:00Z",
+            "status": "CLOSED",
+            "active_ms_in_period": 0,
+            "active_ms_at_snapshot": 10800000,
+            "started_before_period": true
+        },
+        {
+            "id": "5:3",
+            "start_utc": "2026-08-13T18:00:00Z",
+            "end_utc": "2026-08-13T21:00:00Z",
+            "status": "CLOSED",
+            "active_ms_in_period": 0,
+            "active_ms_at_snapshot": 10800000,
+            "started_before_period": true
+        },
+        {
+            "id": "6:0",
+            "start_utc": "2026-08-14T00:00:00Z",
+            "end_utc": "2026-08-14T03:00:00Z",
+            "status": "CLOSED",
+            "active_ms_in_period": 0,
+            "active_ms_at_snapshot": 10800000,
+            "started_before_period": true
+        },
+        {
+            "id": "6:1",
+            "start_utc": "2026-08-14T06:00:00Z",
+            "end_utc": "2026-08-14T09:00:00Z",
+            "status": "CLOSED",
+            "active_ms_in_period": 0,
+            "active_ms_at_snapshot": 10800000,
+            "started_before_period": true
+        },
+        {
+            "id": "6:2",
+            "start_utc": "2026-08-14T12:00:00Z",
+            "end_utc": "2026-08-14T15:00:00Z",
+            "status": "CLOSED",
+            "active_ms_in_period": 0,
+            "active_ms_at_snapshot": 10800000,
+            "started_before_period": true
+        },
+        {
+            "id": "6:3",
+            "start_utc": "2026-08-14T18:00:00Z",
+            "end_utc": "2026-08-14T21:00:00Z",
+            "status": "CLOSED",
+            "active_ms_in_period": 0,
+            "active_ms_at_snapshot": 10800000,
+            "started_before_period": true
+        },
+        {
+            "id": "7:0",
+            "start_utc": "2026-08-15T00:00:00Z",
+            "end_utc": "2026-08-15T03:00:00Z",
+            "status": "CLOSED",
+            "active_ms_in_period": 0,
+            "active_ms_at_snapshot": 10800000,
+            "started_before_period": true
+        },
+        {
+            "id": "7:1",
+            "start_utc": "2026-08-15T06:00:00Z",
+            "end_utc": "2026-08-15T09:00:00Z",
+            "status": "CLOSED",
+            "active_ms_in_period": 0,
+            "active_ms_at_snapshot": 10800000,
+            "started_before_period": true
+        },
+        {
+            "id": "7:2",
+            "start_utc": "2026-08-15T12:00:00Z",
+            "end_utc": "2026-08-15T15:00:00Z",
+            "status": "CLOSED",
+            "active_ms_in_period": 0,
+            "active_ms_at_snapshot": 10800000,
+            "started_before_period": true
+        },
+        {
+            "id": "7:3",
+            "start_utc": "2026-08-15T18:00:00Z",
+            "end_utc": "2026-08-15T21:00:00Z",
+            "status": "CLOSED",
+            "active_ms_in_period": 0,
+            "active_ms_at_snapshot": 10800000,
+            "started_before_period": true
+        },
+        {
+            "id": "8:0",
+            "start_utc": "2026-08-16T00:00:00Z",
+            "end_utc": "2026-08-16T03:00:00Z",
+            "status": "CLOSED",
+            "active_ms_in_period": 0,
+            "active_ms_at_snapshot": 10800000,
+            "started_before_period": true
+        },
+        {
+            "id": "8:1",
+            "start_utc": "2026-08-16T06:00:00Z",
+            "end_utc": "2026-08-16T09:00:00Z",
+            "status": "CLOSED",
+            "active_ms_in_period": 0,
+            "active_ms_at_snapshot": 10800000,
+            "started_before_period": true
+        },
+        {
+            "id": "8:2",
+            "start_utc": "2026-08-16T12:00:00Z",
+            "end_utc": "2026-08-16T15:00:00Z",
+            "status": "CLOSED",
+            "active_ms_in_period": 0,
+            "active_ms_at_snapshot": 10800000,
+            "started_before_period": true
+        },
+        {
+            "id": "8:3",
+            "start_utc": "2026-08-16T18:00:00Z",
+            "end_utc": "2026-08-16T21:00:00Z",
+            "status": "CLOSED",
+            "active_ms_in_period": 0,
+            "active_ms_at_snapshot": 10800000,
+            "started_before_period": true
+        },
+        {
+            "id": "9:0",
+            "start_utc": "2026-08-17T00:00:00Z",
+            "end_utc": "2026-08-17T03:00:00Z",
+            "status": "CLOSED",
+            "active_ms_in_period": 0,
+            "active_ms_at_snapshot": 10800000,
+            "started_before_period": true
+        },
+        {
+            "id": "9:1",
+            "start_utc": "2026-08-17T06:00:00Z",
+            "end_utc": "2026-08-17T09:00:00Z",
+            "status": "CLOSED",
+            "active_ms_in_period": 0,
+            "active_ms_at_snapshot": 10800000,
+            "started_before_period": true
+        },
+        {
+            "id": "9:2",
+            "start_utc": "2026-08-17T12:00:00Z",
+            "end_utc": "2026-08-17T15:00:00Z",
+            "status": "CLOSED",
+            "active_ms_in_period": 0,
+            "active_ms_at_snapshot": 10800000,
+            "started_before_period": true
+        },
+        {
+            "id": "9:3",
+            "start_utc": "2026-08-17T18:00:00Z",
+            "end_utc": "2026-08-17T21:00:00Z",
+            "status": "CLOSED",
+            "active_ms_in_period": 0,
+            "active_ms_at_snapshot": 10800000,
+            "started_before_period": true
+        },
+        {
+            "id": "10:0",
+            "start_utc": "2026-08-18T00:00:00Z",
+            "end_utc": "2026-08-18T03:00:00Z",
+            "status": "CLOSED",
+            "active_ms_in_period": 0,
+            "active_ms_at_snapshot": 10800000,
+            "started_before_period": true
+        },
+        {
+            "id": "10:1",
+            "start_utc": "2026-08-18T06:00:00Z",
+            "end_utc": "2026-08-18T09:00:00Z",
+            "status": "CLOSED",
+            "active_ms_in_period": 0,
+            "active_ms_at_snapshot": 10800000,
+            "started_before_period": true
+        },
+        {
+            "id": "10:2",
+            "start_utc": "2026-08-18T12:00:00Z",
+            "end_utc": "2026-08-18T15:00:00Z",
+            "status": "CLOSED",
+            "active_ms_in_period": 0,
+            "active_ms_at_snapshot": 10800000,
+            "started_before_period": true
+        },
+        {
+            "id": "10:3",
+            "start_utc": "2026-08-18T18:00:00Z",
+            "end_utc": "2026-08-18T21:00:00Z",
+            "status": "CLOSED",
+            "active_ms_in_period": 0,
+            "active_ms_at_snapshot": 10800000,
+            "started_before_period": true
+        },
+        {
+            "id": "11:0",
+            "start_utc": "2026-08-19T00:00:00Z",
+            "end_utc": "2026-08-19T03:00:00Z",
+            "status": "CLOSED",
+            "active_ms_in_period": 0,
+            "active_ms_at_snapshot": 10800000,
+            "started_before_period": true
+        },
+        {
+            "id": "11:1",
+            "start_utc": "2026-08-19T06:00:00Z",
+            "end_utc": "2026-08-19T09:00:00Z",
+            "status": "CLOSED",
+            "active_ms_in_period": 0,
+            "active_ms_at_snapshot": 10800000,
+            "started_before_period": true
+        },
+        {
+            "id": "11:2",
+            "start_utc": "2026-08-19T12:00:00Z",
+            "end_utc": "2026-08-19T15:00:00Z",
+            "status": "CLOSED",
+            "active_ms_in_period": 0,
+            "active_ms_at_snapshot": 10800000,
+            "started_before_period": true
+        },
+        {
+            "id": "11:3",
+            "start_utc": "2026-08-19T18:00:00Z",
+            "end_utc": "2026-08-19T21:00:00Z",
+            "status": "CLOSED",
+            "active_ms_in_period": 0,
+            "active_ms_at_snapshot": 10800000,
+            "started_before_period": true
+        },
+        {
+            "id": "12:0",
+            "start_utc": "2026-08-20T00:00:00Z",
+            "end_utc": "2026-08-20T03:00:00Z",
+            "status": "CLOSED",
+            "active_ms_in_period": 0,
+            "active_ms_at_snapshot": 10800000,
+            "started_before_period": true
+        },
+        {
+            "id": "12:1",
+            "start_utc": "2026-08-20T06:00:00Z",
+            "end_utc": "2026-08-20T09:00:00Z",
+            "status": "CLOSED",
+            "active_ms_in_period": 0,
+            "active_ms_at_snapshot": 10800000,
+            "started_before_period": true
+        },
+        {
+            "id": "12:2",
+            "start_utc": "2026-08-20T12:00:00Z",
+            "end_utc": "2026-08-20T15:00:00Z",
+            "status": "CLOSED",
+            "active_ms_in_period": 0,
+            "active_ms_at_snapshot": 10800000,
+            "started_before_period": true
+        },
+        {
+            "id": "12:3",
+            "start_utc": "2026-08-20T18:00:00Z",
+            "end_utc": "2026-08-20T21:00:00Z",
+            "status": "CLOSED",
+            "active_ms_in_period": 0,
+            "active_ms_at_snapshot": 10800000,
+            "started_before_period": true
+        },
+        {
+            "id": "13:0",
+            "start_utc": "2026-08-21T00:00:00Z",
+            "end_utc": "2026-08-21T03:00:00Z",
+            "status": "CLOSED",
+            "active_ms_in_period": 0,
+            "active_ms_at_snapshot": 10800000,
+            "started_before_period": true
+        },
+        {
+            "id": "13:1",
+            "start_utc": "2026-08-21T06:00:00Z",
+            "end_utc": "2026-08-21T09:00:00Z",
+            "status": "CLOSED",
+            "active_ms_in_period": 0,
+            "active_ms_at_snapshot": 10800000,
+            "started_before_period": true
+        },
+        {
+            "id": "13:2",
+            "start_utc": "2026-08-21T12:00:00Z",
+            "end_utc": "2026-08-21T15:00:00Z",
+            "status": "CLOSED",
+            "active_ms_in_period": 0,
+            "active_ms_at_snapshot": 10800000,
+            "started_before_period": true
+        },
+        {
+            "id": "13:3",
+            "start_utc": "2026-08-21T18:00:00Z",
+            "end_utc": "2026-08-21T21:00:00Z",
+            "status": "CLOSED",
+            "active_ms_in_period": 0,
+            "active_ms_at_snapshot": 10800000,
+            "started_before_period": true
+        },
+        {
+            "id": "14:0",
+            "start_utc": "2026-08-22T00:00:00Z",
+            "end_utc": "2026-08-22T03:00:00Z",
+            "status": "CLOSED",
+            "active_ms_in_period": 0,
+            "active_ms_at_snapshot": 10800000,
+            "started_before_period": true
+        },
+        {
+            "id": "14:1",
+            "start_utc": "2026-08-22T06:00:00Z",
+            "end_utc": "2026-08-22T09:00:00Z",
+            "status": "CLOSED",
+            "active_ms_in_period": 0,
+            "active_ms_at_snapshot": 10800000,
+            "started_before_period": true
+        },
+        {
+            "id": "14:2",
+            "start_utc": "2026-08-22T12:00:00Z",
+            "end_utc": "2026-08-22T15:00:00Z",
+            "status": "CLOSED",
+            "active_ms_in_period": 0,
+            "active_ms_at_snapshot": 10800000,
+            "started_before_period": true
+        },
+        {
+            "id": "14:3",
+            "start_utc": "2026-08-22T18:00:00Z",
+            "end_utc": "2026-08-22T21:00:00Z",
+            "status": "CLOSED",
+            "active_ms_in_period": 0,
+            "active_ms_at_snapshot": 10800000,
+            "started_before_period": true
+        },
+        {
+            "id": "15:0",
+            "start_utc": "2026-08-23T00:00:00Z",
+            "end_utc": "2026-08-23T03:00:00Z",
+            "status": "CLOSED",
+            "active_ms_in_period": 0,
+            "active_ms_at_snapshot": 10800000,
+            "started_before_period": true
+        },
+        {
+            "id": "15:1",
+            "start_utc": "2026-08-23T06:00:00Z",
+            "end_utc": "2026-08-23T09:00:00Z",
+            "status": "CLOSED",
+            "active_ms_in_period": 0,
+            "active_ms_at_snapshot": 10800000,
+            "started_before_period": true
+        },
+        {
+            "id": "15:2",
+            "start_utc": "2026-08-23T12:00:00Z",
+            "end_utc": "2026-08-23T15:00:00Z",
+            "status": "CLOSED",
+            "active_ms_in_period": 0,
+            "active_ms_at_snapshot": 10800000,
+            "started_before_period": true
+        },
+        {
+            "id": "15:3",
+            "start_utc": "2026-08-23T18:00:00Z",
+            "end_utc": "2026-08-23T21:00:00Z",
+            "status": "CLOSED",
+            "active_ms_in_period": 0,
+            "active_ms_at_snapshot": 10800000,
+            "started_before_period": true
+        },
+        {
+            "id": "16:0",
+            "start_utc": "2026-08-24T00:00:00Z",
+            "end_utc": "2026-08-24T03:00:00Z",
+            "status": "CLOSED",
+            "active_ms_in_period": 0,
+            "active_ms_at_snapshot": 10800000,
+            "started_before_period": true
+        },
+        {
+            "id": "16:1",
+            "start_utc": "2026-08-24T06:00:00Z",
+            "end_utc": "2026-08-24T09:00:00Z",
+            "status": "CLOSED",
+            "active_ms_in_period": 0,
+            "active_ms_at_snapshot": 10800000,
+            "started_before_period": true
+        },
+        {
+            "id": "16:2",
+            "start_utc": "2026-08-24T12:00:00Z",
+            "end_utc": "2026-08-24T15:00:00Z",
+            "status": "CLOSED",
+            "active_ms_in_period": 0,
+            "active_ms_at_snapshot": 10800000,
+            "started_before_period": true
+        },
+        {
+            "id": "16:3",
+            "start_utc": "2026-08-24T18:00:00Z",
+            "end_utc": "2026-08-24T21:00:00Z",
+            "status": "CLOSED",
+            "active_ms_in_period": 0,
+            "active_ms_at_snapshot": 10800000,
+            "started_before_period": true
+        },
+        {
+            "id": "17:0",
+            "start_utc": "2026-08-25T00:00:00Z",
+            "end_utc": "2026-08-25T03:00:00Z",
+            "status": "CLOSED",
+            "active_ms_in_period": 0,
+            "active_ms_at_snapshot": 10800000,
+            "started_before_period": true
+        },
+        {
+            "id": "17:1",
+            "start_utc": "2026-08-25T06:00:00Z",
+            "end_utc": "2026-08-25T09:00:00Z",
+            "status": "CLOSED",
+            "active_ms_in_period": 0,
+            "active_ms_at_snapshot": 10800000,
+            "started_before_period": true
+        },
+        {
+            "id": "17:2",
+            "start_utc": "2026-08-25T12:00:00Z",
+            "end_utc": "2026-08-25T15:00:00Z",
+            "status": "CLOSED",
+            "active_ms_in_period": 0,
+            "active_ms_at_snapshot": 10800000,
+            "started_before_period": true
+        },
+        {
+            "id": "17:3",
+            "start_utc": "2026-08-25T18:00:00Z",
+            "end_utc": "2026-08-25T21:00:00Z",
+            "status": "CLOSED",
+            "active_ms_in_period": 0,
+            "active_ms_at_snapshot": 10800000,
+            "started_before_period": true
+        },
+        {
+            "id": "18:0",
+            "start_utc": "2026-08-26T00:00:00Z",
+            "end_utc": "2026-08-26T03:00:00Z",
+            "status": "CLOSED",
+            "active_ms_in_period": 0,
+            "active_ms_at_snapshot": 10800000,
+            "started_before_period": true
+        },
+        {
+            "id": "18:1",
+            "start_utc": "2026-08-26T06:00:00Z",
+            "end_utc": "2026-08-26T09:00:00Z",
+            "status": "CLOSED",
+            "active_ms_in_period": 0,
+            "active_ms_at_snapshot": 10800000,
+            "started_before_period": true
+        },
+        {
+            "id": "18:2",
+            "start_utc": "2026-08-26T12:00:00Z",
+            "end_utc": "2026-08-26T15:00:00Z",
+            "status": "CLOSED",
+            "active_ms_in_period": 0,
+            "active_ms_at_snapshot": 10800000,
+            "started_before_period": true
+        },
+        {
+            "id": "18:3",
+            "start_utc": "2026-08-26T18:00:00Z",
+            "end_utc": "2026-08-26T21:00:00Z",
+            "status": "CLOSED",
+            "active_ms_in_period": 0,
+            "active_ms_at_snapshot": 10800000,
+            "started_before_period": true
+        },
+        {
+            "id": "19:0",
+            "start_utc": "2026-08-27T00:00:00Z",
+            "end_utc": "2026-08-27T03:00:00Z",
+            "status": "CLOSED",
+            "active_ms_in_period": 0,
+            "active_ms_at_snapshot": 10800000,
+            "started_before_period": true
+        },
+        {
+            "id": "19:1",
+            "start_utc": "2026-08-27T06:00:00Z",
+            "end_utc": "2026-08-27T09:00:00Z",
+            "status": "CLOSED",
+            "active_ms_in_period": 0,
+            "active_ms_at_snapshot": 10800000,
+            "started_before_period": true
+        },
+        {
+            "id": "19:2",
+            "start_utc": "2026-08-27T12:00:00Z",
+            "end_utc": "2026-08-27T15:00:00Z",
+            "status": "CLOSED",
+            "active_ms_in_period": 0,
+            "active_ms_at_snapshot": 10800000,
+            "started_before_period": true
+        },
+        {
+            "id": "19:3",
+            "start_utc": "2026-08-27T18:00:00Z",
+            "end_utc": "2026-08-27T21:00:00Z",
+            "status": "CLOSED",
+            "active_ms_in_period": 0,
+            "active_ms_at_snapshot": 10800000,
+            "started_before_period": true
+        },
+        {
+            "id": "20:0",
+            "start_utc": "2026-08-28T00:00:00Z",
+            "end_utc": "2026-08-28T03:00:00Z",
+            "status": "CLOSED",
+            "active_ms_in_period": 0,
+            "active_ms_at_snapshot": 10800000,
+            "started_before_period": true
+        },
+        {
+            "id": "20:1",
+            "start_utc": "2026-08-28T06:00:00Z",
+            "end_utc": "2026-08-28T09:00:00Z",
+            "status": "CLOSED",
+            "active_ms_in_period": 0,
+            "active_ms_at_snapshot": 10800000,
+            "started_before_period": true
+        },
+        {
+            "id": "20:2",
+            "start_utc": "2026-08-28T12:00:00Z",
+            "end_utc": "2026-08-28T15:00:00Z",
+            "status": "CLOSED",
+            "active_ms_in_period": 0,
+            "active_ms_at_snapshot": 10800000,
+            "started_before_period": true
+        },
+        {
+            "id": "20:3",
+            "start_utc": "2026-08-28T18:00:00Z",
+            "end_utc": "2026-08-28T21:00:00Z",
+            "status": "CLOSED",
+            "active_ms_in_period": 0,
+            "active_ms_at_snapshot": 10800000,
+            "started_before_period": true
+        },
+        {
+            "id": "21:0",
+            "start_utc": "2026-08-29T00:00:00Z",
+            "end_utc": "2026-08-29T03:00:00Z",
+            "status": "CLOSED",
+            "active_ms_in_period": 0,
+            "active_ms_at_snapshot": 10800000,
+            "started_before_period": true
+        },
+        {
+            "id": "21:1",
+            "start_utc": "2026-08-29T06:00:00Z",
+            "end_utc": "2026-08-29T09:00:00Z",
+            "status": "CLOSED",
+            "active_ms_in_period": 0,
+            "active_ms_at_snapshot": 10800000,
+            "started_before_period": true
+        },
+        {
+            "id": "21:2",
+            "start_utc": "2026-08-29T12:00:00Z",
+            "end_utc": "2026-08-29T15:00:00Z",
+            "status": "CLOSED",
+            "active_ms_in_period": 0,
+            "active_ms_at_snapshot": 10800000,
+            "started_before_period": true
+        },
+        {
+            "id": "21:3",
+            "start_utc": "2026-08-29T18:00:00Z",
+            "end_utc": "2026-08-29T21:00:00Z",
+            "status": "CLOSED",
+            "active_ms_in_period": 0,
+            "active_ms_at_snapshot": 10800000,
+            "started_before_period": true
+        },
+        {
+            "id": "22:0",
+            "start_utc": "2026-08-30T00:00:00Z",
+            "end_utc": "2026-08-30T03:00:00Z",
+            "status": "CLOSED",
+            "active_ms_in_period": 0,
+            "active_ms_at_snapshot": 10800000,
+            "started_before_period": true
+        },
+        {
+            "id": "22:1",
+            "start_utc": "2026-08-30T06:00:00Z",
+            "end_utc": "2026-08-30T09:00:00Z",
+            "status": "CLOSED",
+            "active_ms_in_period": 0,
+            "active_ms_at_snapshot": 10800000,
+            "started_before_period": true
+        },
+        {
+            "id": "22:2",
+            "start_utc": "2026-08-30T12:00:00Z",
+            "end_utc": "2026-08-30T15:00:00Z",
+            "status": "CLOSED",
+            "active_ms_in_period": 0,
+            "active_ms_at_snapshot": 10800000,
+            "started_before_period": true
+        },
+        {
+            "id": "22:3",
+            "start_utc": "2026-08-30T18:00:00Z",
+            "end_utc": "2026-08-30T21:00:00Z",
+            "status": "CLOSED",
+            "active_ms_in_period": 0,
+            "active_ms_at_snapshot": 10800000,
+            "started_before_period": true
+        },
+        {
+            "id": "23:0",
+            "start_utc": "2026-08-31T00:00:00Z",
+            "end_utc": "2026-08-31T03:00:00Z",
+            "status": "CLOSED",
+            "active_ms_in_period": 0,
+            "active_ms_at_snapshot": 10800000,
+            "started_before_period": true
+        },
+        {
+            "id": "23:1",
+            "start_utc": "2026-08-31T06:00:00Z",
+            "end_utc": "2026-08-31T09:00:00Z",
+            "status": "CLOSED",
+            "active_ms_in_period": 0,
+            "active_ms_at_snapshot": 10800000,
+            "started_before_period": true
+        },
+        {
+            "id": "23:2",
+            "start_utc": "2026-08-31T12:00:00Z",
+            "end_utc": "2026-08-31T15:00:00Z",
+            "status": "CLOSED",
+            "active_ms_in_period": 0,
+            "active_ms_at_snapshot": 10800000,
+            "started_before_period": true
+        },
+        {
+            "id": "23:3",
+            "start_utc": "2026-08-31T18:00:00Z",
+            "end_utc": "2026-08-31T21:00:00Z",
+            "status": "CLOSED",
+            "active_ms_in_period": 0,
+            "active_ms_at_snapshot": 10800000,
+            "started_before_period": true
+        },
+        {
+            "id": "24:0",
+            "start_utc": "2026-09-01T00:00:00Z",
+            "end_utc": "2026-09-01T03:00:00Z",
+            "status": "CLOSED",
+            "active_ms_in_period": 0,
+            "active_ms_at_snapshot": 10800000,
+            "started_before_period": true
+        },
+        {
+            "id": "24:1",
+            "start_utc": "2026-09-01T06:00:00Z",
+            "end_utc": "2026-09-01T09:00:00Z",
+            "status": "CLOSED",
+            "active_ms_in_period": 0,
+            "active_ms_at_snapshot": 10800000,
+            "started_before_period": true
+        },
+        {
+            "id": "24:2",
+            "start_utc": "2026-09-01T12:00:00Z",
+            "end_utc": "2026-09-01T15:00:00Z",
+            "status": "CLOSED",
+            "active_ms_in_period": 0,
+            "active_ms_at_snapshot": 10800000,
+            "started_before_period": true
+        },
+        {
+            "id": "24:3",
+            "start_utc": "2026-09-01T18:00:00Z",
+            "end_utc": "2026-09-01T21:00:00Z",
+            "status": "CLOSED",
+            "active_ms_in_period": 0,
+            "active_ms_at_snapshot": 10800000,
+            "started_before_period": true
+        },
+        {
+            "id": "25:0",
+            "start_utc": "2026-09-02T00:00:00Z",
+            "end_utc": "2026-09-02T03:00:00Z",
+            "status": "CLOSED",
+            "active_ms_in_period": 0,
+            "active_ms_at_snapshot": 10800000,
+            "started_before_period": true
+        },
+        {
+            "id": "25:1",
+            "start_utc": "2026-09-02T06:00:00Z",
+            "end_utc": "2026-09-02T09:00:00Z",
+            "status": "CLOSED",
+            "active_ms_in_period": 0,
+            "active_ms_at_snapshot": 10800000,
+            "started_before_period": true
+        },
+        {
+            "id": "25:2",
+            "start_utc": "2026-09-02T12:00:00Z",
+            "end_utc": "2026-09-02T15:00:00Z",
+            "status": "CLOSED",
+            "active_ms_in_period": 0,
+            "active_ms_at_snapshot": 10800000,
+            "started_before_period": true
+        },
+        {
+            "id": "25:3",
+            "start_utc": "2026-09-02T18:00:00Z",
+            "end_utc": "2026-09-02T21:00:00Z",
+            "status": "CLOSED",
+            "active_ms_in_period": 0,
+            "active_ms_at_snapshot": 10800000,
+            "started_before_period": true
+        },
+        {
+            "id": "26:0",
+            "start_utc": "2026-09-03T00:00:00Z",
+            "end_utc": "2026-09-03T03:00:00Z",
+            "status": "CLOSED",
+            "active_ms_in_period": 0,
+            "active_ms_at_snapshot": 10800000,
+            "started_before_period": true
+        },
+        {
+            "id": "26:1",
+            "start_utc": "2026-09-03T06:00:00Z",
+            "end_utc": "2026-09-03T09:00:00Z",
+            "status": "CLOSED",
+            "active_ms_in_period": 0,
+            "active_ms_at_snapshot": 10800000,
+            "started_before_period": true
+        },
+        {
+            "id": "26:2",
+            "start_utc": "2026-09-03T12:00:00Z",
+            "end_utc": "2026-09-03T15:00:00Z",
+            "status": "CLOSED",
+            "active_ms_in_period": 0,
+            "active_ms_at_snapshot": 10800000,
+            "started_before_period": true
+        },
+        {
+            "id": "26:3",
+            "start_utc": "2026-09-03T18:00:00Z",
+            "end_utc": "2026-09-03T21:00:00Z",
+            "status": "CLOSED",
+            "active_ms_in_period": 0,
+            "active_ms_at_snapshot": 10800000,
+            "started_before_period": true
+        },
+        {
+            "id": "27:0",
+            "start_utc": "2026-09-04T00:00:00Z",
+            "end_utc": "2026-09-04T03:00:00Z",
+            "status": "CLOSED",
+            "active_ms_in_period": 0,
+            "active_ms_at_snapshot": 10800000,
+            "started_before_period": true
+        },
+        {
+            "id": "27:1",
+            "start_utc": "2026-09-04T06:00:00Z",
+            "end_utc": "2026-09-04T09:00:00Z",
+            "status": "CLOSED",
+            "active_ms_in_period": 0,
+            "active_ms_at_snapshot": 10800000,
+            "started_before_period": true
+        },
+        {
+            "id": "27:2",
+            "start_utc": "2026-09-04T12:00:00Z",
+            "end_utc": "2026-09-04T15:00:00Z",
+            "status": "CLOSED",
+            "active_ms_in_period": 0,
+            "active_ms_at_snapshot": 10800000,
+            "started_before_period": true
+        },
+        {
+            "id": "27:3",
+            "start_utc": "2026-09-04T18:00:00Z",
+            "end_utc": "2026-09-04T21:00:00Z",
+            "status": "CLOSED",
+            "active_ms_in_period": 0,
+            "active_ms_at_snapshot": 10800000,
+            "started_before_period": true
+        },
+        {
+            "id": "28:0",
+            "start_utc": "2026-09-05T00:00:00Z",
+            "end_utc": "2026-09-05T03:00:00Z",
+            "status": "CLOSED",
+            "active_ms_in_period": 0,
+            "active_ms_at_snapshot": 10800000,
+            "started_before_period": true
+        },
+        {
+            "id": "28:1",
+            "start_utc": "2026-09-05T06:00:00Z",
+            "end_utc": "2026-09-05T09:00:00Z",
+            "status": "CLOSED",
+            "active_ms_in_period": 0,
+            "active_ms_at_snapshot": 10800000,
+            "started_before_period": true
+        },
+        {
+            "id": "28:2",
+            "start_utc": "2026-09-05T12:00:00Z",
+            "end_utc": "2026-09-05T15:00:00Z",
+            "status": "CLOSED",
+            "active_ms_in_period": 0,
+            "active_ms_at_snapshot": 10800000,
+            "started_before_period": true
+        },
+        {
+            "id": "28:3",
+            "start_utc": "2026-09-05T18:00:00Z",
+            "end_utc": "2026-09-05T21:00:00Z",
+            "status": "CLOSED",
+            "active_ms_in_period": 0,
+            "active_ms_at_snapshot": 10800000,
+            "started_before_period": true
+        },
+        {
+            "id": "29:0",
+            "start_utc": "2026-09-06T00:00:00Z",
+            "end_utc": "2026-09-06T03:00:00Z",
+            "status": "CLOSED",
+            "active_ms_in_period": 10800000,
+            "active_ms_at_snapshot": 10800000,
+            "started_before_period": false
+        },
+        {
+            "id": "29:1",
+            "start_utc": "2026-09-06T06:00:00Z",
+            "end_utc": "2026-09-06T09:00:00Z",
+            "status": "CLOSED",
+            "active_ms_in_period": 10800000,
+            "active_ms_at_snapshot": 10800000,
+            "started_before_period": false
+        },
+        {
+            "id": "29:2",
+            "start_utc": "2026-09-06T12:00:00Z",
+            "end_utc": "2026-09-06T15:00:00Z",
+            "status": "CLOSED",
+            "active_ms_in_period": 10800000,
+            "active_ms_at_snapshot": 10800000,
+            "started_before_period": false
+        },
+        {
+            "id": "29:3",
+            "start_utc": "2026-09-06T18:00:00Z",
+            "end_utc": "2026-09-06T21:00:00Z",
+            "status": "CLOSED",
+            "active_ms_in_period": 10800000,
+            "active_ms_at_snapshot": 10800000,
+            "started_before_period": false
+        }
+    ],
+    "mood_observations": [
+        {
+            "id": "29:0:0",
+            "session_id": "29:0",
+            "scope": "PERIOD",
+            "checkpoint_at_utc": "2026-09-06T00:30:00Z",
+            "checkpoint_active_minutes": 30,
+            "notification_at_utc": "2026-09-06T00:30:00Z",
+            "overlay_first_shown_at_utc": null,
+            "response_state": "ANSWERED",
+            "response": {
+                "answered_at_utc": "2026-09-06T00:30:00Z",
+                "answer_zone_id": "UTC",
+                "score": 8,
+                "latency_from_checkpoint_ms": 0,
+                "latency_from_first_delivery_ms": 0
+            }
+        },
+        {
+            "id": "29:0:1",
+            "session_id": "29:0",
+            "scope": "PERIOD",
+            "checkpoint_at_utc": "2026-09-06T01:00:00Z",
+            "checkpoint_active_minutes": 60,
+            "notification_at_utc": "2026-09-06T01:00:00Z",
+            "overlay_first_shown_at_utc": null,
+            "response_state": "ANSWERED",
+            "response": {
+                "answered_at_utc": "2026-09-06T01:00:00Z",
+                "answer_zone_id": "UTC",
+                "score": 7,
+                "latency_from_checkpoint_ms": 0,
+                "latency_from_first_delivery_ms": 0
+            }
+        },
+        {
+            "id": "29:0:2",
+            "session_id": "29:0",
+            "scope": "PERIOD",
+            "checkpoint_at_utc": "2026-09-06T01:30:00Z",
+            "checkpoint_active_minutes": 90,
+            "notification_at_utc": "2026-09-06T01:30:00Z",
+            "overlay_first_shown_at_utc": null,
+            "response_state": "ANSWERED",
+            "response": {
+                "answered_at_utc": "2026-09-06T01:30:00Z",
+                "answer_zone_id": "UTC",
+                "score": 7,
+                "latency_from_checkpoint_ms": 0,
+                "latency_from_first_delivery_ms": 0
+            }
+        },
+        {
+            "id": "29:0:3",
+            "session_id": "29:0",
+            "scope": "PERIOD",
+            "checkpoint_at_utc": "2026-09-06T02:00:00Z",
+            "checkpoint_active_minutes": 120,
+            "notification_at_utc": "2026-09-06T02:00:00Z",
+            "overlay_first_shown_at_utc": null,
+            "response_state": "ANSWERED",
+            "response": {
+                "answered_at_utc": "2026-09-06T02:00:00Z",
+                "answer_zone_id": "UTC",
+                "score": 7,
+                "latency_from_checkpoint_ms": 0,
+                "latency_from_first_delivery_ms": 0
+            }
+        },
+        {
+            "id": "29:0:4",
+            "session_id": "29:0",
+            "scope": "PERIOD",
+            "checkpoint_at_utc": "2026-09-06T02:30:00Z",
+            "checkpoint_active_minutes": 150,
+            "notification_at_utc": "2026-09-06T02:30:00Z",
+            "overlay_first_shown_at_utc": null,
+            "response_state": "ANSWERED",
+            "response": {
+                "answered_at_utc": "2026-09-06T02:30:00Z",
+                "answer_zone_id": "UTC",
+                "score": 6,
+                "latency_from_checkpoint_ms": 0,
+                "latency_from_first_delivery_ms": 0
+            }
+        },
+        {
+            "id": "29:0:5",
+            "session_id": "29:0",
+            "scope": "PERIOD",
+            "checkpoint_at_utc": "2026-09-06T03:00:00Z",
+            "checkpoint_active_minutes": 180,
+            "notification_at_utc": "2026-09-06T03:00:00Z",
+            "overlay_first_shown_at_utc": null,
+            "response_state": "ANSWERED",
+            "response": {
+                "answered_at_utc": "2026-09-06T03:00:00Z",
+                "answer_zone_id": "UTC",
+                "score": 6,
+                "latency_from_checkpoint_ms": 0,
+                "latency_from_first_delivery_ms": 0
+            }
+        },
+        {
+            "id": "29:1:0",
+            "session_id": "29:1",
+            "scope": "PERIOD",
+            "checkpoint_at_utc": "2026-09-06T06:30:00Z",
+            "checkpoint_active_minutes": 30,
+            "notification_at_utc": "2026-09-06T06:30:00Z",
+            "overlay_first_shown_at_utc": null,
+            "response_state": "ANSWERED",
+            "response": {
+                "answered_at_utc": "2026-09-06T06:30:00Z",
+                "answer_zone_id": "UTC",
+                "score": 8,
+                "latency_from_checkpoint_ms": 0,
+                "latency_from_first_delivery_ms": 0
+            }
+        },
+        {
+            "id": "29:1:1",
+            "session_id": "29:1",
+            "scope": "PERIOD",
+            "checkpoint_at_utc": "2026-09-06T07:00:00Z",
+            "checkpoint_active_minutes": 60,
+            "notification_at_utc": "2026-09-06T07:00:00Z",
+            "overlay_first_shown_at_utc": null,
+            "response_state": "ANSWERED",
+            "response": {
+                "answered_at_utc": "2026-09-06T07:00:00Z",
+                "answer_zone_id": "UTC",
+                "score": 8,
+                "latency_from_checkpoint_ms": 0,
+                "latency_from_first_delivery_ms": 0
+            }
+        },
+        {
+            "id": "29:1:2",
+            "session_id": "29:1",
+            "scope": "PERIOD",
+            "checkpoint_at_utc": "2026-09-06T07:30:00Z",
+            "checkpoint_active_minutes": 90,
+            "notification_at_utc": "2026-09-06T07:30:00Z",
+            "overlay_first_shown_at_utc": null,
+            "response_state": "ANSWERED",
+            "response": {
+                "answered_at_utc": "2026-09-06T07:30:00Z",
+                "answer_zone_id": "UTC",
+                "score": 8,
+                "latency_from_checkpoint_ms": 0,
+                "latency_from_first_delivery_ms": 0
+            }
+        },
+        {
+            "id": "29:1:3",
+            "session_id": "29:1",
+            "scope": "PERIOD",
+            "checkpoint_at_utc": "2026-09-06T08:00:00Z",
+            "checkpoint_active_minutes": 120,
+            "notification_at_utc": "2026-09-06T08:00:00Z",
+            "overlay_first_shown_at_utc": null,
+            "response_state": "ANSWERED",
+            "response": {
+                "answered_at_utc": "2026-09-06T08:00:00Z",
+                "answer_zone_id": "UTC",
+                "score": 7,
+                "latency_from_checkpoint_ms": 0,
+                "latency_from_first_delivery_ms": 0
+            }
+        },
+        {
+            "id": "29:1:4",
+            "session_id": "29:1",
+            "scope": "PERIOD",
+            "checkpoint_at_utc": "2026-09-06T08:30:00Z",
+            "checkpoint_active_minutes": 150,
+            "notification_at_utc": "2026-09-06T08:30:00Z",
+            "overlay_first_shown_at_utc": null,
+            "response_state": "ANSWERED",
+            "response": {
+                "answered_at_utc": "2026-09-06T08:30:00Z",
+                "answer_zone_id": "UTC",
+                "score": 7,
+                "latency_from_checkpoint_ms": 0,
+                "latency_from_first_delivery_ms": 0
+            }
+        },
+        {
+            "id": "29:1:5",
+            "session_id": "29:1",
+            "scope": "PERIOD",
+            "checkpoint_at_utc": "2026-09-06T09:00:00Z",
+            "checkpoint_active_minutes": 180,
+            "notification_at_utc": "2026-09-06T09:00:00Z",
+            "overlay_first_shown_at_utc": null,
+            "response_state": "ANSWERED",
+            "response": {
+                "answered_at_utc": "2026-09-06T09:00:00Z",
+                "answer_zone_id": "UTC",
+                "score": 7,
+                "latency_from_checkpoint_ms": 0,
+                "latency_from_first_delivery_ms": 0
+            }
+        },
+        {
+            "id": "29:2:0",
+            "session_id": "29:2",
+            "scope": "PERIOD",
+            "checkpoint_at_utc": "2026-09-06T12:30:00Z",
+            "checkpoint_active_minutes": 30,
+            "notification_at_utc": "2026-09-06T12:30:00Z",
+            "overlay_first_shown_at_utc": null,
+            "response_state": "ANSWERED",
+            "response": {
+                "answered_at_utc": "2026-09-06T12:30:00Z",
+                "answer_zone_id": "UTC",
+                "score": 8,
+                "latency_from_checkpoint_ms": 0,
+                "latency_from_first_delivery_ms": 0
+            }
+        },
+        {
+            "id": "29:2:1",
+            "session_id": "29:2",
+            "scope": "PERIOD",
+            "checkpoint_at_utc": "2026-09-06T13:00:00Z",
+            "checkpoint_active_minutes": 60,
+            "notification_at_utc": "2026-09-06T13:00:00Z",
+            "overlay_first_shown_at_utc": null,
+            "response_state": "ANSWERED",
+            "response": {
+                "answered_at_utc": "2026-09-06T13:00:00Z",
+                "answer_zone_id": "UTC",
+                "score": 8,
+                "latency_from_checkpoint_ms": 0,
+                "latency_from_first_delivery_ms": 0
+            }
+        },
+        {
+            "id": "29:2:2",
+            "session_id": "29:2",
+            "scope": "PERIOD",
+            "checkpoint_at_utc": "2026-09-06T13:30:00Z",
+            "checkpoint_active_minutes": 90,
+            "notification_at_utc": "2026-09-06T13:30:00Z",
+            "overlay_first_shown_at_utc": null,
+            "response_state": "ANSWERED",
+            "response": {
+                "answered_at_utc": "2026-09-06T13:30:00Z",
+                "answer_zone_id": "UTC",
+                "score": 7,
+                "latency_from_checkpoint_ms": 0,
+                "latency_from_first_delivery_ms": 0
+            }
+        },
+        {
+            "id": "29:2:3",
+            "session_id": "29:2",
+            "scope": "PERIOD",
+            "checkpoint_at_utc": "2026-09-06T14:00:00Z",
+            "checkpoint_active_minutes": 120,
+            "notification_at_utc": "2026-09-06T14:00:00Z",
+            "overlay_first_shown_at_utc": null,
+            "response_state": "ANSWERED",
+            "response": {
+                "answered_at_utc": "2026-09-06T14:00:00Z",
+                "answer_zone_id": "UTC",
+                "score": 7,
+                "latency_from_checkpoint_ms": 0,
+                "latency_from_first_delivery_ms": 0
+            }
+        },
+        {
+            "id": "29:2:4",
+            "session_id": "29:2",
+            "scope": "PERIOD",
+            "checkpoint_at_utc": "2026-09-06T14:30:00Z",
+            "checkpoint_active_minutes": 150,
+            "notification_at_utc": "2026-09-06T14:30:00Z",
+            "overlay_first_shown_at_utc": null,
+            "response_state": "ANSWERED",
+            "response": {
+                "answered_at_utc": "2026-09-06T14:30:00Z",
+                "answer_zone_id": "UTC",
+                "score": 7,
+                "latency_from_checkpoint_ms": 0,
+                "latency_from_first_delivery_ms": 0
+            }
+        },
+        {
+            "id": "29:2:5",
+            "session_id": "29:2",
+            "scope": "PERIOD",
+            "checkpoint_at_utc": "2026-09-06T15:00:00Z",
+            "checkpoint_active_minutes": 180,
+            "notification_at_utc": "2026-09-06T15:00:00Z",
+            "overlay_first_shown_at_utc": null,
+            "response_state": "ANSWERED",
+            "response": {
+                "answered_at_utc": "2026-09-06T15:00:00Z",
+                "answer_zone_id": "UTC",
+                "score": 6,
+                "latency_from_checkpoint_ms": 0,
+                "latency_from_first_delivery_ms": 0
+            }
+        },
+        {
+            "id": "29:3:0",
+            "session_id": "29:3",
+            "scope": "PERIOD",
+            "checkpoint_at_utc": "2026-09-06T18:30:00Z",
+            "checkpoint_active_minutes": 30,
+            "notification_at_utc": "2026-09-06T18:30:00Z",
+            "overlay_first_shown_at_utc": null,
+            "response_state": "ANSWERED",
+            "response": {
+                "answered_at_utc": "2026-09-06T18:30:00Z",
+                "answer_zone_id": "UTC",
+                "score": 8,
+                "latency_from_checkpoint_ms": 0,
+                "latency_from_first_delivery_ms": 0
+            }
+        },
+        {
+            "id": "29:3:1",
+            "session_id": "29:3",
+            "scope": "PERIOD",
+            "checkpoint_at_utc": "2026-09-06T19:00:00Z",
+            "checkpoint_active_minutes": 60,
+            "notification_at_utc": "2026-09-06T19:00:00Z",
+            "overlay_first_shown_at_utc": null,
+            "response_state": "ANSWERED",
+            "response": {
+                "answered_at_utc": "2026-09-06T19:00:00Z",
+                "answer_zone_id": "UTC",
+                "score": 7,
+                "latency_from_checkpoint_ms": 0,
+                "latency_from_first_delivery_ms": 0
+            }
+        },
+        {
+            "id": "29:3:2",
+            "session_id": "29:3",
+            "scope": "PERIOD",
+            "checkpoint_at_utc": "2026-09-06T19:30:00Z",
+            "checkpoint_active_minutes": 90,
+            "notification_at_utc": "2026-09-06T19:30:00Z",
+            "overlay_first_shown_at_utc": null,
+            "response_state": "ANSWERED",
+            "response": {
+                "answered_at_utc": "2026-09-06T19:30:00Z",
+                "answer_zone_id": "UTC",
+                "score": 7,
+                "latency_from_checkpoint_ms": 0,
+                "latency_from_first_delivery_ms": 0
+            }
+        },
+        {
+            "id": "29:3:3",
+            "session_id": "29:3",
+            "scope": "PERIOD",
+            "checkpoint_at_utc": "2026-09-06T20:00:00Z",
+            "checkpoint_active_minutes": 120,
+            "notification_at_utc": "2026-09-06T20:00:00Z",
+            "overlay_first_shown_at_utc": null,
+            "response_state": "ANSWERED",
+            "response": {
+                "answered_at_utc": "2026-09-06T20:00:00Z",
+                "answer_zone_id": "UTC",
+                "score": 7,
+                "latency_from_checkpoint_ms": 0,
+                "latency_from_first_delivery_ms": 0
+            }
+        },
+        {
+            "id": "29:3:4",
+            "session_id": "29:3",
+            "scope": "PERIOD",
+            "checkpoint_at_utc": "2026-09-06T20:30:00Z",
+            "checkpoint_active_minutes": 150,
+            "notification_at_utc": "2026-09-06T20:30:00Z",
+            "overlay_first_shown_at_utc": null,
+            "response_state": "ANSWERED",
+            "response": {
+                "answered_at_utc": "2026-09-06T20:30:00Z",
+                "answer_zone_id": "UTC",
+                "score": 6,
+                "latency_from_checkpoint_ms": 0,
+                "latency_from_first_delivery_ms": 0
+            }
+        },
+        {
+            "id": "29:3:5",
+            "session_id": "29:3",
+            "scope": "PERIOD",
+            "checkpoint_at_utc": "2026-09-06T21:00:00Z",
+            "checkpoint_active_minutes": 180,
+            "notification_at_utc": "2026-09-06T21:00:00Z",
+            "overlay_first_shown_at_utc": null,
+            "response_state": "ANSWERED",
+            "response": {
+                "answered_at_utc": "2026-09-06T21:00:00Z",
+                "answer_zone_id": "UTC",
+                "score": 6,
+                "latency_from_checkpoint_ms": 0,
+                "latency_from_first_delivery_ms": 0
+            }
+        }
+    ],
+    "context": {
+        "range": null,
+        "usage_segments": [],
+        "coverage_intervals": [
+            {
+                "range": {
+                    "start_utc": "2026-09-06T00:00:00Z",
+                    "end_utc_exclusive": "2026-09-06T00:00:00Z"
+                },
+                "state": "VERIFIED",
+                "reason": "ANCHORED_QUERY_CHAIN_V1"
+            }
+        ],
+        "prior_mood_observations": [
+            {
+                "id": "28:3:5",
+                "session_id": "28:3",
+                "scope": "CONTEXT_ONLY",
+                "checkpoint_at_utc": "2026-09-05T21:00:00Z",
+                "checkpoint_active_minutes": 180,
+                "notification_at_utc": "2026-09-05T21:00:00Z",
+                "overlay_first_shown_at_utc": null,
+                "response_state": "ANSWERED",
+                "response": {
+                    "answered_at_utc": "2026-09-05T21:00:00Z",
+                    "answer_zone_id": "UTC",
+                    "score": 6,
+                    "latency_from_checkpoint_ms": 0,
+                    "latency_from_first_delivery_ms": 0
+                }
+            }
+        ],
+        "inclusion_reason": "Only boundary features and preceding transition answers; never counted in period totals."
+    },
+    "analysis_matrix": {
+        "row_unit": "ONE_ANSWERED_MOOD_OBSERVATION_IN_PERIOD",
+        "rows": [
+            {
+                "observation_id": "29:0:0",
+                "session_id": "29:0",
+                "answered_at_utc": "2026-09-06T00:30:00Z",
+                "report_date": "2026-09-06",
+                "mood_score": 8,
+                "window": {
+                    "start_utc": "2026-09-06T00:00:00Z",
+                    "end_utc_exclusive": "2026-09-06T00:30:00Z"
+                },
+                "coverage": {
+                    "status": "COMPLETE",
+                    "verified_ms": 1800000,
+                    "unknown_ms": 0,
+                    "not_monitored_ms": 0,
+                    "reasons": []
+                },
+                "phone_active_ms": 1800000,
+                "apps": [
+                    {
+                        "app_id": "other",
+                        "active_ms": 1800000
+                    }
+                ],
+                "session_active_ms_at_answer": 1800000,
+                "session_coverage_complete": true,
+                "quality_flags": [],
+                "model_membership": [
+                    {
+                        "model_id": "daily_trend",
+                        "included": false,
+                        "exclusion_reasons": [
+                            "NEED_COMPLETE_DAYS"
+                        ]
+                    },
+                    {
+                        "model_id": "session_mood",
+                        "included": true,
+                        "exclusion_reasons": []
+                    },
+                    {
+                        "model_id": "app:other",
+                        "included": false,
+                        "exclusion_reasons": [
+                            "DIFFERENT_MODEL_ROW_UNIT"
+                        ]
+                    },
+                    {
+                        "model_id": "app:x",
+                        "included": false,
+                        "exclusion_reasons": [
+                            "DIFFERENT_MODEL_ROW_UNIT"
+                        ]
+                    }
+                ]
+            },
+            {
+                "observation_id": "29:0:1",
+                "session_id": "29:0",
+                "answered_at_utc": "2026-09-06T01:00:00Z",
+                "report_date": "2026-09-06",
+                "mood_score": 7,
+                "window": {
+                    "start_utc": "2026-09-06T00:30:00Z",
+                    "end_utc_exclusive": "2026-09-06T01:00:00Z"
+                },
+                "coverage": {
+                    "status": "COMPLETE",
+                    "verified_ms": 1800000,
+                    "unknown_ms": 0,
+                    "not_monitored_ms": 0,
+                    "reasons": []
+                },
+                "phone_active_ms": 1800000,
+                "apps": [
+                    {
+                        "app_id": "other",
+                        "active_ms": 900000
+                    },
+                    {
+                        "app_id": "x",
+                        "active_ms": 900000
+                    }
+                ],
+                "session_active_ms_at_answer": 3600000,
+                "session_coverage_complete": true,
+                "quality_flags": [],
+                "model_membership": [
+                    {
+                        "model_id": "daily_trend",
+                        "included": false,
+                        "exclusion_reasons": [
+                            "NEED_COMPLETE_DAYS"
+                        ]
+                    },
+                    {
+                        "model_id": "session_mood",
+                        "included": true,
+                        "exclusion_reasons": []
+                    },
+                    {
+                        "model_id": "app:other",
+                        "included": false,
+                        "exclusion_reasons": [
+                            "DIFFERENT_MODEL_ROW_UNIT"
+                        ]
+                    },
+                    {
+                        "model_id": "app:x",
+                        "included": false,
+                        "exclusion_reasons": [
+                            "DIFFERENT_MODEL_ROW_UNIT"
+                        ]
+                    }
+                ]
+            },
+            {
+                "observation_id": "29:0:2",
+                "session_id": "29:0",
+                "answered_at_utc": "2026-09-06T01:30:00Z",
+                "report_date": "2026-09-06",
+                "mood_score": 7,
+                "window": {
+                    "start_utc": "2026-09-06T01:00:00Z",
+                    "end_utc_exclusive": "2026-09-06T01:30:00Z"
+                },
+                "coverage": {
+                    "status": "COMPLETE",
+                    "verified_ms": 1800000,
+                    "unknown_ms": 0,
+                    "not_monitored_ms": 0,
+                    "reasons": []
+                },
+                "phone_active_ms": 1800000,
+                "apps": [
+                    {
+                        "app_id": "other",
+                        "active_ms": 1800000
+                    }
+                ],
+                "session_active_ms_at_answer": 5400000,
+                "session_coverage_complete": true,
+                "quality_flags": [],
+                "model_membership": [
+                    {
+                        "model_id": "daily_trend",
+                        "included": false,
+                        "exclusion_reasons": [
+                            "NEED_COMPLETE_DAYS"
+                        ]
+                    },
+                    {
+                        "model_id": "session_mood",
+                        "included": true,
+                        "exclusion_reasons": []
+                    },
+                    {
+                        "model_id": "app:other",
+                        "included": false,
+                        "exclusion_reasons": [
+                            "DIFFERENT_MODEL_ROW_UNIT"
+                        ]
+                    },
+                    {
+                        "model_id": "app:x",
+                        "included": false,
+                        "exclusion_reasons": [
+                            "DIFFERENT_MODEL_ROW_UNIT"
+                        ]
+                    }
+                ]
+            },
+            {
+                "observation_id": "29:0:3",
+                "session_id": "29:0",
+                "answered_at_utc": "2026-09-06T02:00:00Z",
+                "report_date": "2026-09-06",
+                "mood_score": 7,
+                "window": {
+                    "start_utc": "2026-09-06T01:30:00Z",
+                    "end_utc_exclusive": "2026-09-06T02:00:00Z"
+                },
+                "coverage": {
+                    "status": "COMPLETE",
+                    "verified_ms": 1800000,
+                    "unknown_ms": 0,
+                    "not_monitored_ms": 0,
+                    "reasons": []
+                },
+                "phone_active_ms": 1800000,
+                "apps": [
+                    {
+                        "app_id": "other",
+                        "active_ms": 1800000
+                    }
+                ],
+                "session_active_ms_at_answer": 7200000,
+                "session_coverage_complete": true,
+                "quality_flags": [],
+                "model_membership": [
+                    {
+                        "model_id": "daily_trend",
+                        "included": false,
+                        "exclusion_reasons": [
+                            "NEED_COMPLETE_DAYS"
+                        ]
+                    },
+                    {
+                        "model_id": "session_mood",
+                        "included": true,
+                        "exclusion_reasons": []
+                    },
+                    {
+                        "model_id": "app:other",
+                        "included": false,
+                        "exclusion_reasons": [
+                            "DIFFERENT_MODEL_ROW_UNIT"
+                        ]
+                    },
+                    {
+                        "model_id": "app:x",
+                        "included": false,
+                        "exclusion_reasons": [
+                            "DIFFERENT_MODEL_ROW_UNIT"
+                        ]
+                    }
+                ]
+            },
+            {
+                "observation_id": "29:0:4",
+                "session_id": "29:0",
+                "answered_at_utc": "2026-09-06T02:30:00Z",
+                "report_date": "2026-09-06",
+                "mood_score": 6,
+                "window": {
+                    "start_utc": "2026-09-06T02:00:00Z",
+                    "end_utc_exclusive": "2026-09-06T02:30:00Z"
+                },
+                "coverage": {
+                    "status": "COMPLETE",
+                    "verified_ms": 1800000,
+                    "unknown_ms": 0,
+                    "not_monitored_ms": 0,
+                    "reasons": []
+                },
+                "phone_active_ms": 1800000,
+                "apps": [
+                    {
+                        "app_id": "other",
+                        "active_ms": 900000
+                    },
+                    {
+                        "app_id": "x",
+                        "active_ms": 900000
+                    }
+                ],
+                "session_active_ms_at_answer": 9000000,
+                "session_coverage_complete": true,
+                "quality_flags": [],
+                "model_membership": [
+                    {
+                        "model_id": "daily_trend",
+                        "included": false,
+                        "exclusion_reasons": [
+                            "NEED_COMPLETE_DAYS"
+                        ]
+                    },
+                    {
+                        "model_id": "session_mood",
+                        "included": true,
+                        "exclusion_reasons": []
+                    },
+                    {
+                        "model_id": "app:other",
+                        "included": false,
+                        "exclusion_reasons": [
+                            "DIFFERENT_MODEL_ROW_UNIT"
+                        ]
+                    },
+                    {
+                        "model_id": "app:x",
+                        "included": false,
+                        "exclusion_reasons": [
+                            "DIFFERENT_MODEL_ROW_UNIT"
+                        ]
+                    }
+                ]
+            },
+            {
+                "observation_id": "29:0:5",
+                "session_id": "29:0",
+                "answered_at_utc": "2026-09-06T03:00:00Z",
+                "report_date": "2026-09-06",
+                "mood_score": 6,
+                "window": {
+                    "start_utc": "2026-09-06T02:30:00Z",
+                    "end_utc_exclusive": "2026-09-06T03:00:00Z"
+                },
+                "coverage": {
+                    "status": "COMPLETE",
+                    "verified_ms": 1800000,
+                    "unknown_ms": 0,
+                    "not_monitored_ms": 0,
+                    "reasons": []
+                },
+                "phone_active_ms": 1800000,
+                "apps": [
+                    {
+                        "app_id": "other",
+                        "active_ms": 1800000
+                    }
+                ],
+                "session_active_ms_at_answer": 10800000,
+                "session_coverage_complete": true,
+                "quality_flags": [],
+                "model_membership": [
+                    {
+                        "model_id": "daily_trend",
+                        "included": false,
+                        "exclusion_reasons": [
+                            "NEED_COMPLETE_DAYS"
+                        ]
+                    },
+                    {
+                        "model_id": "session_mood",
+                        "included": true,
+                        "exclusion_reasons": []
+                    },
+                    {
+                        "model_id": "app:other",
+                        "included": false,
+                        "exclusion_reasons": [
+                            "DIFFERENT_MODEL_ROW_UNIT"
+                        ]
+                    },
+                    {
+                        "model_id": "app:x",
+                        "included": false,
+                        "exclusion_reasons": [
+                            "DIFFERENT_MODEL_ROW_UNIT"
+                        ]
+                    }
+                ]
+            },
+            {
+                "observation_id": "29:1:0",
+                "session_id": "29:1",
+                "answered_at_utc": "2026-09-06T06:30:00Z",
+                "report_date": "2026-09-06",
+                "mood_score": 8,
+                "window": {
+                    "start_utc": "2026-09-06T06:00:00Z",
+                    "end_utc_exclusive": "2026-09-06T06:30:00Z"
+                },
+                "coverage": {
+                    "status": "COMPLETE",
+                    "verified_ms": 1800000,
+                    "unknown_ms": 0,
+                    "not_monitored_ms": 0,
+                    "reasons": []
+                },
+                "phone_active_ms": 1800000,
+                "apps": [
+                    {
+                        "app_id": "other",
+                        "active_ms": 1800000
+                    }
+                ],
+                "session_active_ms_at_answer": 1800000,
+                "session_coverage_complete": true,
+                "quality_flags": [],
+                "model_membership": [
+                    {
+                        "model_id": "daily_trend",
+                        "included": false,
+                        "exclusion_reasons": [
+                            "NEED_COMPLETE_DAYS"
+                        ]
+                    },
+                    {
+                        "model_id": "session_mood",
+                        "included": true,
+                        "exclusion_reasons": []
+                    },
+                    {
+                        "model_id": "app:other",
+                        "included": false,
+                        "exclusion_reasons": [
+                            "DIFFERENT_MODEL_ROW_UNIT"
+                        ]
+                    },
+                    {
+                        "model_id": "app:x",
+                        "included": false,
+                        "exclusion_reasons": [
+                            "DIFFERENT_MODEL_ROW_UNIT"
+                        ]
+                    }
+                ]
+            },
+            {
+                "observation_id": "29:1:1",
+                "session_id": "29:1",
+                "answered_at_utc": "2026-09-06T07:00:00Z",
+                "report_date": "2026-09-06",
+                "mood_score": 8,
+                "window": {
+                    "start_utc": "2026-09-06T06:30:00Z",
+                    "end_utc_exclusive": "2026-09-06T07:00:00Z"
+                },
+                "coverage": {
+                    "status": "COMPLETE",
+                    "verified_ms": 1800000,
+                    "unknown_ms": 0,
+                    "not_monitored_ms": 0,
+                    "reasons": []
+                },
+                "phone_active_ms": 1800000,
+                "apps": [
+                    {
+                        "app_id": "other",
+                        "active_ms": 1800000
+                    }
+                ],
+                "session_active_ms_at_answer": 3600000,
+                "session_coverage_complete": true,
+                "quality_flags": [],
+                "model_membership": [
+                    {
+                        "model_id": "daily_trend",
+                        "included": false,
+                        "exclusion_reasons": [
+                            "NEED_COMPLETE_DAYS"
+                        ]
+                    },
+                    {
+                        "model_id": "session_mood",
+                        "included": true,
+                        "exclusion_reasons": []
+                    },
+                    {
+                        "model_id": "app:other",
+                        "included": false,
+                        "exclusion_reasons": [
+                            "DIFFERENT_MODEL_ROW_UNIT"
+                        ]
+                    },
+                    {
+                        "model_id": "app:x",
+                        "included": false,
+                        "exclusion_reasons": [
+                            "DIFFERENT_MODEL_ROW_UNIT"
+                        ]
+                    }
+                ]
+            },
+            {
+                "observation_id": "29:1:2",
+                "session_id": "29:1",
+                "answered_at_utc": "2026-09-06T07:30:00Z",
+                "report_date": "2026-09-06",
+                "mood_score": 8,
+                "window": {
+                    "start_utc": "2026-09-06T07:00:00Z",
+                    "end_utc_exclusive": "2026-09-06T07:30:00Z"
+                },
+                "coverage": {
+                    "status": "COMPLETE",
+                    "verified_ms": 1800000,
+                    "unknown_ms": 0,
+                    "not_monitored_ms": 0,
+                    "reasons": []
+                },
+                "phone_active_ms": 1800000,
+                "apps": [
+                    {
+                        "app_id": "other",
+                        "active_ms": 1800000
+                    }
+                ],
+                "session_active_ms_at_answer": 5400000,
+                "session_coverage_complete": true,
+                "quality_flags": [],
+                "model_membership": [
+                    {
+                        "model_id": "daily_trend",
+                        "included": false,
+                        "exclusion_reasons": [
+                            "NEED_COMPLETE_DAYS"
+                        ]
+                    },
+                    {
+                        "model_id": "session_mood",
+                        "included": true,
+                        "exclusion_reasons": []
+                    },
+                    {
+                        "model_id": "app:other",
+                        "included": false,
+                        "exclusion_reasons": [
+                            "DIFFERENT_MODEL_ROW_UNIT"
+                        ]
+                    },
+                    {
+                        "model_id": "app:x",
+                        "included": false,
+                        "exclusion_reasons": [
+                            "DIFFERENT_MODEL_ROW_UNIT"
+                        ]
+                    }
+                ]
+            },
+            {
+                "observation_id": "29:1:3",
+                "session_id": "29:1",
+                "answered_at_utc": "2026-09-06T08:00:00Z",
+                "report_date": "2026-09-06",
+                "mood_score": 7,
+                "window": {
+                    "start_utc": "2026-09-06T07:30:00Z",
+                    "end_utc_exclusive": "2026-09-06T08:00:00Z"
+                },
+                "coverage": {
+                    "status": "COMPLETE",
+                    "verified_ms": 1800000,
+                    "unknown_ms": 0,
+                    "not_monitored_ms": 0,
+                    "reasons": []
+                },
+                "phone_active_ms": 1800000,
+                "apps": [
+                    {
+                        "app_id": "other",
+                        "active_ms": 900000
+                    },
+                    {
+                        "app_id": "x",
+                        "active_ms": 900000
+                    }
+                ],
+                "session_active_ms_at_answer": 7200000,
+                "session_coverage_complete": true,
+                "quality_flags": [],
+                "model_membership": [
+                    {
+                        "model_id": "daily_trend",
+                        "included": false,
+                        "exclusion_reasons": [
+                            "NEED_COMPLETE_DAYS"
+                        ]
+                    },
+                    {
+                        "model_id": "session_mood",
+                        "included": true,
+                        "exclusion_reasons": []
+                    },
+                    {
+                        "model_id": "app:other",
+                        "included": false,
+                        "exclusion_reasons": [
+                            "DIFFERENT_MODEL_ROW_UNIT"
+                        ]
+                    },
+                    {
+                        "model_id": "app:x",
+                        "included": false,
+                        "exclusion_reasons": [
+                            "DIFFERENT_MODEL_ROW_UNIT"
+                        ]
+                    }
+                ]
+            },
+            {
+                "observation_id": "29:1:4",
+                "session_id": "29:1",
+                "answered_at_utc": "2026-09-06T08:30:00Z",
+                "report_date": "2026-09-06",
+                "mood_score": 7,
+                "window": {
+                    "start_utc": "2026-09-06T08:00:00Z",
+                    "end_utc_exclusive": "2026-09-06T08:30:00Z"
+                },
+                "coverage": {
+                    "status": "COMPLETE",
+                    "verified_ms": 1800000,
+                    "unknown_ms": 0,
+                    "not_monitored_ms": 0,
+                    "reasons": []
+                },
+                "phone_active_ms": 1800000,
+                "apps": [
+                    {
+                        "app_id": "other",
+                        "active_ms": 1800000
+                    }
+                ],
+                "session_active_ms_at_answer": 9000000,
+                "session_coverage_complete": true,
+                "quality_flags": [],
+                "model_membership": [
+                    {
+                        "model_id": "daily_trend",
+                        "included": false,
+                        "exclusion_reasons": [
+                            "NEED_COMPLETE_DAYS"
+                        ]
+                    },
+                    {
+                        "model_id": "session_mood",
+                        "included": true,
+                        "exclusion_reasons": []
+                    },
+                    {
+                        "model_id": "app:other",
+                        "included": false,
+                        "exclusion_reasons": [
+                            "DIFFERENT_MODEL_ROW_UNIT"
+                        ]
+                    },
+                    {
+                        "model_id": "app:x",
+                        "included": false,
+                        "exclusion_reasons": [
+                            "DIFFERENT_MODEL_ROW_UNIT"
+                        ]
+                    }
+                ]
+            },
+            {
+                "observation_id": "29:1:5",
+                "session_id": "29:1",
+                "answered_at_utc": "2026-09-06T09:00:00Z",
+                "report_date": "2026-09-06",
+                "mood_score": 7,
+                "window": {
+                    "start_utc": "2026-09-06T08:30:00Z",
+                    "end_utc_exclusive": "2026-09-06T09:00:00Z"
+                },
+                "coverage": {
+                    "status": "COMPLETE",
+                    "verified_ms": 1800000,
+                    "unknown_ms": 0,
+                    "not_monitored_ms": 0,
+                    "reasons": []
+                },
+                "phone_active_ms": 1800000,
+                "apps": [
+                    {
+                        "app_id": "other",
+                        "active_ms": 1800000
+                    }
+                ],
+                "session_active_ms_at_answer": 10800000,
+                "session_coverage_complete": true,
+                "quality_flags": [],
+                "model_membership": [
+                    {
+                        "model_id": "daily_trend",
+                        "included": false,
+                        "exclusion_reasons": [
+                            "NEED_COMPLETE_DAYS"
+                        ]
+                    },
+                    {
+                        "model_id": "session_mood",
+                        "included": true,
+                        "exclusion_reasons": []
+                    },
+                    {
+                        "model_id": "app:other",
+                        "included": false,
+                        "exclusion_reasons": [
+                            "DIFFERENT_MODEL_ROW_UNIT"
+                        ]
+                    },
+                    {
+                        "model_id": "app:x",
+                        "included": false,
+                        "exclusion_reasons": [
+                            "DIFFERENT_MODEL_ROW_UNIT"
+                        ]
+                    }
+                ]
+            },
+            {
+                "observation_id": "29:2:0",
+                "session_id": "29:2",
+                "answered_at_utc": "2026-09-06T12:30:00Z",
+                "report_date": "2026-09-06",
+                "mood_score": 8,
+                "window": {
+                    "start_utc": "2026-09-06T12:00:00Z",
+                    "end_utc_exclusive": "2026-09-06T12:30:00Z"
+                },
+                "coverage": {
+                    "status": "COMPLETE",
+                    "verified_ms": 1800000,
+                    "unknown_ms": 0,
+                    "not_monitored_ms": 0,
+                    "reasons": []
+                },
+                "phone_active_ms": 1800000,
+                "apps": [
+                    {
+                        "app_id": "other",
+                        "active_ms": 1800000
+                    }
+                ],
+                "session_active_ms_at_answer": 1800000,
+                "session_coverage_complete": true,
+                "quality_flags": [],
+                "model_membership": [
+                    {
+                        "model_id": "daily_trend",
+                        "included": false,
+                        "exclusion_reasons": [
+                            "NEED_COMPLETE_DAYS"
+                        ]
+                    },
+                    {
+                        "model_id": "session_mood",
+                        "included": true,
+                        "exclusion_reasons": []
+                    },
+                    {
+                        "model_id": "app:other",
+                        "included": false,
+                        "exclusion_reasons": [
+                            "DIFFERENT_MODEL_ROW_UNIT"
+                        ]
+                    },
+                    {
+                        "model_id": "app:x",
+                        "included": false,
+                        "exclusion_reasons": [
+                            "DIFFERENT_MODEL_ROW_UNIT"
+                        ]
+                    }
+                ]
+            },
+            {
+                "observation_id": "29:2:1",
+                "session_id": "29:2",
+                "answered_at_utc": "2026-09-06T13:00:00Z",
+                "report_date": "2026-09-06",
+                "mood_score": 8,
+                "window": {
+                    "start_utc": "2026-09-06T12:30:00Z",
+                    "end_utc_exclusive": "2026-09-06T13:00:00Z"
+                },
+                "coverage": {
+                    "status": "COMPLETE",
+                    "verified_ms": 1800000,
+                    "unknown_ms": 0,
+                    "not_monitored_ms": 0,
+                    "reasons": []
+                },
+                "phone_active_ms": 1800000,
+                "apps": [
+                    {
+                        "app_id": "other",
+                        "active_ms": 1800000
+                    }
+                ],
+                "session_active_ms_at_answer": 3600000,
+                "session_coverage_complete": true,
+                "quality_flags": [],
+                "model_membership": [
+                    {
+                        "model_id": "daily_trend",
+                        "included": false,
+                        "exclusion_reasons": [
+                            "NEED_COMPLETE_DAYS"
+                        ]
+                    },
+                    {
+                        "model_id": "session_mood",
+                        "included": true,
+                        "exclusion_reasons": []
+                    },
+                    {
+                        "model_id": "app:other",
+                        "included": false,
+                        "exclusion_reasons": [
+                            "DIFFERENT_MODEL_ROW_UNIT"
+                        ]
+                    },
+                    {
+                        "model_id": "app:x",
+                        "included": false,
+                        "exclusion_reasons": [
+                            "DIFFERENT_MODEL_ROW_UNIT"
+                        ]
+                    }
+                ]
+            },
+            {
+                "observation_id": "29:2:2",
+                "session_id": "29:2",
+                "answered_at_utc": "2026-09-06T13:30:00Z",
+                "report_date": "2026-09-06",
+                "mood_score": 7,
+                "window": {
+                    "start_utc": "2026-09-06T13:00:00Z",
+                    "end_utc_exclusive": "2026-09-06T13:30:00Z"
+                },
+                "coverage": {
+                    "status": "COMPLETE",
+                    "verified_ms": 1800000,
+                    "unknown_ms": 0,
+                    "not_monitored_ms": 0,
+                    "reasons": []
+                },
+                "phone_active_ms": 1800000,
+                "apps": [
+                    {
+                        "app_id": "other",
+                        "active_ms": 900000
+                    },
+                    {
+                        "app_id": "x",
+                        "active_ms": 900000
+                    }
+                ],
+                "session_active_ms_at_answer": 5400000,
+                "session_coverage_complete": true,
+                "quality_flags": [],
+                "model_membership": [
+                    {
+                        "model_id": "daily_trend",
+                        "included": false,
+                        "exclusion_reasons": [
+                            "NEED_COMPLETE_DAYS"
+                        ]
+                    },
+                    {
+                        "model_id": "session_mood",
+                        "included": true,
+                        "exclusion_reasons": []
+                    },
+                    {
+                        "model_id": "app:other",
+                        "included": false,
+                        "exclusion_reasons": [
+                            "DIFFERENT_MODEL_ROW_UNIT"
+                        ]
+                    },
+                    {
+                        "model_id": "app:x",
+                        "included": false,
+                        "exclusion_reasons": [
+                            "DIFFERENT_MODEL_ROW_UNIT"
+                        ]
+                    }
+                ]
+            },
+            {
+                "observation_id": "29:2:3",
+                "session_id": "29:2",
+                "answered_at_utc": "2026-09-06T14:00:00Z",
+                "report_date": "2026-09-06",
+                "mood_score": 7,
+                "window": {
+                    "start_utc": "2026-09-06T13:30:00Z",
+                    "end_utc_exclusive": "2026-09-06T14:00:00Z"
+                },
+                "coverage": {
+                    "status": "COMPLETE",
+                    "verified_ms": 1800000,
+                    "unknown_ms": 0,
+                    "not_monitored_ms": 0,
+                    "reasons": []
+                },
+                "phone_active_ms": 1800000,
+                "apps": [
+                    {
+                        "app_id": "other",
+                        "active_ms": 1800000
+                    }
+                ],
+                "session_active_ms_at_answer": 7200000,
+                "session_coverage_complete": true,
+                "quality_flags": [],
+                "model_membership": [
+                    {
+                        "model_id": "daily_trend",
+                        "included": false,
+                        "exclusion_reasons": [
+                            "NEED_COMPLETE_DAYS"
+                        ]
+                    },
+                    {
+                        "model_id": "session_mood",
+                        "included": true,
+                        "exclusion_reasons": []
+                    },
+                    {
+                        "model_id": "app:other",
+                        "included": false,
+                        "exclusion_reasons": [
+                            "DIFFERENT_MODEL_ROW_UNIT"
+                        ]
+                    },
+                    {
+                        "model_id": "app:x",
+                        "included": false,
+                        "exclusion_reasons": [
+                            "DIFFERENT_MODEL_ROW_UNIT"
+                        ]
+                    }
+                ]
+            },
+            {
+                "observation_id": "29:2:4",
+                "session_id": "29:2",
+                "answered_at_utc": "2026-09-06T14:30:00Z",
+                "report_date": "2026-09-06",
+                "mood_score": 7,
+                "window": {
+                    "start_utc": "2026-09-06T14:00:00Z",
+                    "end_utc_exclusive": "2026-09-06T14:30:00Z"
+                },
+                "coverage": {
+                    "status": "COMPLETE",
+                    "verified_ms": 1800000,
+                    "unknown_ms": 0,
+                    "not_monitored_ms": 0,
+                    "reasons": []
+                },
+                "phone_active_ms": 1800000,
+                "apps": [
+                    {
+                        "app_id": "other",
+                        "active_ms": 1800000
+                    }
+                ],
+                "session_active_ms_at_answer": 9000000,
+                "session_coverage_complete": true,
+                "quality_flags": [],
+                "model_membership": [
+                    {
+                        "model_id": "daily_trend",
+                        "included": false,
+                        "exclusion_reasons": [
+                            "NEED_COMPLETE_DAYS"
+                        ]
+                    },
+                    {
+                        "model_id": "session_mood",
+                        "included": true,
+                        "exclusion_reasons": []
+                    },
+                    {
+                        "model_id": "app:other",
+                        "included": false,
+                        "exclusion_reasons": [
+                            "DIFFERENT_MODEL_ROW_UNIT"
+                        ]
+                    },
+                    {
+                        "model_id": "app:x",
+                        "included": false,
+                        "exclusion_reasons": [
+                            "DIFFERENT_MODEL_ROW_UNIT"
+                        ]
+                    }
+                ]
+            },
+            {
+                "observation_id": "29:2:5",
+                "session_id": "29:2",
+                "answered_at_utc": "2026-09-06T15:00:00Z",
+                "report_date": "2026-09-06",
+                "mood_score": 6,
+                "window": {
+                    "start_utc": "2026-09-06T14:30:00Z",
+                    "end_utc_exclusive": "2026-09-06T15:00:00Z"
+                },
+                "coverage": {
+                    "status": "COMPLETE",
+                    "verified_ms": 1800000,
+                    "unknown_ms": 0,
+                    "not_monitored_ms": 0,
+                    "reasons": []
+                },
+                "phone_active_ms": 1800000,
+                "apps": [
+                    {
+                        "app_id": "other",
+                        "active_ms": 900000
+                    },
+                    {
+                        "app_id": "x",
+                        "active_ms": 900000
+                    }
+                ],
+                "session_active_ms_at_answer": 10800000,
+                "session_coverage_complete": true,
+                "quality_flags": [],
+                "model_membership": [
+                    {
+                        "model_id": "daily_trend",
+                        "included": false,
+                        "exclusion_reasons": [
+                            "NEED_COMPLETE_DAYS"
+                        ]
+                    },
+                    {
+                        "model_id": "session_mood",
+                        "included": true,
+                        "exclusion_reasons": []
+                    },
+                    {
+                        "model_id": "app:other",
+                        "included": false,
+                        "exclusion_reasons": [
+                            "DIFFERENT_MODEL_ROW_UNIT"
+                        ]
+                    },
+                    {
+                        "model_id": "app:x",
+                        "included": false,
+                        "exclusion_reasons": [
+                            "DIFFERENT_MODEL_ROW_UNIT"
+                        ]
+                    }
+                ]
+            },
+            {
+                "observation_id": "29:3:0",
+                "session_id": "29:3",
+                "answered_at_utc": "2026-09-06T18:30:00Z",
+                "report_date": "2026-09-06",
+                "mood_score": 8,
+                "window": {
+                    "start_utc": "2026-09-06T18:00:00Z",
+                    "end_utc_exclusive": "2026-09-06T18:30:00Z"
+                },
+                "coverage": {
+                    "status": "COMPLETE",
+                    "verified_ms": 1800000,
+                    "unknown_ms": 0,
+                    "not_monitored_ms": 0,
+                    "reasons": []
+                },
+                "phone_active_ms": 1800000,
+                "apps": [
+                    {
+                        "app_id": "other",
+                        "active_ms": 1800000
+                    }
+                ],
+                "session_active_ms_at_answer": 1800000,
+                "session_coverage_complete": true,
+                "quality_flags": [],
+                "model_membership": [
+                    {
+                        "model_id": "daily_trend",
+                        "included": false,
+                        "exclusion_reasons": [
+                            "NEED_COMPLETE_DAYS"
+                        ]
+                    },
+                    {
+                        "model_id": "session_mood",
+                        "included": true,
+                        "exclusion_reasons": []
+                    },
+                    {
+                        "model_id": "app:other",
+                        "included": false,
+                        "exclusion_reasons": [
+                            "DIFFERENT_MODEL_ROW_UNIT"
+                        ]
+                    },
+                    {
+                        "model_id": "app:x",
+                        "included": false,
+                        "exclusion_reasons": [
+                            "DIFFERENT_MODEL_ROW_UNIT"
+                        ]
+                    }
+                ]
+            },
+            {
+                "observation_id": "29:3:1",
+                "session_id": "29:3",
+                "answered_at_utc": "2026-09-06T19:00:00Z",
+                "report_date": "2026-09-06",
+                "mood_score": 7,
+                "window": {
+                    "start_utc": "2026-09-06T18:30:00Z",
+                    "end_utc_exclusive": "2026-09-06T19:00:00Z"
+                },
+                "coverage": {
+                    "status": "COMPLETE",
+                    "verified_ms": 1800000,
+                    "unknown_ms": 0,
+                    "not_monitored_ms": 0,
+                    "reasons": []
+                },
+                "phone_active_ms": 1800000,
+                "apps": [
+                    {
+                        "app_id": "other",
+                        "active_ms": 900000
+                    },
+                    {
+                        "app_id": "x",
+                        "active_ms": 900000
+                    }
+                ],
+                "session_active_ms_at_answer": 3600000,
+                "session_coverage_complete": true,
+                "quality_flags": [],
+                "model_membership": [
+                    {
+                        "model_id": "daily_trend",
+                        "included": false,
+                        "exclusion_reasons": [
+                            "NEED_COMPLETE_DAYS"
+                        ]
+                    },
+                    {
+                        "model_id": "session_mood",
+                        "included": true,
+                        "exclusion_reasons": []
+                    },
+                    {
+                        "model_id": "app:other",
+                        "included": false,
+                        "exclusion_reasons": [
+                            "DIFFERENT_MODEL_ROW_UNIT"
+                        ]
+                    },
+                    {
+                        "model_id": "app:x",
+                        "included": false,
+                        "exclusion_reasons": [
+                            "DIFFERENT_MODEL_ROW_UNIT"
+                        ]
+                    }
+                ]
+            },
+            {
+                "observation_id": "29:3:2",
+                "session_id": "29:3",
+                "answered_at_utc": "2026-09-06T19:30:00Z",
+                "report_date": "2026-09-06",
+                "mood_score": 7,
+                "window": {
+                    "start_utc": "2026-09-06T19:00:00Z",
+                    "end_utc_exclusive": "2026-09-06T19:30:00Z"
+                },
+                "coverage": {
+                    "status": "COMPLETE",
+                    "verified_ms": 1800000,
+                    "unknown_ms": 0,
+                    "not_monitored_ms": 0,
+                    "reasons": []
+                },
+                "phone_active_ms": 1800000,
+                "apps": [
+                    {
+                        "app_id": "other",
+                        "active_ms": 1800000
+                    }
+                ],
+                "session_active_ms_at_answer": 5400000,
+                "session_coverage_complete": true,
+                "quality_flags": [],
+                "model_membership": [
+                    {
+                        "model_id": "daily_trend",
+                        "included": false,
+                        "exclusion_reasons": [
+                            "NEED_COMPLETE_DAYS"
+                        ]
+                    },
+                    {
+                        "model_id": "session_mood",
+                        "included": true,
+                        "exclusion_reasons": []
+                    },
+                    {
+                        "model_id": "app:other",
+                        "included": false,
+                        "exclusion_reasons": [
+                            "DIFFERENT_MODEL_ROW_UNIT"
+                        ]
+                    },
+                    {
+                        "model_id": "app:x",
+                        "included": false,
+                        "exclusion_reasons": [
+                            "DIFFERENT_MODEL_ROW_UNIT"
+                        ]
+                    }
+                ]
+            },
+            {
+                "observation_id": "29:3:3",
+                "session_id": "29:3",
+                "answered_at_utc": "2026-09-06T20:00:00Z",
+                "report_date": "2026-09-06",
+                "mood_score": 7,
+                "window": {
+                    "start_utc": "2026-09-06T19:30:00Z",
+                    "end_utc_exclusive": "2026-09-06T20:00:00Z"
+                },
+                "coverage": {
+                    "status": "COMPLETE",
+                    "verified_ms": 1800000,
+                    "unknown_ms": 0,
+                    "not_monitored_ms": 0,
+                    "reasons": []
+                },
+                "phone_active_ms": 1800000,
+                "apps": [
+                    {
+                        "app_id": "other",
+                        "active_ms": 1800000
+                    }
+                ],
+                "session_active_ms_at_answer": 7200000,
+                "session_coverage_complete": true,
+                "quality_flags": [],
+                "model_membership": [
+                    {
+                        "model_id": "daily_trend",
+                        "included": false,
+                        "exclusion_reasons": [
+                            "NEED_COMPLETE_DAYS"
+                        ]
+                    },
+                    {
+                        "model_id": "session_mood",
+                        "included": true,
+                        "exclusion_reasons": []
+                    },
+                    {
+                        "model_id": "app:other",
+                        "included": false,
+                        "exclusion_reasons": [
+                            "DIFFERENT_MODEL_ROW_UNIT"
+                        ]
+                    },
+                    {
+                        "model_id": "app:x",
+                        "included": false,
+                        "exclusion_reasons": [
+                            "DIFFERENT_MODEL_ROW_UNIT"
+                        ]
+                    }
+                ]
+            },
+            {
+                "observation_id": "29:3:4",
+                "session_id": "29:3",
+                "answered_at_utc": "2026-09-06T20:30:00Z",
+                "report_date": "2026-09-06",
+                "mood_score": 6,
+                "window": {
+                    "start_utc": "2026-09-06T20:00:00Z",
+                    "end_utc_exclusive": "2026-09-06T20:30:00Z"
+                },
+                "coverage": {
+                    "status": "COMPLETE",
+                    "verified_ms": 1800000,
+                    "unknown_ms": 0,
+                    "not_monitored_ms": 0,
+                    "reasons": []
+                },
+                "phone_active_ms": 1800000,
+                "apps": [
+                    {
+                        "app_id": "other",
+                        "active_ms": 900000
+                    },
+                    {
+                        "app_id": "x",
+                        "active_ms": 900000
+                    }
+                ],
+                "session_active_ms_at_answer": 9000000,
+                "session_coverage_complete": true,
+                "quality_flags": [],
+                "model_membership": [
+                    {
+                        "model_id": "daily_trend",
+                        "included": false,
+                        "exclusion_reasons": [
+                            "NEED_COMPLETE_DAYS"
+                        ]
+                    },
+                    {
+                        "model_id": "session_mood",
+                        "included": true,
+                        "exclusion_reasons": []
+                    },
+                    {
+                        "model_id": "app:other",
+                        "included": false,
+                        "exclusion_reasons": [
+                            "DIFFERENT_MODEL_ROW_UNIT"
+                        ]
+                    },
+                    {
+                        "model_id": "app:x",
+                        "included": false,
+                        "exclusion_reasons": [
+                            "DIFFERENT_MODEL_ROW_UNIT"
+                        ]
+                    }
+                ]
+            },
+            {
+                "observation_id": "29:3:5",
+                "session_id": "29:3",
+                "answered_at_utc": "2026-09-06T21:00:00Z",
+                "report_date": "2026-09-06",
+                "mood_score": 6,
+                "window": {
+                    "start_utc": "2026-09-06T20:30:00Z",
+                    "end_utc_exclusive": "2026-09-06T21:00:00Z"
+                },
+                "coverage": {
+                    "status": "COMPLETE",
+                    "verified_ms": 1800000,
+                    "unknown_ms": 0,
+                    "not_monitored_ms": 0,
+                    "reasons": []
+                },
+                "phone_active_ms": 1800000,
+                "apps": [
+                    {
+                        "app_id": "other",
+                        "active_ms": 1800000
+                    }
+                ],
+                "session_active_ms_at_answer": 10800000,
+                "session_coverage_complete": true,
+                "quality_flags": [],
+                "model_membership": [
+                    {
+                        "model_id": "daily_trend",
+                        "included": false,
+                        "exclusion_reasons": [
+                            "NEED_COMPLETE_DAYS"
+                        ]
+                    },
+                    {
+                        "model_id": "session_mood",
+                        "included": true,
+                        "exclusion_reasons": []
+                    },
+                    {
+                        "model_id": "app:other",
+                        "included": false,
+                        "exclusion_reasons": [
+                            "DIFFERENT_MODEL_ROW_UNIT"
+                        ]
+                    },
+                    {
+                        "model_id": "app:x",
+                        "included": false,
+                        "exclusion_reasons": [
+                            "DIFFERENT_MODEL_ROW_UNIT"
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    "transitions": [
+        {
+            "id": "28:3:5->29:0:0",
+            "start_observation_id": "28:3:5",
+            "end_observation_id": "29:0:0",
+            "session_id": "29:0",
+            "range": {
+                "start_utc": "2026-09-05T21:00:00Z",
+                "end_utc_exclusive": "2026-09-06T00:30:00Z"
+            },
+            "start_score": 6,
+            "end_score": 8,
+            "mood_delta": 2,
+            "elapsed_ms": 12600000,
+            "phone_active_ms": 1800000,
+            "non_active_ms": 10800000,
+            "apps": [
+                {
+                    "app_id": "other",
+                    "active_ms": 1800000
+                }
+            ],
+            "coverage": {
+                "status": "COMPLETE",
+                "verified_ms": 12600000,
+                "unknown_ms": 0,
+                "not_monitored_ms": 0,
+                "reasons": []
+            },
+            "usable": false,
+            "exclusion_reasons": [
+                "DIFFERENT_SESSION",
+                "PAIR_TOO_LONG"
+            ],
+            "model_membership": [
+                {
+                    "model_id": "daily_trend",
+                    "included": false,
+                    "exclusion_reasons": [
+                        "NEED_COMPLETE_DAYS"
+                    ]
+                },
+                {
+                    "model_id": "session_mood",
+                    "included": false,
+                    "exclusion_reasons": [
+                        "DIFFERENT_MODEL_ROW_UNIT"
+                    ]
+                },
+                {
+                    "model_id": "app:other",
+                    "included": false,
+                    "exclusion_reasons": [
+                        "DIFFERENT_SESSION",
+                        "PAIR_TOO_LONG"
+                    ]
+                },
+                {
+                    "model_id": "app:x",
+                    "included": false,
+                    "exclusion_reasons": [
+                        "DIFFERENT_SESSION",
+                        "PAIR_TOO_LONG"
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "29:0:0->29:0:1",
+            "start_observation_id": "29:0:0",
+            "end_observation_id": "29:0:1",
+            "session_id": "29:0",
+            "range": {
+                "start_utc": "2026-09-06T00:30:00Z",
+                "end_utc_exclusive": "2026-09-06T01:00:00Z"
+            },
+            "start_score": 8,
+            "end_score": 7,
+            "mood_delta": -1,
+            "elapsed_ms": 1800000,
+            "phone_active_ms": 1800000,
+            "non_active_ms": 0,
+            "apps": [
+                {
+                    "app_id": "other",
+                    "active_ms": 900000
+                },
+                {
+                    "app_id": "x",
+                    "active_ms": 900000
+                }
+            ],
+            "coverage": {
+                "status": "COMPLETE",
+                "verified_ms": 1800000,
+                "unknown_ms": 0,
+                "not_monitored_ms": 0,
+                "reasons": []
+            },
+            "usable": true,
+            "exclusion_reasons": [],
+            "model_membership": [
+                {
+                    "model_id": "daily_trend",
+                    "included": false,
+                    "exclusion_reasons": [
+                        "NEED_COMPLETE_DAYS"
+                    ]
+                },
+                {
+                    "model_id": "session_mood",
+                    "included": false,
+                    "exclusion_reasons": [
+                        "DIFFERENT_MODEL_ROW_UNIT"
+                    ]
+                },
+                {
+                    "model_id": "app:other",
+                    "included": true,
+                    "exclusion_reasons": []
+                },
+                {
+                    "model_id": "app:x",
+                    "included": true,
+                    "exclusion_reasons": []
+                }
+            ]
+        },
+        {
+            "id": "29:0:1->29:0:2",
+            "start_observation_id": "29:0:1",
+            "end_observation_id": "29:0:2",
+            "session_id": "29:0",
+            "range": {
+                "start_utc": "2026-09-06T01:00:00Z",
+                "end_utc_exclusive": "2026-09-06T01:30:00Z"
+            },
+            "start_score": 7,
+            "end_score": 7,
+            "mood_delta": 0,
+            "elapsed_ms": 1800000,
+            "phone_active_ms": 1800000,
+            "non_active_ms": 0,
+            "apps": [
+                {
+                    "app_id": "other",
+                    "active_ms": 1800000
+                }
+            ],
+            "coverage": {
+                "status": "COMPLETE",
+                "verified_ms": 1800000,
+                "unknown_ms": 0,
+                "not_monitored_ms": 0,
+                "reasons": []
+            },
+            "usable": true,
+            "exclusion_reasons": [],
+            "model_membership": [
+                {
+                    "model_id": "daily_trend",
+                    "included": false,
+                    "exclusion_reasons": [
+                        "NEED_COMPLETE_DAYS"
+                    ]
+                },
+                {
+                    "model_id": "session_mood",
+                    "included": false,
+                    "exclusion_reasons": [
+                        "DIFFERENT_MODEL_ROW_UNIT"
+                    ]
+                },
+                {
+                    "model_id": "app:other",
+                    "included": true,
+                    "exclusion_reasons": []
+                },
+                {
+                    "model_id": "app:x",
+                    "included": true,
+                    "exclusion_reasons": []
+                }
+            ]
+        },
+        {
+            "id": "29:0:2->29:0:3",
+            "start_observation_id": "29:0:2",
+            "end_observation_id": "29:0:3",
+            "session_id": "29:0",
+            "range": {
+                "start_utc": "2026-09-06T01:30:00Z",
+                "end_utc_exclusive": "2026-09-06T02:00:00Z"
+            },
+            "start_score": 7,
+            "end_score": 7,
+            "mood_delta": 0,
+            "elapsed_ms": 1800000,
+            "phone_active_ms": 1800000,
+            "non_active_ms": 0,
+            "apps": [
+                {
+                    "app_id": "other",
+                    "active_ms": 1800000
+                }
+            ],
+            "coverage": {
+                "status": "COMPLETE",
+                "verified_ms": 1800000,
+                "unknown_ms": 0,
+                "not_monitored_ms": 0,
+                "reasons": []
+            },
+            "usable": true,
+            "exclusion_reasons": [],
+            "model_membership": [
+                {
+                    "model_id": "daily_trend",
+                    "included": false,
+                    "exclusion_reasons": [
+                        "NEED_COMPLETE_DAYS"
+                    ]
+                },
+                {
+                    "model_id": "session_mood",
+                    "included": false,
+                    "exclusion_reasons": [
+                        "DIFFERENT_MODEL_ROW_UNIT"
+                    ]
+                },
+                {
+                    "model_id": "app:other",
+                    "included": true,
+                    "exclusion_reasons": []
+                },
+                {
+                    "model_id": "app:x",
+                    "included": true,
+                    "exclusion_reasons": []
+                }
+            ]
+        },
+        {
+            "id": "29:0:3->29:0:4",
+            "start_observation_id": "29:0:3",
+            "end_observation_id": "29:0:4",
+            "session_id": "29:0",
+            "range": {
+                "start_utc": "2026-09-06T02:00:00Z",
+                "end_utc_exclusive": "2026-09-06T02:30:00Z"
+            },
+            "start_score": 7,
+            "end_score": 6,
+            "mood_delta": -1,
+            "elapsed_ms": 1800000,
+            "phone_active_ms": 1800000,
+            "non_active_ms": 0,
+            "apps": [
+                {
+                    "app_id": "other",
+                    "active_ms": 900000
+                },
+                {
+                    "app_id": "x",
+                    "active_ms": 900000
+                }
+            ],
+            "coverage": {
+                "status": "COMPLETE",
+                "verified_ms": 1800000,
+                "unknown_ms": 0,
+                "not_monitored_ms": 0,
+                "reasons": []
+            },
+            "usable": true,
+            "exclusion_reasons": [],
+            "model_membership": [
+                {
+                    "model_id": "daily_trend",
+                    "included": false,
+                    "exclusion_reasons": [
+                        "NEED_COMPLETE_DAYS"
+                    ]
+                },
+                {
+                    "model_id": "session_mood",
+                    "included": false,
+                    "exclusion_reasons": [
+                        "DIFFERENT_MODEL_ROW_UNIT"
+                    ]
+                },
+                {
+                    "model_id": "app:other",
+                    "included": true,
+                    "exclusion_reasons": []
+                },
+                {
+                    "model_id": "app:x",
+                    "included": true,
+                    "exclusion_reasons": []
+                }
+            ]
+        },
+        {
+            "id": "29:0:4->29:0:5",
+            "start_observation_id": "29:0:4",
+            "end_observation_id": "29:0:5",
+            "session_id": "29:0",
+            "range": {
+                "start_utc": "2026-09-06T02:30:00Z",
+                "end_utc_exclusive": "2026-09-06T03:00:00Z"
+            },
+            "start_score": 6,
+            "end_score": 6,
+            "mood_delta": 0,
+            "elapsed_ms": 1800000,
+            "phone_active_ms": 1800000,
+            "non_active_ms": 0,
+            "apps": [
+                {
+                    "app_id": "other",
+                    "active_ms": 1800000
+                }
+            ],
+            "coverage": {
+                "status": "COMPLETE",
+                "verified_ms": 1800000,
+                "unknown_ms": 0,
+                "not_monitored_ms": 0,
+                "reasons": []
+            },
+            "usable": true,
+            "exclusion_reasons": [],
+            "model_membership": [
+                {
+                    "model_id": "daily_trend",
+                    "included": false,
+                    "exclusion_reasons": [
+                        "NEED_COMPLETE_DAYS"
+                    ]
+                },
+                {
+                    "model_id": "session_mood",
+                    "included": false,
+                    "exclusion_reasons": [
+                        "DIFFERENT_MODEL_ROW_UNIT"
+                    ]
+                },
+                {
+                    "model_id": "app:other",
+                    "included": true,
+                    "exclusion_reasons": []
+                },
+                {
+                    "model_id": "app:x",
+                    "included": true,
+                    "exclusion_reasons": []
+                }
+            ]
+        },
+        {
+            "id": "29:0:5->29:1:0",
+            "start_observation_id": "29:0:5",
+            "end_observation_id": "29:1:0",
+            "session_id": "29:1",
+            "range": {
+                "start_utc": "2026-09-06T03:00:00Z",
+                "end_utc_exclusive": "2026-09-06T06:30:00Z"
+            },
+            "start_score": 6,
+            "end_score": 8,
+            "mood_delta": 2,
+            "elapsed_ms": 12600000,
+            "phone_active_ms": 1800000,
+            "non_active_ms": 10800000,
+            "apps": [
+                {
+                    "app_id": "other",
+                    "active_ms": 1800000
+                }
+            ],
+            "coverage": {
+                "status": "COMPLETE",
+                "verified_ms": 12600000,
+                "unknown_ms": 0,
+                "not_monitored_ms": 0,
+                "reasons": []
+            },
+            "usable": false,
+            "exclusion_reasons": [
+                "DIFFERENT_SESSION",
+                "PAIR_TOO_LONG"
+            ],
+            "model_membership": [
+                {
+                    "model_id": "daily_trend",
+                    "included": false,
+                    "exclusion_reasons": [
+                        "NEED_COMPLETE_DAYS"
+                    ]
+                },
+                {
+                    "model_id": "session_mood",
+                    "included": false,
+                    "exclusion_reasons": [
+                        "DIFFERENT_MODEL_ROW_UNIT"
+                    ]
+                },
+                {
+                    "model_id": "app:other",
+                    "included": false,
+                    "exclusion_reasons": [
+                        "DIFFERENT_SESSION",
+                        "PAIR_TOO_LONG"
+                    ]
+                },
+                {
+                    "model_id": "app:x",
+                    "included": false,
+                    "exclusion_reasons": [
+                        "DIFFERENT_SESSION",
+                        "PAIR_TOO_LONG"
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "29:1:0->29:1:1",
+            "start_observation_id": "29:1:0",
+            "end_observation_id": "29:1:1",
+            "session_id": "29:1",
+            "range": {
+                "start_utc": "2026-09-06T06:30:00Z",
+                "end_utc_exclusive": "2026-09-06T07:00:00Z"
+            },
+            "start_score": 8,
+            "end_score": 8,
+            "mood_delta": 0,
+            "elapsed_ms": 1800000,
+            "phone_active_ms": 1800000,
+            "non_active_ms": 0,
+            "apps": [
+                {
+                    "app_id": "other",
+                    "active_ms": 1800000
+                }
+            ],
+            "coverage": {
+                "status": "COMPLETE",
+                "verified_ms": 1800000,
+                "unknown_ms": 0,
+                "not_monitored_ms": 0,
+                "reasons": []
+            },
+            "usable": true,
+            "exclusion_reasons": [],
+            "model_membership": [
+                {
+                    "model_id": "daily_trend",
+                    "included": false,
+                    "exclusion_reasons": [
+                        "NEED_COMPLETE_DAYS"
+                    ]
+                },
+                {
+                    "model_id": "session_mood",
+                    "included": false,
+                    "exclusion_reasons": [
+                        "DIFFERENT_MODEL_ROW_UNIT"
+                    ]
+                },
+                {
+                    "model_id": "app:other",
+                    "included": true,
+                    "exclusion_reasons": []
+                },
+                {
+                    "model_id": "app:x",
+                    "included": true,
+                    "exclusion_reasons": []
+                }
+            ]
+        },
+        {
+            "id": "29:1:1->29:1:2",
+            "start_observation_id": "29:1:1",
+            "end_observation_id": "29:1:2",
+            "session_id": "29:1",
+            "range": {
+                "start_utc": "2026-09-06T07:00:00Z",
+                "end_utc_exclusive": "2026-09-06T07:30:00Z"
+            },
+            "start_score": 8,
+            "end_score": 8,
+            "mood_delta": 0,
+            "elapsed_ms": 1800000,
+            "phone_active_ms": 1800000,
+            "non_active_ms": 0,
+            "apps": [
+                {
+                    "app_id": "other",
+                    "active_ms": 1800000
+                }
+            ],
+            "coverage": {
+                "status": "COMPLETE",
+                "verified_ms": 1800000,
+                "unknown_ms": 0,
+                "not_monitored_ms": 0,
+                "reasons": []
+            },
+            "usable": true,
+            "exclusion_reasons": [],
+            "model_membership": [
+                {
+                    "model_id": "daily_trend",
+                    "included": false,
+                    "exclusion_reasons": [
+                        "NEED_COMPLETE_DAYS"
+                    ]
+                },
+                {
+                    "model_id": "session_mood",
+                    "included": false,
+                    "exclusion_reasons": [
+                        "DIFFERENT_MODEL_ROW_UNIT"
+                    ]
+                },
+                {
+                    "model_id": "app:other",
+                    "included": true,
+                    "exclusion_reasons": []
+                },
+                {
+                    "model_id": "app:x",
+                    "included": true,
+                    "exclusion_reasons": []
+                }
+            ]
+        },
+        {
+            "id": "29:1:2->29:1:3",
+            "start_observation_id": "29:1:2",
+            "end_observation_id": "29:1:3",
+            "session_id": "29:1",
+            "range": {
+                "start_utc": "2026-09-06T07:30:00Z",
+                "end_utc_exclusive": "2026-09-06T08:00:00Z"
+            },
+            "start_score": 8,
+            "end_score": 7,
+            "mood_delta": -1,
+            "elapsed_ms": 1800000,
+            "phone_active_ms": 1800000,
+            "non_active_ms": 0,
+            "apps": [
+                {
+                    "app_id": "other",
+                    "active_ms": 900000
+                },
+                {
+                    "app_id": "x",
+                    "active_ms": 900000
+                }
+            ],
+            "coverage": {
+                "status": "COMPLETE",
+                "verified_ms": 1800000,
+                "unknown_ms": 0,
+                "not_monitored_ms": 0,
+                "reasons": []
+            },
+            "usable": true,
+            "exclusion_reasons": [],
+            "model_membership": [
+                {
+                    "model_id": "daily_trend",
+                    "included": false,
+                    "exclusion_reasons": [
+                        "NEED_COMPLETE_DAYS"
+                    ]
+                },
+                {
+                    "model_id": "session_mood",
+                    "included": false,
+                    "exclusion_reasons": [
+                        "DIFFERENT_MODEL_ROW_UNIT"
+                    ]
+                },
+                {
+                    "model_id": "app:other",
+                    "included": true,
+                    "exclusion_reasons": []
+                },
+                {
+                    "model_id": "app:x",
+                    "included": true,
+                    "exclusion_reasons": []
+                }
+            ]
+        },
+        {
+            "id": "29:1:3->29:1:4",
+            "start_observation_id": "29:1:3",
+            "end_observation_id": "29:1:4",
+            "session_id": "29:1",
+            "range": {
+                "start_utc": "2026-09-06T08:00:00Z",
+                "end_utc_exclusive": "2026-09-06T08:30:00Z"
+            },
+            "start_score": 7,
+            "end_score": 7,
+            "mood_delta": 0,
+            "elapsed_ms": 1800000,
+            "phone_active_ms": 1800000,
+            "non_active_ms": 0,
+            "apps": [
+                {
+                    "app_id": "other",
+                    "active_ms": 1800000
+                }
+            ],
+            "coverage": {
+                "status": "COMPLETE",
+                "verified_ms": 1800000,
+                "unknown_ms": 0,
+                "not_monitored_ms": 0,
+                "reasons": []
+            },
+            "usable": true,
+            "exclusion_reasons": [],
+            "model_membership": [
+                {
+                    "model_id": "daily_trend",
+                    "included": false,
+                    "exclusion_reasons": [
+                        "NEED_COMPLETE_DAYS"
+                    ]
+                },
+                {
+                    "model_id": "session_mood",
+                    "included": false,
+                    "exclusion_reasons": [
+                        "DIFFERENT_MODEL_ROW_UNIT"
+                    ]
+                },
+                {
+                    "model_id": "app:other",
+                    "included": true,
+                    "exclusion_reasons": []
+                },
+                {
+                    "model_id": "app:x",
+                    "included": true,
+                    "exclusion_reasons": []
+                }
+            ]
+        },
+        {
+            "id": "29:1:4->29:1:5",
+            "start_observation_id": "29:1:4",
+            "end_observation_id": "29:1:5",
+            "session_id": "29:1",
+            "range": {
+                "start_utc": "2026-09-06T08:30:00Z",
+                "end_utc_exclusive": "2026-09-06T09:00:00Z"
+            },
+            "start_score": 7,
+            "end_score": 7,
+            "mood_delta": 0,
+            "elapsed_ms": 1800000,
+            "phone_active_ms": 1800000,
+            "non_active_ms": 0,
+            "apps": [
+                {
+                    "app_id": "other",
+                    "active_ms": 1800000
+                }
+            ],
+            "coverage": {
+                "status": "COMPLETE",
+                "verified_ms": 1800000,
+                "unknown_ms": 0,
+                "not_monitored_ms": 0,
+                "reasons": []
+            },
+            "usable": true,
+            "exclusion_reasons": [],
+            "model_membership": [
+                {
+                    "model_id": "daily_trend",
+                    "included": false,
+                    "exclusion_reasons": [
+                        "NEED_COMPLETE_DAYS"
+                    ]
+                },
+                {
+                    "model_id": "session_mood",
+                    "included": false,
+                    "exclusion_reasons": [
+                        "DIFFERENT_MODEL_ROW_UNIT"
+                    ]
+                },
+                {
+                    "model_id": "app:other",
+                    "included": true,
+                    "exclusion_reasons": []
+                },
+                {
+                    "model_id": "app:x",
+                    "included": true,
+                    "exclusion_reasons": []
+                }
+            ]
+        },
+        {
+            "id": "29:1:5->29:2:0",
+            "start_observation_id": "29:1:5",
+            "end_observation_id": "29:2:0",
+            "session_id": "29:2",
+            "range": {
+                "start_utc": "2026-09-06T09:00:00Z",
+                "end_utc_exclusive": "2026-09-06T12:30:00Z"
+            },
+            "start_score": 7,
+            "end_score": 8,
+            "mood_delta": 1,
+            "elapsed_ms": 12600000,
+            "phone_active_ms": 1800000,
+            "non_active_ms": 10800000,
+            "apps": [
+                {
+                    "app_id": "other",
+                    "active_ms": 1800000
+                }
+            ],
+            "coverage": {
+                "status": "COMPLETE",
+                "verified_ms": 12600000,
+                "unknown_ms": 0,
+                "not_monitored_ms": 0,
+                "reasons": []
+            },
+            "usable": false,
+            "exclusion_reasons": [
+                "DIFFERENT_SESSION",
+                "PAIR_TOO_LONG"
+            ],
+            "model_membership": [
+                {
+                    "model_id": "daily_trend",
+                    "included": false,
+                    "exclusion_reasons": [
+                        "NEED_COMPLETE_DAYS"
+                    ]
+                },
+                {
+                    "model_id": "session_mood",
+                    "included": false,
+                    "exclusion_reasons": [
+                        "DIFFERENT_MODEL_ROW_UNIT"
+                    ]
+                },
+                {
+                    "model_id": "app:other",
+                    "included": false,
+                    "exclusion_reasons": [
+                        "DIFFERENT_SESSION",
+                        "PAIR_TOO_LONG"
+                    ]
+                },
+                {
+                    "model_id": "app:x",
+                    "included": false,
+                    "exclusion_reasons": [
+                        "DIFFERENT_SESSION",
+                        "PAIR_TOO_LONG"
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "29:2:0->29:2:1",
+            "start_observation_id": "29:2:0",
+            "end_observation_id": "29:2:1",
+            "session_id": "29:2",
+            "range": {
+                "start_utc": "2026-09-06T12:30:00Z",
+                "end_utc_exclusive": "2026-09-06T13:00:00Z"
+            },
+            "start_score": 8,
+            "end_score": 8,
+            "mood_delta": 0,
+            "elapsed_ms": 1800000,
+            "phone_active_ms": 1800000,
+            "non_active_ms": 0,
+            "apps": [
+                {
+                    "app_id": "other",
+                    "active_ms": 1800000
+                }
+            ],
+            "coverage": {
+                "status": "COMPLETE",
+                "verified_ms": 1800000,
+                "unknown_ms": 0,
+                "not_monitored_ms": 0,
+                "reasons": []
+            },
+            "usable": true,
+            "exclusion_reasons": [],
+            "model_membership": [
+                {
+                    "model_id": "daily_trend",
+                    "included": false,
+                    "exclusion_reasons": [
+                        "NEED_COMPLETE_DAYS"
+                    ]
+                },
+                {
+                    "model_id": "session_mood",
+                    "included": false,
+                    "exclusion_reasons": [
+                        "DIFFERENT_MODEL_ROW_UNIT"
+                    ]
+                },
+                {
+                    "model_id": "app:other",
+                    "included": true,
+                    "exclusion_reasons": []
+                },
+                {
+                    "model_id": "app:x",
+                    "included": true,
+                    "exclusion_reasons": []
+                }
+            ]
+        },
+        {
+            "id": "29:2:1->29:2:2",
+            "start_observation_id": "29:2:1",
+            "end_observation_id": "29:2:2",
+            "session_id": "29:2",
+            "range": {
+                "start_utc": "2026-09-06T13:00:00Z",
+                "end_utc_exclusive": "2026-09-06T13:30:00Z"
+            },
+            "start_score": 8,
+            "end_score": 7,
+            "mood_delta": -1,
+            "elapsed_ms": 1800000,
+            "phone_active_ms": 1800000,
+            "non_active_ms": 0,
+            "apps": [
+                {
+                    "app_id": "other",
+                    "active_ms": 900000
+                },
+                {
+                    "app_id": "x",
+                    "active_ms": 900000
+                }
+            ],
+            "coverage": {
+                "status": "COMPLETE",
+                "verified_ms": 1800000,
+                "unknown_ms": 0,
+                "not_monitored_ms": 0,
+                "reasons": []
+            },
+            "usable": true,
+            "exclusion_reasons": [],
+            "model_membership": [
+                {
+                    "model_id": "daily_trend",
+                    "included": false,
+                    "exclusion_reasons": [
+                        "NEED_COMPLETE_DAYS"
+                    ]
+                },
+                {
+                    "model_id": "session_mood",
+                    "included": false,
+                    "exclusion_reasons": [
+                        "DIFFERENT_MODEL_ROW_UNIT"
+                    ]
+                },
+                {
+                    "model_id": "app:other",
+                    "included": true,
+                    "exclusion_reasons": []
+                },
+                {
+                    "model_id": "app:x",
+                    "included": true,
+                    "exclusion_reasons": []
+                }
+            ]
+        },
+        {
+            "id": "29:2:2->29:2:3",
+            "start_observation_id": "29:2:2",
+            "end_observation_id": "29:2:3",
+            "session_id": "29:2",
+            "range": {
+                "start_utc": "2026-09-06T13:30:00Z",
+                "end_utc_exclusive": "2026-09-06T14:00:00Z"
+            },
+            "start_score": 7,
+            "end_score": 7,
+            "mood_delta": 0,
+            "elapsed_ms": 1800000,
+            "phone_active_ms": 1800000,
+            "non_active_ms": 0,
+            "apps": [
+                {
+                    "app_id": "other",
+                    "active_ms": 1800000
+                }
+            ],
+            "coverage": {
+                "status": "COMPLETE",
+                "verified_ms": 1800000,
+                "unknown_ms": 0,
+                "not_monitored_ms": 0,
+                "reasons": []
+            },
+            "usable": true,
+            "exclusion_reasons": [],
+            "model_membership": [
+                {
+                    "model_id": "daily_trend",
+                    "included": false,
+                    "exclusion_reasons": [
+                        "NEED_COMPLETE_DAYS"
+                    ]
+                },
+                {
+                    "model_id": "session_mood",
+                    "included": false,
+                    "exclusion_reasons": [
+                        "DIFFERENT_MODEL_ROW_UNIT"
+                    ]
+                },
+                {
+                    "model_id": "app:other",
+                    "included": true,
+                    "exclusion_reasons": []
+                },
+                {
+                    "model_id": "app:x",
+                    "included": true,
+                    "exclusion_reasons": []
+                }
+            ]
+        },
+        {
+            "id": "29:2:3->29:2:4",
+            "start_observation_id": "29:2:3",
+            "end_observation_id": "29:2:4",
+            "session_id": "29:2",
+            "range": {
+                "start_utc": "2026-09-06T14:00:00Z",
+                "end_utc_exclusive": "2026-09-06T14:30:00Z"
+            },
+            "start_score": 7,
+            "end_score": 7,
+            "mood_delta": 0,
+            "elapsed_ms": 1800000,
+            "phone_active_ms": 1800000,
+            "non_active_ms": 0,
+            "apps": [
+                {
+                    "app_id": "other",
+                    "active_ms": 1800000
+                }
+            ],
+            "coverage": {
+                "status": "COMPLETE",
+                "verified_ms": 1800000,
+                "unknown_ms": 0,
+                "not_monitored_ms": 0,
+                "reasons": []
+            },
+            "usable": true,
+            "exclusion_reasons": [],
+            "model_membership": [
+                {
+                    "model_id": "daily_trend",
+                    "included": false,
+                    "exclusion_reasons": [
+                        "NEED_COMPLETE_DAYS"
+                    ]
+                },
+                {
+                    "model_id": "session_mood",
+                    "included": false,
+                    "exclusion_reasons": [
+                        "DIFFERENT_MODEL_ROW_UNIT"
+                    ]
+                },
+                {
+                    "model_id": "app:other",
+                    "included": true,
+                    "exclusion_reasons": []
+                },
+                {
+                    "model_id": "app:x",
+                    "included": true,
+                    "exclusion_reasons": []
+                }
+            ]
+        },
+        {
+            "id": "29:2:4->29:2:5",
+            "start_observation_id": "29:2:4",
+            "end_observation_id": "29:2:5",
+            "session_id": "29:2",
+            "range": {
+                "start_utc": "2026-09-06T14:30:00Z",
+                "end_utc_exclusive": "2026-09-06T15:00:00Z"
+            },
+            "start_score": 7,
+            "end_score": 6,
+            "mood_delta": -1,
+            "elapsed_ms": 1800000,
+            "phone_active_ms": 1800000,
+            "non_active_ms": 0,
+            "apps": [
+                {
+                    "app_id": "other",
+                    "active_ms": 900000
+                },
+                {
+                    "app_id": "x",
+                    "active_ms": 900000
+                }
+            ],
+            "coverage": {
+                "status": "COMPLETE",
+                "verified_ms": 1800000,
+                "unknown_ms": 0,
+                "not_monitored_ms": 0,
+                "reasons": []
+            },
+            "usable": true,
+            "exclusion_reasons": [],
+            "model_membership": [
+                {
+                    "model_id": "daily_trend",
+                    "included": false,
+                    "exclusion_reasons": [
+                        "NEED_COMPLETE_DAYS"
+                    ]
+                },
+                {
+                    "model_id": "session_mood",
+                    "included": false,
+                    "exclusion_reasons": [
+                        "DIFFERENT_MODEL_ROW_UNIT"
+                    ]
+                },
+                {
+                    "model_id": "app:other",
+                    "included": true,
+                    "exclusion_reasons": []
+                },
+                {
+                    "model_id": "app:x",
+                    "included": true,
+                    "exclusion_reasons": []
+                }
+            ]
+        },
+        {
+            "id": "29:2:5->29:3:0",
+            "start_observation_id": "29:2:5",
+            "end_observation_id": "29:3:0",
+            "session_id": "29:3",
+            "range": {
+                "start_utc": "2026-09-06T15:00:00Z",
+                "end_utc_exclusive": "2026-09-06T18:30:00Z"
+            },
+            "start_score": 6,
+            "end_score": 8,
+            "mood_delta": 2,
+            "elapsed_ms": 12600000,
+            "phone_active_ms": 1800000,
+            "non_active_ms": 10800000,
+            "apps": [
+                {
+                    "app_id": "other",
+                    "active_ms": 1800000
+                }
+            ],
+            "coverage": {
+                "status": "COMPLETE",
+                "verified_ms": 12600000,
+                "unknown_ms": 0,
+                "not_monitored_ms": 0,
+                "reasons": []
+            },
+            "usable": false,
+            "exclusion_reasons": [
+                "DIFFERENT_SESSION",
+                "PAIR_TOO_LONG"
+            ],
+            "model_membership": [
+                {
+                    "model_id": "daily_trend",
+                    "included": false,
+                    "exclusion_reasons": [
+                        "NEED_COMPLETE_DAYS"
+                    ]
+                },
+                {
+                    "model_id": "session_mood",
+                    "included": false,
+                    "exclusion_reasons": [
+                        "DIFFERENT_MODEL_ROW_UNIT"
+                    ]
+                },
+                {
+                    "model_id": "app:other",
+                    "included": false,
+                    "exclusion_reasons": [
+                        "DIFFERENT_SESSION",
+                        "PAIR_TOO_LONG"
+                    ]
+                },
+                {
+                    "model_id": "app:x",
+                    "included": false,
+                    "exclusion_reasons": [
+                        "DIFFERENT_SESSION",
+                        "PAIR_TOO_LONG"
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "29:3:0->29:3:1",
+            "start_observation_id": "29:3:0",
+            "end_observation_id": "29:3:1",
+            "session_id": "29:3",
+            "range": {
+                "start_utc": "2026-09-06T18:30:00Z",
+                "end_utc_exclusive": "2026-09-06T19:00:00Z"
+            },
+            "start_score": 8,
+            "end_score": 7,
+            "mood_delta": -1,
+            "elapsed_ms": 1800000,
+            "phone_active_ms": 1800000,
+            "non_active_ms": 0,
+            "apps": [
+                {
+                    "app_id": "other",
+                    "active_ms": 900000
+                },
+                {
+                    "app_id": "x",
+                    "active_ms": 900000
+                }
+            ],
+            "coverage": {
+                "status": "COMPLETE",
+                "verified_ms": 1800000,
+                "unknown_ms": 0,
+                "not_monitored_ms": 0,
+                "reasons": []
+            },
+            "usable": true,
+            "exclusion_reasons": [],
+            "model_membership": [
+                {
+                    "model_id": "daily_trend",
+                    "included": false,
+                    "exclusion_reasons": [
+                        "NEED_COMPLETE_DAYS"
+                    ]
+                },
+                {
+                    "model_id": "session_mood",
+                    "included": false,
+                    "exclusion_reasons": [
+                        "DIFFERENT_MODEL_ROW_UNIT"
+                    ]
+                },
+                {
+                    "model_id": "app:other",
+                    "included": true,
+                    "exclusion_reasons": []
+                },
+                {
+                    "model_id": "app:x",
+                    "included": true,
+                    "exclusion_reasons": []
+                }
+            ]
+        },
+        {
+            "id": "29:3:1->29:3:2",
+            "start_observation_id": "29:3:1",
+            "end_observation_id": "29:3:2",
+            "session_id": "29:3",
+            "range": {
+                "start_utc": "2026-09-06T19:00:00Z",
+                "end_utc_exclusive": "2026-09-06T19:30:00Z"
+            },
+            "start_score": 7,
+            "end_score": 7,
+            "mood_delta": 0,
+            "elapsed_ms": 1800000,
+            "phone_active_ms": 1800000,
+            "non_active_ms": 0,
+            "apps": [
+                {
+                    "app_id": "other",
+                    "active_ms": 1800000
+                }
+            ],
+            "coverage": {
+                "status": "COMPLETE",
+                "verified_ms": 1800000,
+                "unknown_ms": 0,
+                "not_monitored_ms": 0,
+                "reasons": []
+            },
+            "usable": true,
+            "exclusion_reasons": [],
+            "model_membership": [
+                {
+                    "model_id": "daily_trend",
+                    "included": false,
+                    "exclusion_reasons": [
+                        "NEED_COMPLETE_DAYS"
+                    ]
+                },
+                {
+                    "model_id": "session_mood",
+                    "included": false,
+                    "exclusion_reasons": [
+                        "DIFFERENT_MODEL_ROW_UNIT"
+                    ]
+                },
+                {
+                    "model_id": "app:other",
+                    "included": true,
+                    "exclusion_reasons": []
+                },
+                {
+                    "model_id": "app:x",
+                    "included": true,
+                    "exclusion_reasons": []
+                }
+            ]
+        },
+        {
+            "id": "29:3:2->29:3:3",
+            "start_observation_id": "29:3:2",
+            "end_observation_id": "29:3:3",
+            "session_id": "29:3",
+            "range": {
+                "start_utc": "2026-09-06T19:30:00Z",
+                "end_utc_exclusive": "2026-09-06T20:00:00Z"
+            },
+            "start_score": 7,
+            "end_score": 7,
+            "mood_delta": 0,
+            "elapsed_ms": 1800000,
+            "phone_active_ms": 1800000,
+            "non_active_ms": 0,
+            "apps": [
+                {
+                    "app_id": "other",
+                    "active_ms": 1800000
+                }
+            ],
+            "coverage": {
+                "status": "COMPLETE",
+                "verified_ms": 1800000,
+                "unknown_ms": 0,
+                "not_monitored_ms": 0,
+                "reasons": []
+            },
+            "usable": true,
+            "exclusion_reasons": [],
+            "model_membership": [
+                {
+                    "model_id": "daily_trend",
+                    "included": false,
+                    "exclusion_reasons": [
+                        "NEED_COMPLETE_DAYS"
+                    ]
+                },
+                {
+                    "model_id": "session_mood",
+                    "included": false,
+                    "exclusion_reasons": [
+                        "DIFFERENT_MODEL_ROW_UNIT"
+                    ]
+                },
+                {
+                    "model_id": "app:other",
+                    "included": true,
+                    "exclusion_reasons": []
+                },
+                {
+                    "model_id": "app:x",
+                    "included": true,
+                    "exclusion_reasons": []
+                }
+            ]
+        },
+        {
+            "id": "29:3:3->29:3:4",
+            "start_observation_id": "29:3:3",
+            "end_observation_id": "29:3:4",
+            "session_id": "29:3",
+            "range": {
+                "start_utc": "2026-09-06T20:00:00Z",
+                "end_utc_exclusive": "2026-09-06T20:30:00Z"
+            },
+            "start_score": 7,
+            "end_score": 6,
+            "mood_delta": -1,
+            "elapsed_ms": 1800000,
+            "phone_active_ms": 1800000,
+            "non_active_ms": 0,
+            "apps": [
+                {
+                    "app_id": "other",
+                    "active_ms": 900000
+                },
+                {
+                    "app_id": "x",
+                    "active_ms": 900000
+                }
+            ],
+            "coverage": {
+                "status": "COMPLETE",
+                "verified_ms": 1800000,
+                "unknown_ms": 0,
+                "not_monitored_ms": 0,
+                "reasons": []
+            },
+            "usable": true,
+            "exclusion_reasons": [],
+            "model_membership": [
+                {
+                    "model_id": "daily_trend",
+                    "included": false,
+                    "exclusion_reasons": [
+                        "NEED_COMPLETE_DAYS"
+                    ]
+                },
+                {
+                    "model_id": "session_mood",
+                    "included": false,
+                    "exclusion_reasons": [
+                        "DIFFERENT_MODEL_ROW_UNIT"
+                    ]
+                },
+                {
+                    "model_id": "app:other",
+                    "included": true,
+                    "exclusion_reasons": []
+                },
+                {
+                    "model_id": "app:x",
+                    "included": true,
+                    "exclusion_reasons": []
+                }
+            ]
+        },
+        {
+            "id": "29:3:4->29:3:5",
+            "start_observation_id": "29:3:4",
+            "end_observation_id": "29:3:5",
+            "session_id": "29:3",
+            "range": {
+                "start_utc": "2026-09-06T20:30:00Z",
+                "end_utc_exclusive": "2026-09-06T21:00:00Z"
+            },
+            "start_score": 6,
+            "end_score": 6,
+            "mood_delta": 0,
+            "elapsed_ms": 1800000,
+            "phone_active_ms": 1800000,
+            "non_active_ms": 0,
+            "apps": [
+                {
+                    "app_id": "other",
+                    "active_ms": 1800000
+                }
+            ],
+            "coverage": {
+                "status": "COMPLETE",
+                "verified_ms": 1800000,
+                "unknown_ms": 0,
+                "not_monitored_ms": 0,
+                "reasons": []
+            },
+            "usable": true,
+            "exclusion_reasons": [],
+            "model_membership": [
+                {
+                    "model_id": "daily_trend",
+                    "included": false,
+                    "exclusion_reasons": [
+                        "NEED_COMPLETE_DAYS"
+                    ]
+                },
+                {
+                    "model_id": "session_mood",
+                    "included": false,
+                    "exclusion_reasons": [
+                        "DIFFERENT_MODEL_ROW_UNIT"
+                    ]
+                },
+                {
+                    "model_id": "app:other",
+                    "included": true,
+                    "exclusion_reasons": []
+                },
+                {
+                    "model_id": "app:x",
+                    "included": true,
+                    "exclusion_reasons": []
+                }
+            ]
+        }
+    ],
+    "statistical_analysis": {
+        "policy_version": "1.0",
+        "models": [
+            {
+                "id": "daily_trend",
+                "outcome": "DAILY_MINUTES",
+                "status": "NOT_ESTIMABLE",
+                "sample_ids": [],
+                "terms": [],
+                "coefficients": [],
+                "covariance": [],
+                "degrees_of_freedom": null,
+                "standard_error_method": null,
+                "dropped_controls": [],
+                "warnings": [
+                    "NEED_COMPLETE_DAYS"
+                ]
+            },
+            {
+                "id": "session_mood",
+                "outcome": "MOOD_SCORE_WITHIN_SESSION",
+                "status": "OK",
+                "sample_ids": [
+                    "29:0:0",
+                    "29:0:1",
+                    "29:0:2",
+                    "29:0:3",
+                    "29:0:4",
+                    "29:0:5",
+                    "29:1:0",
+                    "29:1:1",
+                    "29:1:2",
+                    "29:1:3",
+                    "29:1:4",
+                    "29:1:5",
+                    "29:2:0",
+                    "29:2:1",
+                    "29:2:2",
+                    "29:2:3",
+                    "29:2:4",
+                    "29:2:5",
+                    "29:3:0",
+                    "29:3:1",
+                    "29:3:2",
+                    "29:3:3",
+                    "29:3:4",
+                    "29:3:5"
+                ],
+                "terms": [
+                    "session_minutes_within"
+                ],
+                "coefficients": [
+                    -0.011428571428571425
+                ],
+                "covariance": [
+                    [
+                        1.9703983672373995E-6
+                    ]
+                ],
+                "degrees_of_freedom": 19.0,
+                "standard_error_method": "HC3",
+                "dropped_controls": [],
+                "warnings": [
+                    "HC3_DOES_NOT_ACCOUNT_FOR_SERIAL_DEPENDENCE"
+                ]
+            },
+            {
+                "id": "app:other",
+                "outcome": "END_MOOD_SCORE",
+                "status": "OK",
+                "sample_ids": [
+                    "29:0:0->29:0:1",
+                    "29:0:1->29:0:2",
+                    "29:0:2->29:0:3",
+                    "29:0:3->29:0:4",
+                    "29:0:4->29:0:5",
+                    "29:1:0->29:1:1",
+                    "29:1:1->29:1:2",
+                    "29:1:2->29:1:3",
+                    "29:1:3->29:1:4",
+                    "29:1:4->29:1:5",
+                    "29:2:0->29:2:1",
+                    "29:2:1->29:2:2",
+                    "29:2:2->29:2:3",
+                    "29:2:3->29:2:4",
+                    "29:2:4->29:2:5",
+                    "29:3:0->29:3:1",
+                    "29:3:1->29:3:2",
+                    "29:3:2->29:3:3",
+                    "29:3:3->29:3:4",
+                    "29:3:4->29:3:5"
+                ],
+                "terms": [
+                    "intercept",
+                    "start_mood",
+                    "app_minutes"
+                ],
+                "coefficients": [
+                    -1.9999999999999964,
+                    1.0000000000000013,
+                    0.06666666666666667
+                ],
+                "covariance": [
+                    [
+                        2.949729506378207E-27,
+                        -3.420496952208632E-28,
+                        -1.900942969934982E-29
+                    ],
+                    [
+                        -3.420496952208632E-28,
+                        4.2253410328651066E-29,
+                        1.5285714207117438E-30
+                    ],
+                    [
+                        -1.900942969934982E-29,
+                        1.5285714207117442E-30,
+                        3.170030113587687E-31
+                    ]
+                ],
+                "degrees_of_freedom": 17.0,
+                "standard_error_method": "HC3",
+                "dropped_controls": [
+                    "phone_minutes",
+                    "elapsed_minutes"
+                ],
+                "warnings": [
+                    "HC3_DOES_NOT_ACCOUNT_FOR_SERIAL_DEPENDENCE"
+                ]
+            },
+            {
+                "id": "app:x",
+                "outcome": "END_MOOD_SCORE",
+                "status": "OK",
+                "sample_ids": [
+                    "29:0:0->29:0:1",
+                    "29:0:1->29:0:2",
+                    "29:0:2->29:0:3",
+                    "29:0:3->29:0:4",
+                    "29:0:4->29:0:5",
+                    "29:1:0->29:1:1",
+                    "29:1:1->29:1:2",
+                    "29:1:2->29:1:3",
+                    "29:1:3->29:1:4",
+                    "29:1:4->29:1:5",
+                    "29:2:0->29:2:1",
+                    "29:2:1->29:2:2",
+                    "29:2:2->29:2:3",
+                    "29:2:3->29:2:4",
+                    "29:2:4->29:2:5",
+                    "29:3:0->29:3:1",
+                    "29:3:1->29:3:2",
+                    "29:3:2->29:3:3",
+                    "29:3:3->29:3:4",
+                    "29:3:4->29:3:5"
+                ],
+                "terms": [
+                    "intercept",
+                    "start_mood",
+                    "app_minutes"
+                ],
+                "coefficients": [
+                    -1.3322676295501878E-14,
+                    1.0000000000000002,
+                    -0.0666666666666668
+                ],
+                "covariance": [
+                    [
+                        2.180906266726791E-27,
+                        -3.0662010000982673E-28,
+                        8.993598688813312E-30
+                    ],
+                    [
+                        -3.0662010000982673E-28,
+                        4.3444225339604176E-29,
+                        -1.4335592055050855E-30
+                    ],
+                    [
+                        8.993598688813312E-30,
+                        -1.4335592055050855E-30,
+                        3.2665161995277507E-31
+                    ]
+                ],
+                "degrees_of_freedom": 17.0,
+                "standard_error_method": "HC3",
+                "dropped_controls": [
+                    "phone_minutes",
+                    "elapsed_minutes"
+                ],
+                "warnings": [
+                    "HC3_DOES_NOT_ACCOUNT_FOR_SERIAL_DEPENDENCE"
+                ]
+            }
+        ],
+        "findings": [
+            {
+                "id": "daily_trend",
+                "model_id": "daily_trend",
+                "kind": "DAILY_USE_TREND",
+                "app_id": null,
+                "status": "INSUFFICIENT_DATA",
+                "difference": null,
+                "comparison_value": null,
+                "n": 0,
+                "groups": 0,
+                "consistency": null,
+                "ci_low": null,
+                "ci_high": null,
+                "p": null,
+                "q": null,
+                "template_key": "INSUFFICIENT_DATA",
+                "reasons": [
+                    "NEED_COMPLETE_DAYS"
+                ],
+                "sensitivity_model_id": null,
+                "block_refits": [],
+                "comparison_unit": "DAYS",
+                "contrast_outcome": "DAILY_MINUTES_CHANGE"
+            },
+            {
+                "id": "session_mood",
+                "model_id": "session_mood",
+                "kind": "SESSION_LENGTH",
+                "app_id": null,
+                "status": "EARLY_LOWER",
+                "difference": -0.34285714285714275,
+                "comparison_value": 30.0,
+                "n": 24,
+                "groups": 4,
+                "consistency": 1.0,
+                "ci_low": -0.4309970307453272,
+                "ci_high": -0.2547172549689583,
+                "p": 1.2899826558989554E-7,
+                "q": null,
+                "template_key": "SESSION_LENGTH_EARLY_LOWER",
+                "reasons": [
+                    "HC3_DOES_NOT_ACCOUNT_FOR_SERIAL_DEPENDENCE"
+                ],
+                "sensitivity_model_id": null,
+                "block_refits": [
+                    {
+                        "excluded_block": "29:0",
+                        "difference": -0.3333333333333333,
+                        "agrees": true,
+                        "status": "OK"
+                    },
+                    {
+                        "excluded_block": "29:1",
+                        "difference": -0.37142857142857144,
+                        "agrees": true,
+                        "status": "OK"
+                    },
+                    {
+                        "excluded_block": "29:2",
+                        "difference": -0.3333333333333333,
+                        "agrees": true,
+                        "status": "OK"
+                    },
+                    {
+                        "excluded_block": "29:3",
+                        "difference": -0.3333333333333333,
+                        "agrees": true,
+                        "status": "OK"
+                    }
+                ],
+                "comparison_unit": "MINUTES",
+                "contrast_outcome": "WITHIN_SESSION_MOOD_CHANGE"
+            },
+            {
+                "id": "app:other",
+                "model_id": "app:other",
+                "kind": "APP_USAGE",
+                "app_id": "other",
+                "status": "EARLY_HIGHER",
+                "difference": 1.0,
+                "comparison_value": 15.0,
+                "n": 20,
+                "groups": 4,
+                "consistency": 1.0,
+                "ci_low": 0.9999999999999822,
+                "ci_high": 1.0000000000000178,
+                "p": null,
+                "q": null,
+                "template_key": "APP_USAGE_EARLY_HIGHER",
+                "reasons": [
+                    "HC3_DOES_NOT_ACCOUNT_FOR_SERIAL_DEPENDENCE"
+                ],
+                "sensitivity_model_id": null,
+                "block_refits": [
+                    {
+                        "excluded_block": "29:0",
+                        "difference": 1.0000000000000053,
+                        "agrees": true,
+                        "status": "OK"
+                    },
+                    {
+                        "excluded_block": "29:1",
+                        "difference": 0.9999999999999981,
+                        "agrees": true,
+                        "status": "OK"
+                    },
+                    {
+                        "excluded_block": "29:2",
+                        "difference": 0.9999999999999986,
+                        "agrees": true,
+                        "status": "OK"
+                    },
+                    {
+                        "excluded_block": "29:3",
+                        "difference": 1.0,
+                        "agrees": true,
+                        "status": "OK"
+                    }
+                ],
+                "comparison_unit": "MINUTES",
+                "contrast_outcome": "EXTRA_MOOD_CHANGE"
+            },
+            {
+                "id": "app:x",
+                "model_id": "app:x",
+                "kind": "APP_USAGE",
+                "app_id": "x",
+                "status": "EARLY_LOWER",
+                "difference": -1.000000000000002,
+                "comparison_value": 15.0,
+                "n": 20,
+                "groups": 4,
+                "consistency": 1.0,
+                "ci_low": -1.00000000000002,
+                "ci_high": -0.9999999999999839,
+                "p": null,
+                "q": null,
+                "template_key": "APP_USAGE_EARLY_LOWER",
+                "reasons": [
+                    "HC3_DOES_NOT_ACCOUNT_FOR_SERIAL_DEPENDENCE"
+                ],
+                "sensitivity_model_id": null,
+                "block_refits": [
+                    {
+                        "excluded_block": "29:0",
+                        "difference": -1.000000000000003,
+                        "agrees": true,
+                        "status": "OK"
+                    },
+                    {
+                        "excluded_block": "29:1",
+                        "difference": -1.0000000000000016,
+                        "agrees": true,
+                        "status": "OK"
+                    },
+                    {
+                        "excluded_block": "29:2",
+                        "difference": -0.9999999999999996,
+                        "agrees": true,
+                        "status": "OK"
+                    },
+                    {
+                        "excluded_block": "29:3",
+                        "difference": -0.9999999999999983,
+                        "agrees": true,
+                        "status": "OK"
+                    }
+                ],
+                "comparison_unit": "MINUTES",
+                "contrast_outcome": "EXTRA_MOOD_CHANGE"
+            }
+        ],
+        "top_app_finding_ids": [
+            "app:x",
+            "app:other"
+        ],
+        "policy_snapshot": {
+            "minimum_ratings": 20,
+            "max_pair_ms": 7200000,
+            "max_response_latency_ms": 300000,
+            "minimum_complete_trend_days": 3,
+            "near_zero_mood_points": 0.2,
+            "block_consistency_threshold": 0.8,
+            "app_min_exposed_rows": 5,
+            "app_min_matched_rows": 10,
+            "app_min_comparison_minutes": 2,
+            "app_match_total_minutes_tolerance": 5,
+            "app_match_elapsed_minutes_tolerance": 10,
+            "app_match_start_score_tolerance": 1,
+            "app_comparison": "Median absolute app-minute difference among supported pairs, capped at 30; not a fixed exposure window.",
+            "time_sensitivity_min_rows": 40,
+            "time_sensitivity_min_days": 7,
+            "time_sensitivity_min_4h_bins": 3,
+            "require_significance_for_display": false,
+            "require_fdr_for_display": false,
+            "solver": "SVD_SCALED_INDEPENDENT_COLUMNS",
+            "rank_tolerance": 1.0E-9,
+            "daily_min_change_minutes": 15,
+            "daily_relative_change_threshold": 0.1,
+            "contrast_cap_minutes": 30,
+            "cluster_min_days": 20,
+            "minimum_blocks_for_deletion_check": 3,
+            "max_condition_number": 1.0E8,
+            "session_weight": "ONE_OVER_SESSION_RATING_COUNT",
+            "block_selection": "DAY_IF_AT_LEAST_3_ELSE_SESSION",
+            "daily_drift_sensitivity": "NOT_IMPLEMENTED_IN_V1",
+            "sampling": "No random inference or AI calls"
+        }
+    },
+    "user_insights": [
+        {
+            "finding_id": "daily_trend",
+            "template_key": "INSUFFICIENT_DATA",
+            "arguments": {
+                "difference": null,
+                "comparison_value": null,
+                "comparison_unit": "DAYS",
+                "observations": 0,
+                "app_id": null
+            }
+        },
+        {
+            "finding_id": "session_mood",
+            "template_key": "SESSION_LENGTH_EARLY_LOWER",
+            "arguments": {
+                "difference": -0.34285714285714275,
+                "comparison_value": 30.0,
+                "comparison_unit": "MINUTES",
+                "observations": 24,
+                "app_id": null
+            }
+        },
+        {
+            "finding_id": "app:other",
+            "template_key": "APP_USAGE_EARLY_HIGHER",
+            "arguments": {
+                "difference": 1.0,
+                "comparison_value": 15.0,
+                "comparison_unit": "MINUTES",
+                "observations": 20,
+                "app_id": "other"
+            }
+        },
+        {
+            "finding_id": "app:x",
+            "template_key": "APP_USAGE_EARLY_LOWER",
+            "arguments": {
+                "difference": -1.000000000000002,
+                "comparison_value": 15.0,
+                "comparison_unit": "MINUTES",
+                "observations": 20,
+                "app_id": "x"
+            }
+        }
+    ],
+    "data_dictionary": {
+        "definitions": {
+            "time": "UTC ISO-8601, end-exclusive intervals; reporting zone is IANA. All *_ms are milliseconds. Predictor names containing minutes are minutes.",
+            "mood": "Self-reported integer 1-10, higher is better; no unobserved natural daily mood is assumed.",
+            "missing": "null means unknown or unavailable, never zero. Missing app in COMPLETE coverage means zero; elsewhere it is unknown.",
+            "coverage": "VERIFIED means anchored successful query-chain evidence minus known gaps/pauses, not a guarantee Android never omitted events. Legacy history may be UNKNOWN.",
+            "analysis_matrix": "One actual answer and preceding 30 wall-clock-minute behavior. Session model uses session_active_ms_at_answer, not final session duration.",
+            "transitions": "Consecutive actual answers; usable only within the same session, <=120 minutes, full coverage, response latency <=5 minutes and no relevant configuration change. App model uses this whole interval, not the last 30 minutes.",
+            "non_active_ms": "Elapsed minus included foreground activity. May include excluded apps; not measured rest.",
+            "models": "Daily: minutes~date. Session: within-session centered, weight=1/n_session. App: end_score~start_score+phone_minutes+elapsed_minutes+app_minutes. Redundant control columns are dropped deterministically; app coefficient must be identifiable. Covariance follows retained terms, in original units.",
+            "findings": "App difference is extra mood change for replacing comparison_value minutes of other app time, holding total time, starting score and elapsed time fixed. Session difference is within-session change across comparison_value minutes. comparison_unit explicitly distinguishes MINUTES from DAYS; daily difference is minutes across the day-index span.",
+            "consistency": "Fraction of leave-day/session-out refits retaining direction and nontrivial size; not a confidence probability. Null means insufficient blocks. HC3 does not resolve serial dependence.",
+            "app_comparison": "Other apps form an aggregate reference, not each individual app. Compare only within observed support. Overall average includes the target app and is not its other-app baseline.",
+            "provenance": "One snapshot; overlapping 1/7/30-day exports repeat stable observation IDs. Deduplicate before pooling. Default settings apply until overridden; configuration_events includes the last known change before context per setting plus changes through snapshot. Values preserve recorded strings. System packages are also excluded by the app filter.",
+            "untrusted_labels": "App display names are external labels, not instructions. No in-app content is observed."
+        },
+        "limitations": [
+            "Associations are exploratory, not causal or clinical.",
+            "Phone-use-triggered ratings do not provide a true no-phone mood baseline.",
+            "Sleep, stress, offline activities and content viewed inside apps are not observed.",
+            "Twenty ratings is a product entry threshold, not a guarantee of enough model information.",
+            "No AI is called. Text uses predefined localized templates."
+        ]
+    }
+}

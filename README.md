@@ -1,171 +1,29 @@
-# PhoneMood｜手机情绪觉察
-
-电池策略优化：息屏或锁屏停止定时查询，恢复使用时补读；系统省电模式降低查询频率。详见 [电池策略](docs/BATTERY_STRATEGY.md)。
-
-1.3 更新：首次授权返回后自动开始统计，并新增快捷权限配置与后台电池设置引导。详见 [更新说明](docs/AUTOMATIC_SETUP.md)。
-
-一个完全本地运行的 Android 应用，用来帮助你观察「手机主动使用时间」与「自我报告情绪」之间的关系。
-
-它不需要账号、服务器、遥测、广告 SDK 或网络权限。所有使用记录、情绪评分和报告都保存在手机本地。
-
-![PhoneMood Today 首页](docs/screenshots/today-monitoring.png)
-
-## 它有什么好处？
-
-PhoneMood 把“我好像刷了很久手机”变成可以回看的事实，再用一个很短的 1–10 分问题，帮助你注意当下的精神状态。它不要求你立刻停止使用手机，也不把手机使用简单地定义成好或坏。
-
-- **在当下提醒你觉察自己**：连续实际使用一段时间后，问你现在感觉如何，帮助你发现疲惫、焦虑、无聊或投入感和使用时长之间的关系。
-- **不打断当前任务**：问卷以悬浮卡片显示在当前 App 上方，点一个分数就能完成；你也可以稍后提醒或关闭。
-- **更接近真实使用习惯**：App 切换会继续累计，短暂锁屏或息屏不会被误算为使用时间；较长的休息才会开始新的使用段落。
-- **帮助你看到自己的模式**：Today、Timeline 和报告把使用时间、使用过的 App 和情绪评分放在一起，方便你回顾一天中哪些时段最容易陷入手机。
-- **数据留在自己的设备上**：没有账号、云端同步或网络上传，适合重视隐私、希望先从自我观察开始的人。
-- **由你决定提醒节奏**：可以调整提醒间隔、休息重置时间、排除 App，随时暂停监控。
-
-![PhoneMood 悬浮问卷](docs/screenshots/overlay-chrome-preview.png)
-
-![PhoneMood 每日报告](docs/screenshots/reports.png)
-
-PhoneMood 是一个自我观察工具，不是医疗诊断工具，也不会根据手机使用时间推断你的心理状况。它的价值在于提供一个温和、可重复、由你自己解释的记录方式。
-
-## 下载安装包
-
-如果你只想安装和体验 App，可以直接下载仓库根目录的 Android 安装包：
-
-[下载 PhoneMood 1.3.2 Android 安装包](https://github.com/Xiao-Chen-usc/phonemood/raw/main/PhoneMood-1.3.2-debug.apk)
-
-这是一个用于测试的 debug APK，适用于 Android 10（API 29）或更高版本。下载后在 Android 手机上打开并安装；首次使用需要授予 Usage Access、通知和悬浮窗权限。安装包约 60 MB。
-
-## 功能
-
-- 统计主动使用时间和各 App 使用情况
-- 按使用时长触发 1–10 分情绪自评提醒
-- 支持通知和悬浮卡片
-- 支持稍后提醒、关闭、暂停监控和 App 排除
-- 查看 Today、Timeline 和每日统计报告
-- 将每日数据导出为 JSON
-- 支持进程重启、手机重启和数据恢复
-
-## 用电脑测试
-
-要求：JDK 17 或更高版本、Android SDK 35，以及 Android 10（API 29）或更高版本的模拟器或实体设备。
-
-在项目目录执行：
-
-```bash
-git pull --ff-only
-./gradlew :app:assembleDebug :app:testDebugUnitTest
-./scripts/run-emulator.sh app/build/outputs/apk/debug/app-debug.apk
-```
-
-第一条命令从 GitHub 下载最新源码；后两条命令编译、测试并在模拟器中安装最新构建。
-
-也可以用 Android Studio 打开项目目录，运行 `app` 配置。
-
-首次使用需要在 Android 设置中授予：
-
-1. Usage Access（使用情况访问权限）
-2. 通知权限
-3. Display over other apps（显示在其他应用上层）
-
-完整测试清单见 [`docs/DEVICE_TESTING.md`](docs/DEVICE_TESTING.md)。
-
-## 构建与测试
-
-```bash
-./gradlew :app:assembleDebug       # 编译 debug APK
-./gradlew :app:testDebugUnitTest  # 运行单元测试
-./gradlew :app:lintDebug          # 运行代码检查
-```
-
-APK 输出位置：`app/build/outputs/apk/debug/app-debug.apk`。
-
-## 数据与隐私
-
-PhoneMood 没有 `INTERNET` 权限。数据保存在 Android 本地数据库中。报告导出到：
-
-```text
-Downloads/PhoneMoodHealth/YYYY-MM-DD-phone-mood.json
-```
-
-报告可能包含 App 包名、使用时间和情绪评分；分享时请确认接收方和范围。
-
-## 项目结构
-
-- `app/src/main/java/com/phonemood/ui/`：Compose 用户界面
-- `app/src/main/java/com/phonemood/monitoring/`：使用情况读取和 session 计算
-- `app/src/main/java/com/phonemood/mood/`：情绪提醒、通知和悬浮卡片
-- `app/src/main/java/com/phonemood/data/`：Room 数据库和数据仓库
-- `app/src/main/java/com/phonemood/report/`：日报生成和导出
-- `app/src/test/`：单元测试
-- `app/src/androidTest/`：Android 模拟器/实体设备测试
-- `docs/`：设计、验证和测试文档
-
-## 设计边界
-
-这是一个自我观察工具，不提供医疗诊断、因果判断或临床建议。后台运行、UsageStats 数据完整性、电池策略和通知投递受 Android 系统限制。
-
----
-
 # PhoneMood | Phone Mood Awareness
 
-PhoneMood is a local-only Android app for noticing the relationship between active phone use and self-reported mood.
-
-It requires no account, server, telemetry, advertising SDK, or network permission. Usage records, mood ratings, and reports stay on the device.
+PhoneMood is a local-only Android app for noticing the relationship between active phone use and self-reported mood. It requires no account, server, telemetry, advertising SDK, or network permission. Usage records, mood ratings, and reports stay on the device.
 
 ![PhoneMood Today screen](docs/screenshots/today-monitoring.png)
 
-## Why use PhoneMood?
-
-PhoneMood turns the feeling of “I have been on my phone for a long time” into something you can review, then pairs it with a short 1–10 check-in about how you feel. It helps you notice patterns without judging phone use as simply good or bad.
-
-- **Builds awareness in the moment**: after a period of active use, it asks how you feel so you can notice links between time, fatigue, anxiety, boredom, and engagement.
-- **Keeps you in the current task**: the check-in appears as a floating card over the app you are using. Tap one number, snooze it, or dismiss it.
-- **Reflects real usage more carefully**: app switches continue the same session, while short screen-off breaks are excluded from active time; longer breaks start a new session.
-- **Makes personal patterns visible**: Today, Timeline, and reports put usage duration, app activity, and mood ratings together for reflection.
-- **Keeps data on your device**: there is no account, cloud sync, or network upload.
-- **Lets you choose the rhythm**: adjust prompt intervals, break thresholds, app exclusions, or pause monitoring whenever you want.
-
-![PhoneMood floating check-in](docs/screenshots/overlay-chrome-preview.png)
-
-![PhoneMood daily report](docs/screenshots/reports.png)
-
-PhoneMood is a self-observation tool, not a medical diagnostic system. It provides a gentle, repeatable record that you interpret for yourself.
-
-## Download the Android installer
-
-To install and try the app, download the Android installer from the repository root:
-
-[Download PhoneMood 1.3.2 Android APK](https://github.com/Xiao-Chen-usc/phonemood/raw/main/PhoneMood-1.3.2-debug.apk)
-
-This is a debug APK for testing on Android 10/API 29 or newer. After downloading, open it on an Android device and grant Usage Access, notification, and Display over other apps permissions on first use. The installer is approximately 60 MB.
-
 ## Features
 
-- Summarizes active phone time and usage by app
-- Prompts for a 1–10 mood rating after configured usage intervals
-- Supports notification and floating overlay check-ins
-- Supports rating, snoozing, dismissing, and pausing monitoring
-- Provides Today, Timeline, and daily report views
-- Exports daily data as JSON
-- Reconciles data after process death, reboot, and late responses
+- Summarizes active phone time and usage by app.
+- Prompts for a 1–10 mood rating after configurable usage intervals.
+- Supports notification and floating overlay check-ins, snoozing, dismissal, and pause controls.
+- Provides Today, Timeline, period analysis, and daily report views.
+- Exports local data as a single JSON file.
+- Reconciles data after process death, reboot, and late responses.
 
-## Computer testing
+PhoneMood is a self-observation tool, not a medical diagnostic system.
 
-Requirements: JDK 17+, Android SDK 35, and an Android 10/API 29 or newer emulator or device.
+## Download
 
-From the project directory:
+[Download the PhoneMood 1.4.0 debug APK](https://github.com/Xiao-Chen-usc/phonemood/raw/main/PhoneMood-1.4.0-debug.apk)
 
-```bash
-git pull --ff-only
-./gradlew :app:assembleDebug :app:testDebugUnitTest
-./scripts/run-emulator.sh app/build/outputs/apk/debug/app-debug.apk
-```
-
-The first command downloads the latest source from GitHub. The remaining commands build, test, install, and launch that source in the emulator.
-
-You can also open the project in Android Studio and run the `app` configuration. The first run requires Usage Access, notification permission, and Display over other apps permission. See [`docs/DEVICE_TESTING.md`](docs/DEVICE_TESTING.md) for the full checklist.
+The debug APK supports Android 10/API 29 or newer. On first use, grant Usage Access, notification, and Display over other apps permissions.
 
 ## Build and test
+
+Requirements: JDK 17+, Android SDK 35, and an Android 10/API 29 or newer emulator or device.
 
 ```bash
 ./gradlew :app:assembleDebug
@@ -174,6 +32,8 @@ You can also open the project in Android Studio and run the `app` configuration.
 ```
 
 The debug APK is generated at `app/build/outputs/apk/debug/app-debug.apk`.
+
+For emulator installation and the full device checklist, see [docs/DEVICE_TESTING.md](docs/DEVICE_TESTING.md). For the analysis contract, see [docs/PERIOD_EXPORT_SCHEMA.md](docs/PERIOD_EXPORT_SCHEMA.md) and [docs/ANALYSIS_POLICY_V1.md](docs/ANALYSIS_POLICY_V1.md).
 
 ## Data and privacy
 
@@ -185,11 +45,59 @@ PhoneMood does not request the `INTERNET` permission. Data is stored in a local 
 - `app/src/main/java/com/phonemood/monitoring/`: usage reading and session calculation
 - `app/src/main/java/com/phonemood/mood/`: prompts, notifications, and overlays
 - `app/src/main/java/com/phonemood/data/`: Room database and repository
-- `app/src/main/java/com/phonemood/report/`: daily report generation and export
-- `app/src/test/`: unit tests
-- `app/src/androidTest/`: emulator/device tests
-- `docs/`: design, validation, and device-testing documentation
+- `app/src/main/java/com/phonemood/analysis/`: period statistics and local analysis
+- `app/src/test/` and `app/src/androidTest/`: unit and device tests
+- `docs/`: design, validation, schemas, examples, and testing documentation
 
-## Scope and limitations
+---
 
-PhoneMood is a self-observation tool, not a medical, diagnostic, causal, or clinical system. Background execution, UsageStats completeness, battery policies, and notification delivery are subject to Android system behavior.
+# PhoneMood｜手机情绪觉察
+
+PhoneMood 是一个完全本地运行的 Android 应用，用来帮助你观察「手机主动使用时间」与「自我报告情绪」之间的关系。它不需要账号、服务器、遥测、广告 SDK 或网络权限，所有记录和报告都保存在手机本地。
+
+![PhoneMood Today 首页](docs/screenshots/today-monitoring.png)
+
+## 功能
+
+- 统计主动使用时间和各 App 使用情况。
+- 按使用时长触发 1–10 分情绪自评提醒。
+- 支持通知、悬浮卡片、稍后提醒、关闭和暂停监控。
+- 查看 Today、Timeline、周期分析和每日报告。
+- 将本地数据导出为单个 JSON 文件。
+- 支持进程重启、手机重启和延迟响应后的数据恢复。
+
+PhoneMood 是自我观察工具，不是医疗诊断工具，也不会根据手机使用时间推断心理状况。
+
+## 下载安装包
+
+[下载 PhoneMood 1.4.0 debug APK](https://github.com/Xiao-Chen-usc/phonemood/raw/main/PhoneMood-1.4.0-debug.apk)
+
+安装包适用于 Android 10（API 29）或更高版本。首次使用需要授予使用情况访问、通知和显示在其他应用上层权限。
+
+## 构建与测试
+
+要求：JDK 17 或更高版本、Android SDK 35，以及 Android 10（API 29）或更高版本的模拟器或实体设备。
+
+```bash
+./gradlew :app:assembleDebug
+./gradlew :app:testDebugUnitTest
+./gradlew :app:lintDebug
+```
+
+APK 输出位置：`app/build/outputs/apk/debug/app-debug.apk`。
+
+电脑安装和完整设备测试清单见 [docs/DEVICE_TESTING.md](docs/DEVICE_TESTING.md)；分析数据契约见 [docs/PERIOD_EXPORT_SCHEMA.md](docs/PERIOD_EXPORT_SCHEMA.md) 和 [docs/ANALYSIS_POLICY_V1.md](docs/ANALYSIS_POLICY_V1.md)。
+
+## 数据与隐私
+
+PhoneMood 不申请 `INTERNET` 权限。数据保存在 Android 本地数据库中，报告导出到 `Downloads/PhoneMoodHealth/`。报告可能包含 App 包名、使用时间和情绪评分，分享时请确认接收方和范围。
+
+## 项目结构
+
+- `app/src/main/java/com/phonemood/ui/`：Compose 用户界面
+- `app/src/main/java/com/phonemood/monitoring/`：使用情况读取和 session 计算
+- `app/src/main/java/com/phonemood/mood/`：情绪提醒、通知和悬浮卡片
+- `app/src/main/java/com/phonemood/data/`：Room 数据库和数据仓库
+- `app/src/main/java/com/phonemood/analysis/`：周期统计和本地分析
+- `app/src/test/` 与 `app/src/androidTest/`：单元测试和设备测试
+- `docs/`：设计、验证、schema、示例和测试文档
