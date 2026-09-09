@@ -96,7 +96,7 @@
     <string name="see_all">查看全部</string>
     <string name="as_you_use_your_phone_your_most_used_apps_will_appear_here">使用手机后，常用应用会显示在这里。</string>
     <string name="apps_that_don_t_count">不计入时长的应用</string>
-    <string name="phonemood_your_launcher_keyboard_and_system_controls_are_excluded_automatic">PhoneMood、桌面、键盘和系统控制界面会自动排除。可在下方添加其他 Android 应用包名，每行一个。</string>
+    <string name="phonemood_your_launcher_keyboard_and_system_controls_are_excluded_automatic">PhoneMood、桌面、键盘、通话界面和系统控制界面会自动排除。可在下方添加其他 Android 应用包名，每行一个。</string>
     <string name="additional_excluded_apps">额外排除的应用</string>
     <string name="enter_package_names_such_as_com_example_app">请输入应用包名，例如 com.example.app。</string>
     <string name="save_exclusions">保存排除列表</string>
@@ -186,4 +186,12 @@
     <string name="period_mood_title">这段时间的心情</string><string name="period_mood_average">有评分日期的日均心情：%1$.1f / 10</string><string name="period_mood_support">%1$d 天有评分 · 共 %2$d 次记录</string><string name="period_mood_early">前半段日均 %1$.1f，后半段日均 %2$.1f。</string><string name="period_mood_limit">只比较有评分的日期；没有评分的日期不按 0 分计算。这是描述性比较。</string><string name="period_mood_insufficient">有评分的日期还不足以比较前后变化，已有评分仍显示在下方。</string><string name="period_mood_empty">这个时段没有心情评分，可选择其他时段查看。</string>
     <string name="review_zone">日期按记录时区 %1$s 划分</string><string name="review_back_period">返回周期回顾</string><string name="review_all_ratings">查看全部 %1$d 次评分</string><string name="review_less_ratings">收起评分（共 %1$d 次）</string>
     <string name="review_empty_note">这个时段没有可用记录。未记录不代表没有使用手机。</string><string name="review_preview_note">包含今天的临时记录，今天尚未结束，不计入完整日日均。</string><string name="review_finished_note">所选日期已结束。记录是否完整取决于当时的记录状态。</string><string name="review_in_progress">进行中</string><string name="review_no_records">暂无记录</string><string name="review_mood">心情记录</string><string name="review_no_mood">这个时段没有心情评分。</string><string name="review_more_dates">其他日期</string><string name="review_previous">更早一期</string><string name="review_next">更晚一期</string><string name="review_yesterday">昨天</string><string name="review_last_week">上周</string><string name="review_last_days">近 %1$d 天</string><string name="review_choose_day">选择日期</string><string name="review_today">今日预览</string><string name="review_range_help">近 7／30 天截至昨天；上周为周一至周日。</string>
+    <string name="this_is_a_test_check_in_no_mood_data_is_saved">这是一条测试提醒，不会保存心情数据。</string>
+    <string name="check_ins_arrive_without_a_sound">提醒无声送达</string>
+    <string name="do_not_disturb_is_holding_check_ins">勿扰模式正在拦截提醒</string>
+    <string name="settings_tests">测试</string>
+    <string name="test_a_check_in">测试提醒</string>
+    <string name="hear_whether_one_reaches_you_inside_a_fullscreen_video">看看全屏视频时能不能听见</string>
+    <string name="try_it">试一下</string>
+    <string name="a_test_check_in_arrives_in_5_seconds_open_the_app_that_swallows_them">5 秒后发送测试提醒，请打开收不到提醒的那个应用。</string>
 </resources>

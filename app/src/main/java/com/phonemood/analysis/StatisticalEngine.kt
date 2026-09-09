@@ -34,6 +34,8 @@ data class Fit(val result: ModelResult, val focal: Int) {
     val se get() = result.covariance.takeIf { it.isNotEmpty() }?.get(focal)?.get(focal)?.coerceAtLeast(0.0)?.let(::sqrt)
 }
 
+data class PhoneSample(val previous: MoodRow, val current: MoodRow)
+
 /** SVD on independently selected, scaled columns. No inversion of X'X. */
 object LinearFit {
     fun fit(id: String, outcome: String, ids: List<String>, x: List<DoubleArray>, y: DoubleArray,
@@ -103,7 +105,7 @@ object StatisticalEngine {
             models += ModelResult(id,if(kind=="DAILY_USE_TREND") "DAILY_MINUTES" else if(kind=="SESSION_LENGTH") "MOOD_SCORE" else "END_MOOD_SCORE","NOT_ESTIMABLE",emptyList(),warnings=listOf(reason))
             findings += Finding(id,id,kind,app,"INSUFFICIENT_DATA",n=n,templateKey="INSUFFICIENT_DATA",reasons=listOf(reason))
         }
-        val daily = data.daily.filter { it.complete && !it.ongoing }
+        val daily = data.daily.filter { it.complete && !it.ongoing && it.scores.isNotEmpty() }
         if (daily.size >= 3) {
             fun fit(ds: List<DayData>, inference: Boolean = true) = LinearFit.fit("daily_trend","DAILY_MINUTES",ds.map { it.date },
                 ds.map { doubleArrayOf(1.0,(java.time.LocalDate.parse(it.date).toEpochDay() - java.time.LocalDate.parse(data.daily.first().date).toEpochDay()).toDouble()) },
@@ -121,7 +123,7 @@ object StatisticalEngine {
         coroutineContext.ensureActive()
 
         val sessionRows = data.rows.filter { it.reasons.isEmpty() && it.sessionComplete }
-        if (data.validRatings >= AnalysisPolicy.MIN_RATINGS) {
+        if (data.validRatings >= AnalysisPolicy.MIN_EARLY_RATINGS) {
             val fit = sessionFit(sessionRows)
             if (fit != null) {
                 models += fit.result
@@ -139,7 +141,25 @@ object StatisticalEngine {
         } else insufficient("session_mood","SESSION_LENGTH","NEED_20_RATINGS",data.validRatings)
 
         val transitions = data.transitions.filter { it.usable }
-        if (data.validRatings < AnalysisPolicy.MIN_RATINGS) insufficient("app_mood","APP_USAGE","NEED_20_RATINGS",data.validRatings)
+        val phoneRows = data.rows.sortedBy { it.at }.zipWithNext().mapNotNull { (a,b) ->
+            if (a.reasons.isNotEmpty() || b.reasons.isNotEmpty() || !b.complete ||
+                b.phoneMs !in 0..AnalysisPolicy.WINDOW || b.at-a.at !in 1..AnalysisPolicy.MAX_PAIR ||
+                data.facts.configurations.any { it.timestampUtc in (a.at+1)..b.at && it.setting in setOf("excludedPackages","monitoringEnabled") }) null
+            else PhoneSample(a,b)
+        }
+        val phoneFit = if(phoneRows.size >= AnalysisPolicy.MIN_EARLY_RATINGS) phoneFit(phoneRows,data.facts.zone) else null
+        val phoneContrast = quantile(phoneRows.map { it.current.phoneMs/60000.0 },.75) - quantile(phoneRows.map { it.current.phoneMs/60000.0 },.25)
+        if(phoneFit != null && phoneContrast >= 2) {
+            models += phoneFit.result
+            val days=phoneRows.map { it.current.day }.distinct()
+            val refits=if(days.size>=3) days.map { day ->
+                coroutineContext.ensureActive()
+                blockResult(day,phoneFit(phoneRows.filter { it.current.day!=day },data.facts.zone,false),phoneContrast,phoneFit.beta*phoneContrast,AnalysisPolicy.NEAR_ZERO)
+            } else emptyList()
+            val consistency=refits.takeIf { it.isNotEmpty() }?.let { it.count { r -> r.agrees }.toDouble()/it.size }
+            findings += finding(phoneFit,"PHONE_USAGE",null,phoneContrast,days.size,consistency,AnalysisPolicy.NEAR_ZERO).copy(blockRefits=refits)
+        } else insufficient("phone_mood","PHONE_USAGE","NEED_PHONE_VARIATION",phoneRows.size)
+        if (data.validRatings < AnalysisPolicy.MIN_APP_RATINGS) insufficient("app_mood","APP_USAGE","NEED_APP_RATINGS",data.validRatings)
         else {
             for (app in transitions.flatMap { it.apps.keys }.distinct().sorted()) {
                 coroutineContext.ensureActive()
@@ -147,19 +167,19 @@ object StatisticalEngine {
                 if (exposure < AnalysisPolicy.MIN_APP_EXPOSED) { insufficient("app:$app","APP_USAGE","RARE_APP",transitions.size,app); continue }
                 val h = supportedComparison(transitions,app)
                 if (h < 2) { insufficient("app:$app","APP_USAGE","NO_SUPPORTED_COMPARISON",transitions.size,app); continue }
-                val fit = appFit(transitions,app)
+                val fit = appFit(transitions,app,zone=data.facts.zone,sensitivity=true)
                 if (fit == null) { insufficient("app:$app","APP_USAGE","LOW_RESIDUAL_APP_VARIATION",transitions.size,app); continue }
                 models += fit.result
                 val blocks = blocks(transitions.map { it.day },transitions.map { it.sessionId })
                 val refits = if (blocks.distinct().size >= 3) blocks.distinct().map { block ->
                     coroutineContext.ensureActive()
-                    blockResult(block,appFit(transitions.filterIndexed { i,_ -> blocks[i] != block },app,inference=false),h,fit.beta*h,AnalysisPolicy.NEAR_ZERO)
+                    blockResult(block,appFit(transitions.filterIndexed { i,_ -> blocks[i] != block },app,zone=data.facts.zone,sensitivity=true,inference=false),h,fit.beta*h,AnalysisPolicy.NEAR_ZERO)
                 } else emptyList()
                 val consistency = refits.takeIf { it.isNotEmpty() }?.let { it.count { r -> r.agrees }.toDouble()/it.size }
                 var f = finding(fit,"APP_USAGE",app,h,transitions.map { it.sessionId }.distinct().size,consistency,AnalysisPolicy.NEAR_ZERO).copy(blockRefits=refits)
                 // Eligibility is determined solely by input, never by significance.
                 if (transitions.size >= 40 && transitions.map { it.day }.distinct().size >= 7 && transitions.map { localHour(it.end,data.facts.zone).toInt()/4 }.distinct().size >= 3) {
-                    val sensitive = appFit(transitions,app,zone=data.facts.zone,sensitivity=true)
+                    val sensitive = appFit(transitions,app,zone=data.facts.zone)
                     if (sensitive != null) {
                         models += sensitive.result
                         f = f.copy(sensitivityModelId=sensitive.result.id)
@@ -174,6 +194,14 @@ object StatisticalEngine {
         val top = withQ.filter { it.kind=="APP_USAGE" && it.status in setOf("EARLY_HIGHER","EARLY_LOWER") }
             .sortedWith(compareByDescending<Finding> { it.consistency != null }.thenByDescending { abs(it.difference ?: 0.0) }.thenByDescending { it.n }.thenBy { it.appId }).take(3).map { it.id }
         return Statistics(models=models,findings=withQ,topAppIds=top)
+    }
+
+    fun phoneFit(rows: List<PhoneSample>, zone: String, inference: Boolean = true): Fit? {
+        val names=listOf("intercept","previous_mood","elapsed_minutes","hour_sin","hour_cos","phone_minutes")
+        return LinearFit.fit("phone_mood","MOOD_SCORE",rows.map { it.current.id },rows.map { (a,b) ->
+            val phase=2*PI*localHour(b.at,zone)/24
+            doubleArrayOf(1.0,a.score.toDouble(),(b.at-a.at)/60000.0,sin(phase),cos(phase),b.phoneMs/60000.0)
+        },rows.map { it.current.score.toDouble() }.toDoubleArray(),names,"phone_minutes",clusters=rows.map { it.current.day },inference=inference)
     }
 
     fun sessionFit(rows: List<MoodRow>, inference: Boolean = true): Fit? {

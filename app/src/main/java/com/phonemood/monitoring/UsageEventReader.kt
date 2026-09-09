@@ -21,6 +21,11 @@ class AppFilter(context: Context, private val configuration: Configuration) {
         // handler accidentally excludes the entire Settings app. Only exclude the selected home.
         context.packageManager.resolveActivity(Intent(Intent.ACTION_MAIN).addCategory(Intent.CATEGORY_HOME), android.content.pm.PackageManager.MATCH_DEFAULT_ONLY)?.activityInfo?.packageName?.takeUnless { it == "android" }?.let { add(it) }
         context.getSystemService(InputMethodManager::class.java).inputMethodList.forEach { add(it.packageName) }
+        // A phone call is not the phone use this app is about, and neither a card nor a heads-up
+        // can reach someone mid-call. Excluding the in-call screen keeps a long call from banking
+        // up check-ins that would all arrive the moment it ends.
+        add("com.android.incallui"); add("com.samsung.android.incallui"); add("com.android.server.telecom")
+        runCatching { context.getSystemService(android.telecom.TelecomManager::class.java)?.defaultDialerPackage }.getOrNull()?.let { add(it) }
         addAll(configuration.excluded)
     }
     fun excludes(pkg: String) = pkg in ignored || pkg.isBlank()

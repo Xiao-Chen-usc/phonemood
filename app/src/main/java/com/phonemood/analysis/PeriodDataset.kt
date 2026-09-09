@@ -6,14 +6,16 @@ import kotlinx.coroutines.sync.withLock
 import java.time.*
 
 object AnalysisPolicy {
-    const val VERSION = "1.0"
+    const val VERSION = "1.1"
     const val WINDOW = 30 * 60_000L
     const val MAX_PAIR = 120 * 60_000L
     const val MAX_LATENCY = 5 * 60_000L
     const val MIN_RATINGS = 20
+    const val MIN_EARLY_RATINGS = 6
+    const val MIN_APP_RATINGS = 10
     const val NEAR_ZERO = .2
-    const val MIN_APP_EXPOSED = 5
-    const val MIN_APP_COMPARISONS = 5
+    const val MIN_APP_EXPOSED = 3
+    const val MIN_APP_COMPARISONS = 3
     const val RANK_TOLERANCE = 1e-9
 }
 
@@ -23,15 +25,15 @@ data class Facts(val asOf: Long, val zone: String, val revision: Long, val first
     val gaps: List<MonitoringGap>, val evidence: List<UsageCoverageEvidence>)
 
 /** A short coherent read; no model fitting is performed under the repository lock. */
-suspend fun Repository.analysisFacts(days: Int, now: Long = System.currentTimeMillis(), endDate: LocalDate? = null): Facts = mutex.withLock {
-    require(days in listOf(1, 7, 30))
+suspend fun Repository.analysisFacts(days: Int, now: Long = System.currentTimeMillis(), endDate: LocalDate? = null, cumulative: Boolean = false): Facts = mutex.withLock {
+    require(days in listOf(1, 3, 7, 30))
     db.withTransaction {
         val state = dao.state()
         val zone = dao.firstStart()?.zoneId ?: ZoneId.systemDefault().id
         val today = Instant.ofEpochMilli(now).atZone(ZoneId.of(zone)).toLocalDate()
         val last = endDate ?: today
         require(last <= today)
-        val start = last.minusDays(days - 1L).atStartOfDay(ZoneId.of(zone)).toInstant().toEpochMilli()
+        val start = if (cumulative) state?.firstStartedUtc ?: now else last.minusDays(days - 1L).atStartOfDay(ZoneId.of(zone)).toInstant().toEpochMilli()
         val end = minOf(now, last.plusDays(1).atStartOfDay(ZoneId.of(zone)).toInstant().toEpochMilli())
         val answers = (dao.responsesIn(start, end) + listOfNotNull(dao.responseBefore(start)).filter { it.responseTimestampUtc >= start - AnalysisPolicy.MAX_PAIR }).distinctBy { it.checkpointId }
         val checks = (dao.checkpointsIn(start, end) + answers.mapNotNull { dao.checkpoint(it.checkpointId) }).distinctBy { it.checkpointId }
@@ -95,8 +97,15 @@ private class UsageIntegral(segments: List<UsageSegment>) {
 }
 
 object PeriodDatasetBuilder {
+    fun cumulative(f: Facts): PeriodDataset {
+        val zone = ZoneId.of(f.zone)
+        val today = Instant.ofEpochMilli(f.asOf).atZone(zone).toLocalDate()
+        val first = Instant.ofEpochMilli(f.firstStarted ?: f.asOf).atZone(zone).toLocalDate().coerceAtMost(today)
+        return build(f, (java.time.temporal.ChronoUnit.DAYS.between(first, today) + 1).toInt(), today)
+    }
+
     fun build(f: Facts, days: Int, endDate: LocalDate? = null): PeriodDataset {
-        require(days in listOf(1, 7, 30))
+        require(days > 0)
         val zone = ZoneId.of(f.zone)
         val today = Instant.ofEpochMilli(f.asOf).atZone(zone).toLocalDate()
         val last = endDate ?: today

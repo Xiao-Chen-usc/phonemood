@@ -55,6 +55,9 @@ class OverlayTest {
     @Test fun repeatedPollUsesOneWindowAndDismissalSurvivesControllerRecreation() = runBlocking {
         val c = checkpoint()
         controller.reconcile(); controller.reconcile()
+        // Wait for the window to reach the accessibility tree before counting it; addView is
+        // asynchronous, so counting straight away races the compositor on a loaded device.
+        assertNotNull(button(context.getString(R.string.score_accessibility, 7)))
         assertEquals(1, device.findObjects(By.desc(context.getString(R.string.score_accessibility, 7))).size)
         button(context.getString(R.string.dismiss_mood_card)).click()
         assertTrue(device.wait(Until.gone(By.desc(context.getString(R.string.score_accessibility, 7))), 5_000))
@@ -91,5 +94,15 @@ class OverlayTest {
         db.dao().saveState(MonitorState(monitoringEnabled = true))
         device.sleep()
         try { assertNull(controller.reconcile()) } finally { device.wakeUp(); device.executeShellCommand("wm dismiss-keyguard") }
+    }
+    @Test fun aCardOverItsOwnAppIsRecordedAsUnconfirmedRatherThanDelivered() = runBlocking {
+        val c = checkpoint()
+        db.dao().insertEvents(listOf(RawEvent("resume-test-app", System.currentTimeMillis() - 60_000, "RESUME", "test.app", "Test", "UTC")))
+        assertEquals(c.checkpointId, controller.reconcile())
+        val state = db.dao().promptState(c.checkpointId)!!
+        // A fullscreen video in that same app can cover the card, so attaching it is not
+        // evidence that it was seen; only the notification carries delivery for this case.
+        assertNull(state.overlayShownUtc)
+        assertEquals(MoodOverlayController.MAY_BE_COVERED, state.lastOverlayError)
     }
 }

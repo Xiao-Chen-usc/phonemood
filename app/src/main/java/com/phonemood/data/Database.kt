@@ -12,7 +12,9 @@ data class PhoneSession(@PrimaryKey val sessionId: String, val startUtc: Long, v
 @Entity(indices = [Index(value = ["sessionId", "checkpointMinutes"], unique = true), Index("promptTimestampUtc")])
 data class MoodCheckpoint(@PrimaryKey val checkpointId: String, val sessionId: String, val checkpointMinutes: Int, val promptTimestampUtc: Long, val foregroundPackage: String, val zoneId: String, val responseStatus: String = "PENDING", val notifiedUtc: Long? = null)
 @Entity
-data class MoodPromptState(@PrimaryKey val checkpointId: String, val overlayShownUtc: Long? = null, val dismissed: Boolean = false, val snoozedUntilUtc: Long? = null, val lastOverlayError: String? = null)
+data class MoodPromptState(@PrimaryKey val checkpointId: String, val overlayShownUtc: Long? = null, val dismissed: Boolean = false, val snoozedUntilUtc: Long? = null, val lastOverlayError: String? = null,
+    /** Repeat delivery, kept apart from MoodCheckpoint.notifiedUtc so the first delivery stays the exported evidence. */
+    val lastNotifiedUtc: Long? = null, @ColumnInfo(defaultValue = "0") val notifyCount: Int = 0, val notifiedPackage: String? = null)
 @Entity(indices = [Index("responseTimestampUtc")])
 data class MoodResponse(@PrimaryKey val checkpointId: String, val responseTimestampUtc: Long, val score: Int, val zoneId: String = java.time.ZoneId.systemDefault().id)
 @Entity
@@ -45,6 +47,7 @@ interface PhoneMoodDao {
     @Query("SELECT * FROM raw_events WHERE type = 'START' ORDER BY timestampUtc LIMIT 1") suspend fun firstStart(): RawEvent?
     @Query("UPDATE MonitorState SET sourceRevision = sourceRevision + 1 WHERE id = 1") suspend fun bumpRevision()
     @Query("SELECT * FROM raw_events ORDER BY timestampUtc") suspend fun events(): List<RawEvent>
+    @Query("SELECT * FROM raw_events WHERE type = 'RESUME' ORDER BY timestampUtc DESC, id DESC LIMIT 1") suspend fun lastResume(): RawEvent?
     @Insert(onConflict = OnConflictStrategy.IGNORE) suspend fun insertEvents(events: List<RawEvent>)
     @Query("SELECT * FROM UsageSegment ORDER BY startUtc") suspend fun segments(): List<UsageSegment>
     @Query("SELECT * FROM UsageSegment ORDER BY startUtc DESC") fun watchSegments(): Flow<List<UsageSegment>>
@@ -57,6 +60,7 @@ interface PhoneMoodDao {
     @Query("SELECT * FROM MoodCheckpoint ORDER BY promptTimestampUtc") suspend fun checkpoints(): List<MoodCheckpoint>
     @Query("SELECT * FROM MoodCheckpoint ORDER BY promptTimestampUtc DESC") fun watchCheckpoints(): Flow<List<MoodCheckpoint>>
     @Query("SELECT * FROM MoodCheckpoint WHERE checkpointId = :id") suspend fun checkpoint(id: String): MoodCheckpoint?
+    @Query("SELECT COUNT(*) FROM MoodCheckpoint WHERE responseStatus = 'PENDING'") suspend fun pendingCheckpoints(): Int
     @Insert(onConflict = OnConflictStrategy.IGNORE) suspend fun insertCheckpoints(checkpoints: List<MoodCheckpoint>)
     @Update suspend fun updateCheckpointRow(checkpoint: MoodCheckpoint)
     @Transaction suspend fun updateCheckpoint(checkpoint: MoodCheckpoint) { updateCheckpointRow(checkpoint); bumpRevision() }
@@ -81,8 +85,16 @@ interface PhoneMoodDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE) suspend fun saveReport(report: DailyReportState)
 }
 
-@Database(entities = [RawEvent::class, UsageSegment::class, PhoneSession::class, MoodCheckpoint::class, MoodResponse::class, MoodPromptState::class, MonitorState::class, ConfigurationEvent::class, MonitoringGap::class, DailyReportState::class, UsageCoverageEvidence::class], version = 3, exportSchema = true)
+@Database(entities = [RawEvent::class, UsageSegment::class, PhoneSession::class, MoodCheckpoint::class, MoodResponse::class, MoodPromptState::class, MonitorState::class, ConfigurationEvent::class, MonitoringGap::class, DailyReportState::class, UsageCoverageEvidence::class], version = 4, exportSchema = true)
 abstract class PhoneMoodDatabase : RoomDatabase() { abstract fun dao(): PhoneMoodDao }
+
+val MIGRATION_3_4 = object : androidx.room.migration.Migration(3, 4) {
+    override fun migrate(db: androidx.sqlite.db.SupportSQLiteDatabase) {
+        db.execSQL("ALTER TABLE `MoodPromptState` ADD COLUMN `lastNotifiedUtc` INTEGER")
+        db.execSQL("ALTER TABLE `MoodPromptState` ADD COLUMN `notifyCount` INTEGER NOT NULL DEFAULT 0")
+        db.execSQL("ALTER TABLE `MoodPromptState` ADD COLUMN `notifiedPackage` TEXT")
+    }
+}
 
 val MIGRATION_2_3 = object : androidx.room.migration.Migration(2, 3) {
     override fun migrate(db: androidx.sqlite.db.SupportSQLiteDatabase) {

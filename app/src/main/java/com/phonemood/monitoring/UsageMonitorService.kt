@@ -25,6 +25,7 @@ class UsageMonitorService : Service() {
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
     private var job: Job? = null
     private var previewJob: Job? = null
+    private var testJob: Job? = null
     private lateinit var overlays: MoodOverlayController
     private val pollRequests = Channel<Unit>(Channel.CONFLATED)
     private val screenReceiver = object : BroadcastReceiver() {
@@ -53,6 +54,11 @@ class UsageMonitorService : Service() {
         val notifications = MoodNotificationManager(this)
         if (job?.isActive == true) pollRequests.trySend(Unit)
         ServiceCompat.startForeground(this, 1, notifications.ongoing(intent?.action == ACTION_PREVIEW), if (Build.VERSION.SDK_INT >= 34) ServiceInfo.FOREGROUND_SERVICE_TYPE_SPECIAL_USE else 0)
+        if (intent?.action == ACTION_TEST_NOTIFICATION) {
+            // Five seconds is time enough to get back into the video that swallows check-ins.
+            testJob?.cancel()
+            testJob = scope.launch { delay(5_000); notifications.preview() }
+        }
         if (intent?.action == ACTION_PREVIEW) {
             previewJob?.cancel()
             previewJob = scope.launch {
@@ -71,7 +77,7 @@ class UsageMonitorService : Service() {
             var reportDay: LocalDate? = null
             while (isActive) {
                 if (!phoneMood.repository.configuration().enabled) {
-                    if (previewJob?.isActive == true) { delay(1_000); continue }
+                    if (previewJob?.isActive == true || testJob?.isActive == true) { delay(1_000); continue }
                     stopSelf(); break
                 }
                 try {
@@ -81,7 +87,7 @@ class UsageMonitorService : Service() {
                     // heads-up notification audible while the same app remains foreground.
                     val silentCheckpoint = visibleCheckpoint?.takeUnless { id ->
                         phoneMood.repository.dao.checkpoint(id)?.foregroundPackage ==
-                            phoneMood.repository.dao.events().lastOrNull { it.type == "RESUME" }?.packageName
+                            phoneMood.repository.dao.lastResume()?.packageName
                     }
                     notifications.deliver(phoneMood.repository, silentCheckpointId = silentCheckpoint)
                     if (reportDay != LocalDate.now()) { phoneMood.reconcileSoon(); reportDay = LocalDate.now() }
@@ -91,7 +97,8 @@ class UsageMonitorService : Service() {
                 }
                 val power = getSystemService(PowerManager::class.java)
                 val locked = getSystemService(KeyguardManager::class.java).isKeyguardLocked
-                val interval = PollingPolicy.intervalMillis(power.isInteractive, locked, power.isPowerSaveMode)
+                val pending = runCatching { phoneMood.repository.dao.pendingCheckpoints() > 0 }.getOrDefault(false)
+                val interval = PollingPolicy.intervalMillis(power.isInteractive, locked, power.isPowerSaveMode, pending)
                 // Broadcasts interrupt the wait without cancelling an in-flight database transaction.
                 if (interval == null) pollRequests.receive()
                 else withTimeoutOrNull(interval) { pollRequests.receive() }
@@ -109,6 +116,7 @@ class UsageMonitorService : Service() {
     override fun onDestroy() { scope.cancel(); overlays.destroy(); unregisterReceiver(screenReceiver); super.onDestroy() }
     companion object {
         const val ACTION_PREVIEW = "com.phonemood.PREVIEW_OVERLAY"
+        const val ACTION_TEST_NOTIFICATION = "com.phonemood.TEST_NOTIFICATION"
     }
     override fun onBind(intent: Intent?): IBinder? = null
 }

@@ -17,6 +17,7 @@ import org.junit.runner.RunWith
 class MigrationTest {
     @Test fun versionOneFactsSurviveUpgrade() = verifyUpgrade(1)
     @Test fun versionTwoFactsSurviveUpgradeWithoutInventingCoverage() = verifyUpgrade(2)
+    @Test fun versionThreeFactsSurviveTheRepeatDeliveryColumns() = verifyUpgrade(3)
     private fun verifyUpgrade(version: Int) = runBlocking {
         val context = ApplicationProvider.getApplicationContext<Context>()
         val name = "migration-overlay-test.db"
@@ -34,13 +35,15 @@ class MigrationTest {
             legacy.execSQL("INSERT INTO MoodResponse VALUES ('old-check',1002,7,'UTC')")
             legacy.version = version
         }
-        val upgraded = Room.databaseBuilder(context, PhoneMoodDatabase::class.java, name).addMigrations(MIGRATION_1_2, MIGRATION_2_3).build()
+        val upgraded = Room.databaseBuilder(context, PhoneMoodDatabase::class.java, name).addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4).build()
         try {
             assertEquals(7, upgraded.dao().responses().single().score)
             assertEquals("old-check", upgraded.dao().checkpoints().single().checkpointId)
             assertTrue(upgraded.dao().promptStates().isEmpty())
             upgraded.dao().savePromptState(MoodPromptState("old-check", dismissed = true))
             assertTrue(upgraded.dao().promptState("old-check")!!.dismissed)
+            assertEquals(0, upgraded.dao().promptState("old-check")!!.notifyCount)
+            assertNull(upgraded.dao().promptState("old-check")!!.lastNotifiedUtc)
             assertTrue(upgraded.dao().coverage(0,10_000).isEmpty())
             upgraded.dao().saveCoverage(UsageCoverageEvidence(1000,2000,2000))
             assertEquals(1000L,upgraded.dao().coverage(0,10_000).single().startUtc)

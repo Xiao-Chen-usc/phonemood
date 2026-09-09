@@ -45,7 +45,7 @@ import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 import kotlin.math.abs
 
-data class AnalysisContent(val data: PeriodDataset, val stats: Statistics)
+data class AnalysisContent(val data: PeriodDataset, val stats: Statistics, val longTermData: PeriodDataset = data, val longTermStats: Statistics = stats)
 data class AnalysisUiState(val days: Int = 7, val endDate: LocalDate? = null, val content: AnalysisContent? = null, val loading: Boolean = false, val error: Boolean = false)
 
 class AnalysisViewModel(application: Application): AndroidViewModel(application) {
@@ -60,7 +60,7 @@ class AnalysisViewModel(application: Application): AndroidViewModel(application)
     
     private var exportPayload: String? = null
     fun select(days: Int, endDate: LocalDate) {
-        require(days in listOf(1,7,30) && endDate <= today())
+        require(days in listOf(1,3,7,30) && endDate <= today())
         mutable.value=AnalysisUiState(days=days,endDate=endDate)
         refresh()
     }
@@ -74,11 +74,12 @@ class AnalysisViewModel(application: Application): AndroidViewModel(application)
                     val state=app.repository.dao.state()
                     if(state?.monitoringEnabled==true && System.currentTimeMillis()-state.lastHeartbeatUtc>15_000) app.repository.poll()
                     reportingZone=ZoneId.of(app.repository.dao.firstStart()?.zoneId ?: ZoneId.systemDefault().id)
-                    app.repository.analysisFacts(days,endDate=requestedEnd ?: today().minusDays(1))
+                    app.repository.analysisFacts(days,cumulative=true)
                 }
                 val result=withContext(Dispatchers.Default) {
                     val data=PeriodDatasetBuilder.build(facts,days,requestedEnd ?: Instant.ofEpochMilli(facts.asOf).atZone(ZoneId.of(facts.zone)).toLocalDate().minusDays(1))
-                    AnalysisContent(data,StatisticalEngine.analyze(data))
+                    val longTerm = PeriodDatasetBuilder.cumulative(facts)
+                    AnalysisContent(data,StatisticalEngine.analyze(data),longTerm,StatisticalEngine.analyze(longTerm))
                 }
                 if(token==generation) {
                     mutable.value=AnalysisUiState(days=days,endDate=LocalDate.parse(result.data.daily.last().date),content=result)
@@ -96,7 +97,7 @@ class AnalysisViewModel(application: Application): AndroidViewModel(application)
             .debounce(300).collect { refresh() }
     }
     suspend fun prepareExport(content: AnalysisContent): String = withContext(Dispatchers.Default) {
-        exportPayload=PeriodExport.encode(content.data,content.stats,app.packageManager.getPackageInfo(app.packageName,0).versionName.orEmpty())
+        exportPayload=PeriodExport.encodeScreen(content.data,content.stats,content.longTermData,content.longTermStats,app.packageManager.getPackageInfo(app.packageName,0).versionName.orEmpty())
         "PhoneMood_${content.data.days}d_${content.data.daily.first().date}_${content.data.daily.last().date}_${content.data.end}.json"
     }
     suspend fun save(uri: Uri) = withContext(Dispatchers.IO) {
@@ -151,17 +152,19 @@ fun AnalysisScreen(vm: AnalysisViewModel = viewModel()) {
                 IconButton(onClick={vm.refresh()},enabled=!state.loading) { Icon(Icons.Outlined.Refresh,context.getString(R.string.analysis_refresh)) }
             }
             Text(context.getString(R.string.analysis_intro),color=Muted)
+            Spacer(Modifier.height(20.dp))
+            Text(context.getString(R.string.analysis_recent),style=MaterialTheme.typography.titleLarge)
             val today=vm.today()
             val end=state.endDate ?: today.minusDays(1)
             val lastSunday=today.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY)).minusDays(1)
             Column {
                 TextButton(onClick={moreDates=!moreDates}) { Text(context.getString(R.string.trends_more_dates)) }
                 if(moreDates) Row(horizontalArrangement=Arrangement.spacedBy(8.dp)) {
-                    FilterChip(selected=state.days==1 && end==today.minusDays(1),onClick={vm.select(1,today.minusDays(1))},label={Text(context.getString(R.string.review_yesterday))})
-                    FilterChip(selected=state.days==7 && end==lastSunday,onClick={vm.select(7,lastSunday)},label={Text(context.getString(R.string.review_last_week))})
+                    FilterChip(colors=FilterChipDefaults.filterChipColors(selectedContainerColor=Sage,selectedLabelColor=Forest),selected=state.days==1 && end==today.minusDays(1),onClick={vm.select(1,today.minusDays(1))},label={Text(context.getString(R.string.review_yesterday))})
+                    FilterChip(colors=FilterChipDefaults.filterChipColors(selectedContainerColor=Sage,selectedLabelColor=Forest),selected=state.days==7 && end==lastSunday,onClick={vm.select(7,lastSunday)},label={Text(context.getString(R.string.review_last_week))})
                 }
                 Row(horizontalArrangement=Arrangement.spacedBy(8.dp)) {
-                    listOf(7,30).forEach { days -> FilterChip(selected=state.days==days && end==today.minusDays(1),onClick={vm.select(days,today.minusDays(1))},label={Text(context.getString(R.string.review_last_days,days))}) }
+                    listOf(3,7,30).forEach { days -> FilterChip(colors=FilterChipDefaults.filterChipColors(selectedContainerColor=Sage,selectedLabelColor=Forest),selected=state.days==days && end==today.minusDays(1),onClick={vm.select(days,today.minusDays(1))},label={Text(context.getString(R.string.analysis_period_days,days))}) }
                 }
                 if(moreDates) Row(horizontalArrangement=Arrangement.spacedBy(8.dp)) {
                     TextButton(onClick={
@@ -185,31 +188,34 @@ fun AnalysisScreen(vm: AnalysisViewModel = viewModel()) {
         if(state.error) item { Text(context.getString(R.string.analysis_error),color=MaterialTheme.colorScheme.error) }
         message?.let { text -> item { Text(text) } }
         state.content?.let { content ->
-            val data=content.data;val stats=content.stats
+            val data=content.data
             item {
                 Text(if(data.days==1) data.daily.first().date else "${data.daily.first().date} – ${data.daily.last().date}",style=MaterialTheme.typography.titleMedium)
             }
             item { PeriodMoodSummary(data) }
-            val ratedDays=data.daily.filter { it.scores.isNotEmpty() }
-            if (ratedDays.size >= 2) item {
+            val usageDays=data.daily.filter { it.activeMs>0 || it.verifiedMs>0 }
+            item {
                 SoftCard(Sage) {
                     Text(context.getString(R.string.analysis_daily),style=MaterialTheme.typography.titleLarge)
-                    Text(context.getString(R.string.analysis_total,formatAnalysisDuration(ratedDays.sumOf { it.activeMs })),style=MaterialTheme.typography.titleMedium)
-                    if(ratedDays.size>1) {
-                        Text(context.getString(R.string.analysis_daily_mean,formatAnalysisDuration(ratedDays.map { it.activeMs }.average().toLong())))
-                        Text(context.getString(R.string.analysis_typical,formatAnalysisDuration(quantile(ratedDays.map { it.activeMs.toDouble() },.25).toLong()),formatAnalysisDuration(quantile(ratedDays.map { it.activeMs.toDouble() },.75).toLong())))
+                    Text(context.getString(R.string.analysis_total,if(usageDays.isEmpty()) "—" else formatAnalysisDuration(usageDays.sumOf { it.activeMs })),style=MaterialTheme.typography.titleMedium)
+                    if(usageDays.size>1) {
+                        Text(context.getString(R.string.analysis_daily_mean,formatAnalysisDuration(usageDays.map { it.activeMs }.average().toLong())))
+                        Text(context.getString(R.string.analysis_typical,formatAnalysisDuration(quantile(usageDays.map { it.activeMs.toDouble() },.25).toLong()),formatAnalysisDuration(quantile(usageDays.map { it.activeMs.toDouble() },.75).toLong())))
                     }
                     val color=Forest
                     Canvas(Modifier.fillMaxWidth().height(90.dp)) {
-                        val max=ratedDays.maxOfOrNull { it.activeMs }?.coerceAtLeast(1) ?: 1L
-                        val step=size.width/ratedDays.size
-                        ratedDays.forEachIndexed { i,d -> drawLine(color,
+                        val max=usageDays.maxOfOrNull { it.activeMs }?.coerceAtLeast(1) ?: 1L
+                        val step=size.width/data.days
+                        data.daily.forEachIndexed { i,d -> if(d in usageDays) drawLine(color,
                             Offset(step*(i+.5f),size.height),Offset(step*(i+.5f),size.height*(1-d.activeMs.toFloat()/max)),strokeWidth=(step*.65f).coerceAtMost(28f)) }
                     }
-                    if(ratedDays.size>2) stats.findings.firstOrNull { it.kind=="DAILY_USE_TREND" }?.let { FindingBody(it) }
+                    Row(Modifier.fillMaxWidth(),horizontalArrangement=Arrangement.SpaceBetween) {
+                        Text(data.daily.first().date,style=MaterialTheme.typography.bodySmall)
+                        if(data.days>1) Text(data.daily.last().date,style=MaterialTheme.typography.bodySmall)
+                    }
                     var expanded by remember(data.start, data.days) { mutableStateOf(false) }
                     TextButton(onClick={expanded=!expanded}) { Text(context.getString(if(expanded) R.string.analysis_hide_data else R.string.analysis_view_data)) }
-                    if(expanded) ratedDays.forEach { day ->
+                    if(expanded) usageDays.forEach { day ->
                         val hasData=day.activeMs>0 || day.verifiedMs>0
                         TextButton(onClick={ if(state.days>1) { parentEnd=state.endDate.toString();parentDays=state.days };vm.select(1,LocalDate.parse(day.date))}, modifier=Modifier.fillMaxWidth()) {
                             Text(context.getString(R.string.analysis_day_row,day.date,if(hasData) formatAnalysisDuration(day.activeMs) else "—",context.getString(if(day.ongoing) R.string.review_in_progress else if(!hasData) R.string.review_no_records else if(day.complete) R.string.analysis_known else R.string.analysis_partial)))
@@ -217,17 +223,39 @@ fun AnalysisScreen(vm: AnalysisViewModel = viewModel()) {
                     }
                 }
             }
-            if(data.days>1) {
             item {
+                Spacer(Modifier.height(8.dp))
+                Text(context.getString(R.string.analysis_long_term),style=MaterialTheme.typography.headlineSmall)
+                Text(context.getString(R.string.analysis_long_term_basis),style=MaterialTheme.typography.bodySmall,color=Muted)
+            }
+            val longStats=content.longTermStats
+            val phoneFinding=longStats.findings.firstOrNull { it.kind=="PHONE_USAGE" && it.status!="INSUFFICIENT_DATA" }
+            val appFindings=longStats.topAppIds.take(if(phoneFinding==null) 3 else 2).map { id -> longStats.findings.first { it.id==id } }
+            if(phoneFinding==null && appFindings.isEmpty()) item {
                 SoftCard(Sage) {
-                    Text(context.getString(R.string.analysis_apps),style=MaterialTheme.typography.titleLarge)
-                    if(stats.topAppIds.isEmpty()) Text(context.getString(R.string.analysis_no_apps))
-                    stats.topAppIds.forEach { id -> stats.findings.first { it.id==id }.let { FindingBody(it,data.names[it.appId] ?: it.appId.orEmpty()) } }
-                    if(stats.topAppIds.isEmpty()) {
-                        stats.findings.firstOrNull { it.kind=="APP_USAGE" }?.let { FindingBody(it,data.names[it.appId] ?: it.appId.orEmpty()) }
-                    }
+                    Text(context.getString(R.string.analysis_collecting_title),style=MaterialTheme.typography.titleLarge)
+                    Text(context.getString(R.string.analysis_collecting_body),color=Muted)
                 }
             }
+            phoneFinding?.let { finding -> item {
+                SoftCard(Sage) {
+                    Text(context.getString(R.string.analysis_phone_mood),style=MaterialTheme.typography.titleLarge)
+                    Text(context.getString(R.string.analysis_early_observation),style=MaterialTheme.typography.labelMedium,color=Muted)
+                    FindingBody(finding)
+                }
+            } }
+            appFindings.forEach { finding -> item {
+                SoftCard(Sage) {
+                    Text(content.longTermData.names[finding.appId] ?: finding.appId.orEmpty(),style=MaterialTheme.typography.titleLarge)
+                    Text(context.getString(R.string.analysis_early_observation),style=MaterialTheme.typography.labelMedium,color=Muted)
+                    FindingBody(finding,content.longTermData.names[finding.appId] ?: finding.appId.orEmpty())
+                }
+            } }
+            item {
+                TextButton(onClick={showMethodPage=true}, modifier=Modifier.fillMaxWidth().heightIn(min=48.dp)) {
+                    Text(context.getString(R.string.analysis_method_link), modifier=Modifier.weight(1f))
+                    Text("→")
+                }
             }
             item {
                 var showLogs by remember(data.start,data.days) { mutableStateOf(false) }
@@ -255,14 +283,6 @@ fun AnalysisScreen(vm: AnalysisViewModel = viewModel()) {
                         catch(_: Exception) { message=context.getString(R.string.export_failed) }
                         finally { exporting=false }
                     }}) { Text(context.getString(R.string.analysis_share)) }
-                }
-            }
-            item {
-                SoftCard(Peach) {
-                    TextButton(onClick={showMethodPage=true}, modifier=Modifier.fillMaxWidth().heightIn(min=48.dp)) {
-                        Text(context.getString(R.string.analysis_method_link), modifier=Modifier.weight(1f))
-                        Text("→")
-                    }
                 }
             }
         }
@@ -310,13 +330,14 @@ private fun FindingBody(f: Finding,name: String = "") {
             when(f.kind) {
                 "DAILY_USE_TREND" -> context.getString(R.string.analysis_trend,context.getString(if(f.status=="EARLY_HIGHER") R.string.analysis_increasing else R.string.analysis_decreasing),abs(f.difference ?: 0.0))
                 "SESSION_LENGTH" -> context.getString(R.string.analysis_session_finding,f.comparisonValue ?: 0.0,direction,abs(f.difference ?: 0.0))
+                "PHONE_USAGE" -> context.getString(R.string.analysis_phone_finding,f.comparisonValue ?: 0.0,direction,abs(f.difference ?: 0.0))
                 else -> context.getString(R.string.analysis_app_finding,name,f.comparisonValue ?: 0.0,direction,abs(f.difference ?: 0.0))
             }
         }
         "NO_NOTICEABLE_TENDENCY" -> context.getString(R.string.analysis_no_tendency)
         "MIXED_TENDENCY" -> context.getString(if(f.templateKey=="TIME_ADJUSTMENT_SENSITIVE") R.string.analysis_time_sensitive else R.string.analysis_mixed)
         else -> context.getString(when(f.reasons.firstOrNull()) {
-            "NEED_20_RATINGS" -> R.string.analysis_need_ratings
+            "NEED_20_RATINGS","NEED_APP_RATINGS" -> R.string.analysis_need_ratings
             "NEED_COMPLETE_DAYS" -> R.string.analysis_need_days
             "NEED_WITHIN_SESSION_VARIATION" -> R.string.analysis_need_sessions
             "RARE_APP","NO_SUPPORTED_COMPARISON" -> R.string.analysis_need_app_support

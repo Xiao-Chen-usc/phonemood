@@ -26,9 +26,11 @@ class AnalysisFeatureTest {
         val uri=vm.share(content)
         val shared=app.contentResolver.openInputStream(uri)!!.bufferedReader().use { it.readText() }
         val doc=Json.parseToJsonElement(shared).jsonObject
-        assertEquals("2.0",doc.getValue("schema_version").jsonPrimitive.content)
-        assertEquals(7,doc.getValue("days").jsonArray.size)
-        assertTrue(doc.getValue("analysis_matrix").jsonObject.getValue("rows").jsonArray.isEmpty())
+        assertEquals("2.1",doc.getValue("schema_version").jsonPrimitive.content)
+        val period=doc.getValue("selected_period").jsonObject
+        assertEquals(7,period.getValue("days").jsonArray.size)
+        assertTrue(period.getValue("analysis_matrix").jsonObject.getValue("rows").jsonArray.isEmpty())
+        assertTrue(doc.containsKey("long_term"))
         val target=File(app.cacheDir,"analysis-exports/save-test.json")
         try {
             vm.prepareExport(content)

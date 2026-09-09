@@ -14,7 +14,7 @@ import kotlinx.coroutines.sync.withLock
 
 class PhoneMoodApp : Application() {
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
-    val database by lazy { Room.databaseBuilder(this, PhoneMoodDatabase::class.java, "phonemood.db").addMigrations(MIGRATION_1_2, MIGRATION_2_3).build() }
+    val database by lazy { Room.databaseBuilder(this, PhoneMoodDatabase::class.java, "phonemood.db").addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4).build() }
     val repository by lazy { Repository(this, database, SettingsStore(this)) }
     val reports by lazy { DailyReportGenerator(this, repository) }
     override fun onCreate() {

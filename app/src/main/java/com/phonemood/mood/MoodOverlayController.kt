@@ -25,18 +25,16 @@ class MoodOverlayController(
         }
         if (withContext(Dispatchers.Main.immediate) { window.checkpointId } == PREVIEW_ID) return@withLock null
         val presentations = repository.dao.promptStates().associateBy { it.checkpointId }
-        val latestForegroundPackage = repository.dao.events().lastOrNull { it.type == "RESUME" }?.packageName
+        val latestForegroundPackage = repository.dao.lastResume()?.packageName
         val checkpoint = repository.dao.checkpoints().lastOrNull { c ->
             val p = presentations[c.checkpointId]
             val ordinary = OverlayPolicy.eligible(now, c.promptTimestampUtc, c.responseStatus, p?.dismissed ?: false, p?.snoozedUntilUtc)
-            val sameForegroundApp = c.foregroundPackage == latestForegroundPackage
-            val deferredApp = c.responseStatus == "PENDING" &&
-                latestForegroundPackage != null && !sameForegroundApp &&
-                p?.dismissed != true && p?.snoozedUntilUtc == null
-            // An overlay can be accepted by WindowManager yet hidden by a fullscreen
-            // video surface. Keep the pending checkpoint until the foreground app
-            // changes, then present it again instead of losing it as MISSED.
-            (ordinary || deferredApp) && !(sameForegroundApp && !ordinary)
+            // An overlay can be accepted by WindowManager yet hidden by a fullscreen video
+            // surface. Keep the pending checkpoint for as long as the user stays in that app,
+            // then present it again the moment another app comes forward.
+            val again = OverlayPolicy.represent(c.responseStatus, p?.dismissed == true, p?.snoozedUntilUtc,
+                foregroundChanged = latestForegroundPackage != null && c.foregroundPackage != latestForegroundPackage)
+            if (c.foregroundPackage == latestForegroundPackage) ordinary else ordinary || again
         }
         if (checkpoint == null) { withContext(Dispatchers.Main.immediate) { window.hide() }; return@withLock null }
         val wasVisible = withContext(Dispatchers.Main.immediate) { window.checkpointId == checkpoint.checkpointId }
@@ -49,9 +47,13 @@ class MoodOverlayController(
         val previous = presentations[checkpoint.checkpointId] ?: MoodPromptState(checkpoint.checkpointId)
         if (shown) {
             val shownAt = if (!wasVisible) now else previous.overlayShownUtc ?: now
-            if (previous.overlayShownUtc == null || previous.lastOverlayError != null || !wasVisible) repository.dao.savePromptState(previous.copy(overlayShownUtc = shownAt, lastOverlayError = null))
-            val lifetimeStart = shownAt
-            if (!wasVisible) expireAfter(checkpoint.checkpointId, lifetimeStart + OverlayPolicy.PROMPT_LIFETIME_MS - now)
+            // WindowManager accepted the card, but a fullscreen surface in the app this
+            // checkpoint was raised in can still hide it. Record the attempt without claiming
+            // the card was seen; the notification carries delivery for that case.
+            val next = if (checkpoint.foregroundPackage == latestForegroundPackage) previous.copy(lastOverlayError = MAY_BE_COVERED)
+                else previous.copy(overlayShownUtc = shownAt, lastOverlayError = null)
+            if (next != previous) repository.dao.savePromptState(next)
+            if (!wasVisible) expireAfter(checkpoint.checkpointId, shownAt + OverlayPolicy.PROMPT_LIFETIME_MS - now)
             checkpoint.checkpointId
         } else {
             repository.dao.savePromptState(previous.copy(lastOverlayError = "WINDOW_NOT_ATTACHED"))
@@ -108,5 +110,7 @@ class MoodOverlayController(
     fun destroy() { scope.cancel(); window.hide() }
     companion object {
         const val PREVIEW_ID = "phonemood-preview"
+        /** Attached over the app the checkpoint came from: presentation is unconfirmed, not delivery evidence. */
+        const val MAY_BE_COVERED = "OVERLAY_MAY_BE_COVERED"
     }
 }

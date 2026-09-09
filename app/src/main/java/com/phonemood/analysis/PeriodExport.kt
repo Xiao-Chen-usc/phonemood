@@ -148,9 +148,9 @@ object PeriodExport {
             put("statistical_analysis",json.encodeToJsonElement(stats).jsonObject.let { serialized -> buildJsonObject {
                 serialized.forEach { (k,v) -> put(k,v) }
                 put("policy_snapshot",buildJsonObject {
-                    put("minimum_ratings",20);put("max_pair_ms",AnalysisPolicy.MAX_PAIR);put("max_response_latency_ms",AnalysisPolicy.MAX_LATENCY)
+                    put("minimum_ratings",AnalysisPolicy.MIN_EARLY_RATINGS);put("app_minimum_ratings",AnalysisPolicy.MIN_APP_RATINGS);put("max_pair_ms",AnalysisPolicy.MAX_PAIR);put("max_response_latency_ms",AnalysisPolicy.MAX_LATENCY)
                     put("minimum_complete_trend_days",3);put("near_zero_mood_points",.2);put("block_consistency_threshold",.8)
-                    put("app_min_exposed_rows",5);put("app_min_matched_rows",10);put("app_min_comparison_minutes",2)
+                    put("app_min_exposed_rows",AnalysisPolicy.MIN_APP_EXPOSED);put("app_min_matched_rows",2*AnalysisPolicy.MIN_APP_COMPARISONS);put("app_min_comparison_minutes",2)
                     put("app_match_total_minutes_tolerance",5);put("app_match_elapsed_minutes_tolerance",10);put("app_match_start_score_tolerance",1)
                     put("app_comparison","Median absolute app-minute difference among supported pairs, capped at 30; not a fixed exposure window.")
                     put("time_sensitivity_min_rows",40);put("time_sensitivity_min_days",7);put("time_sensitivity_min_4h_bins",3)
@@ -171,8 +171,13 @@ object PeriodExport {
     }
 
     fun encode(d: PeriodDataset,s: Statistics,version: String): String = json.encodeToString(document(d,s,version))
+    fun encodeScreen(d: PeriodDataset,s: Statistics,longTerm: PeriodDataset,longStats: Statistics,version: String): String = json.encodeToString(buildJsonObject {
+        put("schema_version","2.1")
+        put("selected_period",document(d,s,version))
+        put("long_term",document(longTerm,longStats,version))
+    })
     fun validate(d: PeriodDataset,s: Statistics) {
-        require(d.daily.size==d.days && d.days in listOf(1,7,30))
+        require(d.daily.size==d.days && d.days>0)
         require(d.rows.map { it.id }.distinct().size==d.rows.size)
         require(d.rows.all { it.phoneMs in 0..AnalysisPolicy.WINDOW && it.apps.values.sum()==it.phoneMs })
         require(d.transitions.all { it.apps.values.sum()==it.phoneMs })

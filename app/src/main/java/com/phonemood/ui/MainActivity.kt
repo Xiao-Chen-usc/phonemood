@@ -98,14 +98,14 @@ fun PhoneMoodScreen() {
     var now by remember { mutableLongStateOf(System.currentTimeMillis()) }
     var usageAccess by remember { mutableStateOf(context.hasUsageAccess()) }
     var overlayPermission by remember { mutableStateOf(Settings.canDrawOverlays(context)) }
-    var notifications by remember { mutableStateOf(MoodNotificationManager(context).canPrompt()) }
+    var reach by remember { mutableStateOf(MoodNotificationManager(context).reach()) }
     var busy by remember { mutableStateOf(false) }
     val snackbar = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
     val lifecycle = LocalLifecycleOwner.current
-    val permission = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { notifications = MoodNotificationManager(context).canPrompt() }
+    val permission = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { reach = MoodNotificationManager(context).reach() }
     DisposableEffect(lifecycle) {
-        val observer = LifecycleEventObserver { _, event -> if (event == Lifecycle.Event.ON_RESUME) { usageAccess = context.hasUsageAccess(); overlayPermission = Settings.canDrawOverlays(context); notifications = MoodNotificationManager(context).canPrompt(); now = System.currentTimeMillis() } }
+        val observer = LifecycleEventObserver { _, event -> if (event == Lifecycle.Event.ON_RESUME) { usageAccess = context.hasUsageAccess(); overlayPermission = Settings.canDrawOverlays(context); reach = MoodNotificationManager(context).reach(); now = System.currentTimeMillis() } }
         lifecycle.lifecycle.addObserver(observer); onDispose { lifecycle.lifecycle.removeObserver(observer) }
     }
     LaunchedEffect(Unit) { while (true) { now = System.currentTimeMillis(); delay(10_000) } }
@@ -132,6 +132,11 @@ fun PhoneMoodScreen() {
     fun previewOverlay() {
         runCatching { ContextCompat.startForegroundService(context, Intent(context, UsageMonitorService::class.java).setAction(UsageMonitorService.ACTION_PREVIEW)) }
             .onSuccess { message(context.getString(R.string.preview_in_5_seconds_switch_to_another_app_no_mood_data_will_be_saved)) }
+            .onFailure { message(context.getString(R.string.could_not_start_the_preview_keep_phonemood_open_and_try_again)) }
+    }
+    fun testNotification() {
+        runCatching { ContextCompat.startForegroundService(context, Intent(context, UsageMonitorService::class.java).setAction(UsageMonitorService.ACTION_TEST_NOTIFICATION)) }
+            .onSuccess { message(context.getString(R.string.a_test_check_in_arrives_in_5_seconds_open_the_app_that_swallows_them)) }
             .onFailure { message(context.getString(R.string.could_not_start_the_preview_keep_phonemood_open_and_try_again)) }
     }
     fun grantNotifications() {
@@ -187,7 +192,12 @@ fun PhoneMoodScreen() {
                 if (tab == 2) {
                     item { SettingsCard(context.getString(R.string.system_permissions)) {
                         SettingRow(context.getString(R.string.usage_access), if (usageAccess) context.getString(R.string.allowed) else context.getString(R.string.permission_needed)) { TextButton(onClick = ::grantUsage) { Text(if (usageAccess) context.getString(R.string.manage) else context.getString(R.string.enable)) } }
-                        SettingRow(context.getString(R.string.notifications), if (notifications) context.getString(R.string.check_ins_are_allowed) else context.getString(R.string.check_ins_are_unavailable)) { TextButton(onClick = ::grantNotifications) { Text(context.getString(R.string.manage)) } }
+                        SettingRow(context.getString(R.string.notifications), context.getString(when (reach) {
+                            MoodNotificationManager.Reach.READY -> R.string.check_ins_are_allowed
+                            MoodNotificationManager.Reach.DISABLED -> R.string.check_ins_are_unavailable
+                            MoodNotificationManager.Reach.SILENCED -> R.string.check_ins_arrive_without_a_sound
+                            MoodNotificationManager.Reach.SUPPRESSED -> R.string.do_not_disturb_is_holding_check_ins
+                        })) { TextButton(onClick = ::grantNotifications) { Text(context.getString(R.string.manage)) } }
                         SettingRow(context.getString(R.string.display_over_other_apps), if (overlayPermission) context.getString(R.string.allowed) else context.getString(R.string.permission_needed)) { TextButton(onClick = ::grantOverlay) { Text(if (overlayPermission) context.getString(R.string.manage) else context.getString(R.string.allow)) } }
                         if (!overlayPermission) Text(context.getString(R.string.overlay_permission_all_apps), color = Muted, style = MaterialTheme.typography.bodyMedium)
                     } }
@@ -211,6 +221,10 @@ fun PhoneMoodScreen() {
                     } }
                     item { TextButton(onClick={advancedSettings=!advancedSettings}) { Text(context.getString(R.string.settings_advanced)) } }
                     if(advancedSettings) {
+                    item { SettingsCard(context.getString(R.string.settings_tests)) {
+                        SettingRow(context.getString(R.string.test_a_check_in), context.getString(R.string.hear_whether_one_reaches_you_inside_a_fullscreen_video)) { TextButton(onClick = ::testNotification) { Text(context.getString(R.string.try_it)) } }
+                        SettingRow(context.getString(R.string.preview_in_5_seconds), context.getString(R.string.switch_to_another_app_after_tapping_preview_scores_are_not_recorded)) { TextButton(onClick = ::previewOverlay, enabled = overlayPermission) { Text(context.getString(R.string.try_it)) } }
+                    } }
                     item { SettingsCard(context.getString(R.string.your_check_in_rhythm)) {
                         Text(context.getString(R.string.check_in_after), fontWeight = FontWeight.Medium)
                         Text(context.getString(R.string.minutes_of_active_use_across_app_switches), color = Muted, style = MaterialTheme.typography.bodyMedium)

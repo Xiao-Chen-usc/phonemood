@@ -7,8 +7,28 @@ plugins {
 }
 android {
     namespace = "com.phonemood"
-    compileSdk = 35
-    defaultConfig { applicationId = "com.phonemood"; minSdk = 29; targetSdk = 35; versionCode = 7; versionName = "1.4.0"; testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner" }
+    compileSdk = 36
+    signingConfigs {
+        create("upload") {
+            val passwordFile = rootProject.file(".signing/upload-password.txt")
+            if (passwordFile.exists()) {
+                storeFile = rootProject.file(".signing/phonemood-upload.p12")
+                storePassword = passwordFile.readText().trim()
+                keyAlias = "phonemood-upload"
+                keyPassword = storePassword
+                storeType = "PKCS12"
+            }
+        }
+    }
+    buildTypes {
+        getByName("release") {
+            signingConfig = signingConfigs.getByName("upload")
+        }
+    }
+    // Play Console locks the uploaded package name, so releases stay com.phonemood.app.
+    // Sideloaded test builds can override it to update an existing install in place:
+    //   ./gradlew assembleDebug -PphonemoodApplicationId=com.phonemood
+    defaultConfig { applicationId = (findProperty("phonemoodApplicationId") as String? ?: "com.phonemood.app"); minSdk = 29; targetSdk = 36; versionCode = 11; versionName = "1.4.4"; testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner" }
     buildFeatures { compose = true }
     compileOptions { sourceCompatibility = JavaVersion.VERSION_17; targetCompatibility = JavaVersion.VERSION_17 }
     kotlinOptions { jvmTarget = "17" }

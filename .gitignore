@@ -9,3 +9,4 @@ dist/
 captures/
 .DS_Store
 *.log
+.signing/

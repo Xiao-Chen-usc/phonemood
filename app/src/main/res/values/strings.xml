@@ -96,7 +96,7 @@
     <string name="see_all">See all</string>
     <string name="as_you_use_your_phone_your_most_used_apps_will_appear_here">As you use your phone, your most-used apps will appear here.</string>
     <string name="apps_that_don_t_count">APPS THAT DON’T COUNT</string>
-    <string name="phonemood_your_launcher_keyboard_and_system_controls_are_excluded_automatic">PhoneMood, your launcher, keyboard, and system controls are excluded automatically. Add other Android package names below, one per line.</string>
+    <string name="phonemood_your_launcher_keyboard_and_system_controls_are_excluded_automatic">PhoneMood, your launcher, keyboard, phone calls, and system controls are excluded automatically. Add other Android package names below, one per line.</string>
     <string name="additional_excluded_apps">Additional excluded apps</string>
     <string name="enter_package_names_such_as_com_example_app">Enter package names such as com.example.app.</string>
     <string name="save_exclusions">Save exclusions</string>
@@ -186,4 +186,12 @@
     <string name="period_mood_title">Mood over this period</string><string name="period_mood_average">Average daily mood on rated days: %1$.1f / 10</string><string name="period_mood_support">%1$d rated days · %2$d ratings</string><string name="period_mood_early">Daily mood averaged %1$.1f in the first half and %2$.1f in the second half.</string><string name="period_mood_limit">Compares only rated days. Unrated days are not scored as zero. This is a descriptive comparison.</string><string name="period_mood_insufficient">There are too few rated days to compare the two halves. Available ratings are shown below.</string><string name="period_mood_empty">No mood ratings in this period. Choose another period to explore.</string>
     <string name="review_zone">Dates use the recording time zone: %1$s</string><string name="review_back_period">Back to period review</string><string name="review_all_ratings">View all %1$d ratings</string><string name="review_less_ratings">Show fewer ratings (%1$d total)</string>
     <string name="review_empty_note">No records are available for this period. Missing records do not mean no phone use.</string><string name="review_preview_note">Includes provisional data for today. Today is excluded from completed-day averages.</string><string name="review_finished_note">The selected dates have ended. Record completeness depends on tracking coverage.</string><string name="review_in_progress">In progress</string><string name="review_no_records">No records</string><string name="review_mood">Mood ratings</string><string name="review_no_mood">No mood ratings in this period.</string><string name="review_more_dates">More dates</string><string name="review_previous">Earlier period</string><string name="review_next">Later period</string><string name="review_yesterday">Yesterday</string><string name="review_last_week">Last week</string><string name="review_last_days">Last %1$d days</string><string name="review_choose_day">Choose date</string><string name="review_today">Today’s preview</string><string name="review_range_help">Last 7/30 days end yesterday. Last week is Monday–Sunday.</string>
+    <string name="this_is_a_test_check_in_no_mood_data_is_saved">This is a test check-in. No mood data is saved.</string>
+    <string name="check_ins_arrive_without_a_sound">Check-ins arrive without a sound</string>
+    <string name="do_not_disturb_is_holding_check_ins">Do Not Disturb is holding check-ins</string>
+    <string name="settings_tests">TESTS</string>
+    <string name="test_a_check_in">Test a check-in</string>
+    <string name="hear_whether_one_reaches_you_inside_a_fullscreen_video">Hear whether one reaches you inside a fullscreen video</string>
+    <string name="try_it">Try it</string>
+    <string name="a_test_check_in_arrives_in_5_seconds_open_the_app_that_swallows_them">A test check-in arrives in 5 seconds. Open the app that swallows them.</string>
 </resources>

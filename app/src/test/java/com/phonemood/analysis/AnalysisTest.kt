@@ -9,6 +9,36 @@ import java.io.File
 import java.time.Instant
 
 class AnalysisTest {
+    @Test fun cumulativeHistoryDoesNotFollowRecentDateSelection() = runBlocking {
+        val facts=fixture()
+        val history=PeriodDatasetBuilder.cumulative(facts)
+        val ids=history.rows.map { it.id }
+        val stats=StatisticalEngine.analyze(history)
+        for(days in listOf(1,3,7,30)) {
+            val recent=PeriodDatasetBuilder.build(facts,days,java.time.LocalDate.parse("2026-09-04"))
+            assertEquals(ids,PeriodDatasetBuilder.cumulative(facts).rows.map { it.id })
+            assertEquals(facts.asOf,history.end)
+            val export=Json.parseToJsonElement(PeriodExport.encodeScreen(recent,StatisticalEngine.analyze(recent),history,stats,"test")).jsonObject
+            assertEquals(PeriodExport.document(history,stats,"test"),export["long_term"])
+        }
+        assertTrue(history.start<=history.rows.minOf { it.at })
+        assertTrue(history.rows.size>PeriodDatasetBuilder.build(facts,3,java.time.LocalDate.parse("2026-09-04")).rows.size)
+    }
+
+    @Test fun phoneRegressionRecoversEffectAfterPreviousMoodAndTimeAdjustment() {
+        val rows=(0 until 60).map { i ->
+            val minutes=(i%3+1)*5L
+            val at=(i*193L+40)*60_000
+            val previous=MoodRow("p$i","s$i",at-(20+i%7)*60_000,"day${i/4}",7+i%2,0,0,emptyMap(),true,0,true,emptyList())
+            val current=previous.copy(id="c$i",at=at,phoneMs=minutes*60_000,score=previous.score-(minutes/5).toInt())
+            PhoneSample(previous,current)
+        }
+        val fit=StatisticalEngine.phoneFit(rows,"UTC")!!
+        assertEquals(-.2,fit.beta,1e-10)
+        assertTrue(fit.result.terms.containsAll(listOf("previous_mood","hour_sin","hour_cos")))
+        assertNull(StatisticalEngine.phoneFit(rows.map { it.copy(current=it.current.copy(phoneMs=10*60_000)) },"UTC"))
+    }
+
     private val minute = 60_000L
     private fun transition(i: Int, start: Int, end: Int, p: Int, g: Int, a: Int) =
         Transition("t$i", "a$i", "b$i", "s${i/3}", i*200*minute, (i*200+g)*minute,
@@ -73,7 +103,7 @@ class AnalysisTest {
             val stats=StatisticalEngine.analyze(data)
             assertEquals(days,data.daily.size)
             assertTrue(data.validRatings>=20)
-            assertTrue(stats.models.any { it.id=="app:x" && it.status=="OK" })
+            assertTrue(stats.models.any { it.id=="app:x:time" && it.status=="OK" })
             assertTrue(stats.findings.any { it.appId=="x" && it.status=="EARLY_LOWER" })
             val encoded=PeriodExport.encode(data,stats,"1.4.0")
             assertEquals(encoded,PeriodExport.encode(data,StatisticalEngine.analyze(data),"1.4.0"))
