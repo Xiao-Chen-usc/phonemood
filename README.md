@@ -1,6 +1,6 @@
 # PhoneMood | Phone Mood Awareness
 
-PhoneMood is a local-only Android app for noticing the relationship between active phone use and self-reported mood. It requires no account, server, telemetry, advertising SDK, or network permission. Usage records, mood ratings, and reports stay on the device.
+PhoneMood is a Android app for noticing the relationship between active phone use and self-reported mood. It requires no account, server, telemetry, advertising SDK, or network permission. Usage records, mood ratings, and reports stay on the device.
 
 ![PhoneMood Today screen](docs/screenshots/today-monitoring.png)
 
