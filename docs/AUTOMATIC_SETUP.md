@@ -1,13 +1,34 @@
-# PhoneMood 1.3：自动开始与快捷权限配置
+# PhoneMood 1.3: Automatic Start and Guided Permission Setup
 
-安装 `dist/PhoneMood-1.3.0-debug.apk`，可直接覆盖安装并保留已有数据。
+*Chinese version: [AUTOMATIC_SETUP.zh-CN.md](AUTOMATIC_SETUP.zh-CN.md)*
 
-首页和设置页新增“快捷配置权限”。点击一次后，应用依次打开尚未完成的使用情况访问权限、通知、悬浮卡片和电池优化豁免申请。每项仍需要在 Android 的系统页面确认；拒绝某项不会反复强制弹出，之后可再次配置。
+Install `dist/PhoneMood-1.3.0-debug.apk`. It installs over the previous version and keeps
+existing data.
 
-首次开启使用情况访问权限并返回 PhoneMood 后，立即自动开始统计，无需再点 Start monitoring。之后切换应用仍通过带有常驻通知的前台服务在后台统计；系统重启后尝试恢复之前已开启的记录。手动暂停会保留，不会因重新打开应用而自动恢复。系统“强行停止”和部分厂商的后台限制仍可能停止记录，需要重新打开应用或调整厂商的自启动设置。
+The home screen and Settings gained a "Quick permission setup" action. One tap walks through the
+permissions that are still missing, in order: Usage Access, notifications, floating cards, and
+the battery optimization exemption. Each one still has to be confirmed on Android's own system
+page. Declining one does not force a repeated prompt; setup can be run again later.
 
-悬浮权限授权列表中的其他条目是其他应用，不是 PhoneMood 的多个权限。只需选择 PhoneMood 并开启一个开关，即可在允许悬浮窗的其他应用上方显示卡片。Android 11 及之后的标准权限入口可能显示应用总列表，不能代替用户批量授权。参考：[Android 权限说明](https://developer.android.com/about/versions/11/privacy/permissions)。
+The first time Usage Access is granted and the user returns to PhoneMood, tracking starts
+immediately — there is no longer a separate "Start monitoring" tap. After that, switching apps
+keeps tracking alive through a foreground service with a persistent notification, and a device
+restart attempts to restore tracking that was previously enabled. A manual pause is preserved and
+is **not** undone by reopening the app. A system "Force stop", and some manufacturers'
+background restrictions, can still stop tracking; recovering from that needs the app to be opened
+again or the manufacturer's auto-start setting to be adjusted.
 
-本次验证：APK 构建、单元测试和 lint 通过；新增数据库测试验证未授权不启动、授权后只启动一次、保留手动暂停。Android 15 模拟器实走了完整快捷授权流程，未点击 Start monitoring 即显示“正在记录”；切到 Chrome 后服务仍处于前台服务状态，电池优化豁免已生效。
+The other entries in the overlay permission list are other applications, not multiple PhoneMood
+permissions. Selecting PhoneMood and enabling its single switch is enough to draw a card above
+other apps that permit overlays. On Android 11 and later, the standard permission entry point may
+show the full application list; this does not let an app grant the permission on the user's
+behalf. Reference: [Android permission notes](https://developer.android.com/about/versions/11/privacy/permissions).
 
-界面截图：`screenshots/quick-setup-1.3.png`。
+Verification for this change: the APK build, unit tests and lint pass. New database tests cover
+that tracking does not start without permission, that it starts exactly once after permission is
+granted, and that a manual pause is preserved. The full guided-permission flow was walked through
+on an Android 15 emulator: "Recording" appeared without any "Start monitoring" tap, the service
+remained a foreground service after switching to Chrome, and the battery optimization exemption
+took effect.
+
+Screenshot: `screenshots/quick-setup-1.3.png`.

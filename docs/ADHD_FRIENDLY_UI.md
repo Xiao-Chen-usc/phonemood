@@ -1,41 +1,67 @@
-# PhoneMood：减少首页负担
+# PhoneMood: Reducing the Load on the Home Screen
 
-本次设计使用 visualize skill 展示交互方案，原生实现仍使用项目现有的 Jetpack Compose。
+*Chinese version: [ADHD_FRIENDLY_UI.zh-CN.md](ADHD_FRIENDLY_UI.zh-CN.md)*
 
-## 已实现
+The interaction proposals below were presented with a visualization skill; the shipping
+implementation uses the project's existing Jetpack Compose code.
 
-- 首页采用直接的“今天”标题，使用无衬线标题，提高正文和辅助文字可读性。
-- 待回答的情绪提醒提前到统计卡片之前；当前节奏提前到今日累计时间之前。
-- 今日默认只显示主动使用时间。情绪均值、完成比例、图表和 App 明细通过“展开今日详情”访问。
-- 当前导航页与详情展开状态使用 rememberSaveable，在 Activity 重建后恢复。
-- 暂停统计使用明确的文字按钮；暂停后的首页保留原有开始统计入口。
-- 快捷权限总览移至设置，首页保留情境化的授权入口；悬浮窗和通知授权提示按先后显示。
-- 保留现有绿色品牌色，将辅助文字从 #738075 加深至 #526256；中英文本同步更新。
+## What shipped
 
-## 设计依据
+- The home screen leads with a plain "Today" heading in a sans-serif face, which raised the
+  readability of both body and secondary text.
+- An unanswered mood check-in now appears **before** the statistics card, and the current pace
+  appears before the cumulative time for the day.
+- Today shows active use time only by default. The mood average, completion ratio, chart and
+  per-app breakdown moved behind "Expand today's detail".
+- The selected tab and the expanded/collapsed state persist through `rememberSaveable`, so they
+  survive Activity recreation.
+- Pausing tracking uses an explicit text button. After a pause, the home screen keeps the
+  original entry point for starting tracking again.
+- The permissions overview moved to Settings; the home screen keeps only contextual prompts.
+  The overlay and notification prompts appear in sequence rather than at once.
+- The existing green brand color is unchanged. Secondary text darkened from #738075 to #526256,
+  applied to both the English and Chinese strings.
 
-W3C COGA 建议使用明确的目的、简单内容和帮助重新定位的标题，并减少干扰：
+## Design rationale
+
+W3C COGA recommends a clear purpose, simple content, headings that help a reader re-orient, and
+reduced distraction:
 
 - https://www.w3.org/WAI/WCAG2/supplemental/objectives/o5-user-focus/
 - https://www.w3.org/WAI/WCAG2/supplemental/objectives/o3-clear-content/
 
-这是面向认知可访问性的设计假设，不代表经过 ADHD 用户研究验证。后续应邀请目标用户验证：是否更快找到提醒、是否理解暂停后的状态、是否能找回折叠的详情。
+These are design hypotheses grounded in cognitive accessibility guidance. **They have not been
+validated with ADHD users.** Target users should be asked whether they find a pending check-in
+faster, whether they understand the state after pausing, and whether they can find the collapsed
+detail again.
 
-## 验证范围
+## Scope of verification
 
-运行 Android debug 构建、现有单元测试和 lint。未执行实体设备可用性研究或 TalkBack、200% 字号视觉检查。对话中的交互预览使用明确标识的示例数据，不连接真实记录。
+An Android debug build, the existing unit tests and lint. No on-device usability study was run,
+and no TalkBack or 200%-font-size visual check was performed. The interaction previews in the
+design conversation used clearly labelled sample data and were never connected to real records.
 
+## Copy review, English and Chinese
 
-## 中英文文案审查落实
+- Standing slogans and repeated reassurances were removed. Home, usage records, the daily export
+  and Settings all use functional headings.
+- State is reported as one of: not started, paused, needs attention, checking, recording. A stale
+  heartbeat reports only "checking" — it never infers a service failure on its own.
+- A check-in is described as "after about X more minutes of use". The defer action is stated as
+  "remind me in 1 minute".
+- The mood question and the tap-to-save-and-close explanation are identical across both rating
+  surfaces, and the scale endpoints are unchanged. A successful save gives a short Toast.
+- Starting or pausing tracking, and saving the exclusion list, give Snackbar feedback. The pause
+  message is scoped to "new mood check-ins" and never claims that existing notifications were
+  removed.
+- English can be selected independently of the system language; the version number is read from
+  the installed application info.
+- The explanation of how use time is measured, and the permission setup notes, expand on demand.
+  The analysis data threshold and method moved into the calculation detail.
+- The export button explains what the JSON file contains. An unspecified "health AI" use was
+  removed.
+- No change to the statistical model, the rating range, or the recorded data structures.
 
-- 删除常驻口号和重复安慰语，首页、使用记录、每日导出和设置使用功能标题。
-- 状态分别显示未开始、已暂停、需要处理、正在检查、正在记录；心跳过旧只显示正在检查，不直接推断服务故障。
-- 提醒明确为“再使用约 X 分钟后”，稍后操作明确为“1 分钟后提醒”。
-- 心情问题、点击保存关闭说明在两种评分界面统一，评分端点保持不变；成功保存使用短 Toast 反馈。
-- 开启或暂停记录、保存排除列表使用 Snackbar 反馈。暂停提示限定为“新的心情提醒”，不声称删除已存在的通知。
-- English 可以独立选择；版本号从已安装应用信息读取。
-- 使用时长解释和权限配置说明按需展开；分析的数据门槛和方法移入计算详情。
-- 导出按钮旁说明 JSON 文件内容，删除未指定的“健康 AI”用途。
-- 不改动统计模型、评分范围或记录数据结构。
-
-验证：中英文资源键和格式占位符逐项核对；运行 debug 构建、现有单元测试与 lint。未进行新一轮模拟器视觉检查或用户测试。
+Verification: every English and Chinese resource key and format placeholder was checked
+one by one; the debug build, existing unit tests and lint were run. No new emulator visual pass
+or user testing was performed.

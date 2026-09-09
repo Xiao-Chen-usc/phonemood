@@ -1,13 +1,32 @@
-# 自适应电池策略
+# Adaptive Battery Strategy
 
-监控服务正常亮屏解锁时每 10 秒查询一次；系统省电模式下每 30 秒查询一次。息屏后延迟约 1 秒补查一次，让系统有时间写入锁屏事件，随后停止定时查询。亮屏、解锁、省电模式切换及服务启动请求会触发查询；锁屏状态下不启动周期计时器。
+*Chinese version: [BATTERY_STRATEGY.zh-CN.md](BATTERY_STRATEGY.zh-CN.md)*
 
-恢复查询仍从数据库保存的上次进度补读 UsageEvents，使用时长与提醒检查点按事件时间重建。锁屏期间会话关闭状态可能延后显示，迟到事件在后续查询时修正。原有超过三天的历史恢复限制仍适用。不使用唤醒锁或精确闹钟，因此系统休眠时不保证补查立即执行。
+While the screen is on and unlocked, the monitoring service queries once every 10 seconds. In the
+system's power-save mode it queries every 30 seconds. After the screen turns off it waits about
+one second and queries once more — enough time for the system to write the lock event — and then
+stops the periodic timer. Screen-on, unlock, a power-save mode change and a service start request
+all trigger a query. No periodic timer runs while the device is locked.
 
-独立的日报任务仍可能在息屏期间补读数据：原有每 6 小时的 WorkManager 任务及主动请求的报告更新不受服务轮询暂停影响。
+When querying resumes, it re-reads `UsageEvents` from the progress point saved in the database.
+Use time and check-ins are reconstructed from event timestamps. A session's closed state may
+therefore be reported late while the device is locked, and events that arrive late are corrected
+on a subsequent query. The existing limit on recovering history older than three days still
+applies. No wake locks and no exact alarms are used, so a catch-up query is not guaranteed to run
+promptly while the system is asleep.
 
-日报保留 `poll_interval_seconds` 表示正常使用时的基础频率，并新增 `polling_policy` 说明自适应行为。设置页同步说明省电模式可能增加提醒延迟。
+The separate daily-report job can still read data while the screen is off: the existing six-hour
+WorkManager job, and report refreshes requested by the user, are unaffected by the service's
+polling pause.
 
-验证包括轮询策略分支测试、跨夜锁屏恢复的时长和检查点测试，以及已有单元测试、APK 构建和 lint。尚未测量真机耗电，也尚未验证各厂商的锁屏广播与后台存活情况。每次查询仍会重建历史记录，长期数据量增长后的开销需要进一步 profiling。
+The daily report keeps `poll_interval_seconds` to state the base frequency during normal use, and
+adds `polling_policy` to describe the adaptive behavior. Settings notes that power-save mode may
+increase check-in latency.
 
-平台依据：[Android PowerManager](https://developer.android.com/reference/android/os/PowerManager)。
+Verification covers branch tests of the polling policy, tests of duration and checkpoint recovery
+across an overnight lock, plus the existing unit tests, the APK build and lint. **Battery drain
+on a physical device has not been measured**, and per-manufacturer lock broadcasts and background
+survival have not been verified. Every query still rebuilds the record history, so the cost as
+long-term data grows needs further profiling.
+
+Platform reference: [Android PowerManager](https://developer.android.com/reference/android/os/PowerManager).

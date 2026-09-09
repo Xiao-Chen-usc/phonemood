@@ -1,4 +1,18 @@
-# Validation — September 5, 2026
+# Historical Validation — PhoneMood 1.0.0, September 5, 2026
+
+*Chinese version: [VALIDATION.zh-CN.md](VALIDATION.zh-CN.md)*
+
+## Scope of this record
+
+This report preserves the engineering checks recorded for the initial **1.0.0** debug build. The repository later added 1.4.0 analysis features and further source changes. The test counts and emulator observations below must not be cited as a complete validation of a later source revision or APK. A version name alone does not identify the exact code tested.
+
+The later [analysis tests](../app/src/test/java/com/phonemood/analysis/AnalysisTest.kt), [export schema](schemas/phonemood-period-v2.schema.json), and [synthetic examples](examples/implemented-exports/README.md) are separate artifacts. Their presence does not establish that every current check has passed. New validation reports should identify the source commit and local changes, artifact, environment, commands, outcomes, and remaining limitations.
+
+As of the September 7, 2026 documentation update, the project author reports small-scale user testing. Their participant counts, methods, and findings have not been documented here. Engineering validation and synthetic examples do not establish usability, measurement validity, or psychological/educational efficacy. See the [project overview](../README.md) for current positioning and the [literature review](LITERATURE_REVIEW.md) for proposed evaluations.
+
+No application tests were rerun as part of this documentation update; the historical results below remain unchanged.
+
+## Original build and environment
 
 Build: PhoneMood 1.0.0 debug, Kotlin/Compose, minSdk 29, target/compile SDK 35.
 Environment: local macOS build with Gradle 8.13 and the IntelliJ bundled JDK; Pixel 6 profile Android 15/API 35 ARM64 emulator.
@@ -33,4 +47,4 @@ Instrumented coverage: Room checkpoint/raw-event uniqueness; export timeline/sum
 
 A physical-device soak test is still needed for manufacturer-specific battery policies, process eviction, multi-day recovery, reboot behavior, denied/revoked permissions over time, and full-interval notification timing. API 29 and API 36 have not been run on a device in this session. The test suite verifies threshold and export logic but does not establish battery efficiency or exactly-timed notification delivery.
 
-See README for the MediaStore atomic-publication limitation, conservative history recovery, inferred backfill timezone offsets, and full-replay scaling tradeoff. This is a debug MVP, not a signed production/Play release.
+The original build also retained limitations around MediaStore publication, conservative history recovery, inferred backfill timezone offsets, and full-replay scaling. The [device checklist](DEVICE_TESTING.md) includes publication, recovery, timezone, and long-term profiling scenarios. This historical report concerns a debug MVP, not a signed production/Play release.

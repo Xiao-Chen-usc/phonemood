@@ -1,13 +1,23 @@
 # PhoneMood 1.1 — Floating check-ins
 
-## 手机上怎么开启
+*Chinese version: [OVERLAY_UPDATE.zh-CN.md](OVERLAY_UPDATE.zh-CN.md)*
 
-1. 安装 `PhoneMood-1.1.0-debug.apk`。可以覆盖安装原来的 1.0.0，保留原有记录；不要先卸载旧版。
-2. 打开 PhoneMood → Settings → **FLOATING CHECK-INS**。
-3. 点击 **Display over other apps → Allow**，在 Android 设置中允许 PhoneMood 显示在其他应用上层。部分手机会先显示应用列表，需要再选择 PhoneMood。
-4. 保持 **Show over other apps** 开启。
-5. 点 **Preview in 5 seconds**，立即切换到 Chrome 等 App。约 5 秒后出现预览卡片；预览分数不会写入记录，20 秒后自动收起。
-6. 正式使用时，开启 Usage Access 和 Start monitoring。达到有效使用时长后，直接在浮层上点 1–10 分，保存后卡片消失。**Later** 延迟一分钟；**×** 关闭本次卡片，通知仍可用于稍后回答。
+## Turning it on, on the phone
+
+1. Install `PhoneMood-1.1.0-debug.apk`. It installs over 1.0.0 and keeps existing records — do
+   not uninstall the old version first.
+2. Open PhoneMood → Settings → **FLOATING CHECK-INS**.
+3. Tap **Display over other apps → Allow** and permit PhoneMood to draw over other apps in
+   Android's settings. Some phones show a list of applications first, in which case PhoneMood has
+   to be selected from it.
+4. Leave **Show over other apps** enabled.
+5. Tap **Preview in 5 seconds** and immediately switch to Chrome or another app. The preview card
+   appears after about five seconds. A preview score is never written to the records, and the card
+   retracts automatically after 20 seconds.
+6. For real use, enable Usage Access and Start monitoring. Once enough active use has accumulated,
+   a score of 1–10 can be tapped straight on the floating card; the card disappears once saved.
+   **Later** defers by one minute. **×** closes this card, leaving the notification available for
+   answering later.
 
 ## Behavior
 

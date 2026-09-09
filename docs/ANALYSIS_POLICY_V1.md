@@ -1,52 +1,111 @@
-# 免费分析统计策略 1.0
+# Free-Tier Statistical Analysis Policy 1.0
 
-实现于 PhoneMood 1.4.0。所有计算在本机执行；同一快照、时区、版本得到相同结果。规则选择固定中英文模板，不调用 AI。以下数值是产品的初步 insight 参数，不是临床阈值。
+*Chinese version: [ANALYSIS_POLICY_V1.zh-CN.md](ANALYSIS_POLICY_V1.zh-CN.md)*
 
-## 周期、样本与缺失
+Implemented in PhoneMood 1.4.0. Every computation runs on the device; the same snapshot, time
+zone and version produce the same result. Rules select from fixed English and Chinese templates
+and never call an AI. **The numbers below are product parameters for surfacing an insight, not
+clinical thresholds.**
 
-- 当天、滚动 7 天、滚动 30 天均包含今天；按首次开始记录的 IANA 时区划分自然日。夏令时日按真实长度计算。
-- 情绪按实际回答时间归属周期；回答前 30 分钟的描述特征独立保留。
-- 至少 20 个有效评分开始尝试情绪模型。评分必须在 1–10 内，回答相对检查点延迟为 0–5 分钟；负延迟保留并标记时钟异常。
-- 连续使用模型还要求截至回答的会话覆盖完整。App 模型只使用同会话、相邻实际回答间隔在 (0,120] 分钟、完整覆盖且没有相关配置变更的区间。
-- 没有之前回答时不构造基线；不同会话不拼成可用配对。未答检查点及不可用配对仍导出。
-- `VERIFIED` 来源于有前台／暂停／锁屏／关机状态锚点的成功补读链，再扣除已知缺口和暂停。旧数据不能只凭心跳补成完整覆盖。Android 可能遗漏事件的限制仍明确保留。
+## Periods, samples and missingness
 
-## 三个主模型
+- Today, a rolling 7 days and a rolling 30 days all include today. Calendar days are cut using
+  the IANA time zone in force when recording first began. A daylight-saving day is counted at its
+  true length.
+- A mood rating belongs to the period containing the time it was actually answered. The
+  behavioural features of the 30 minutes before the answer are kept separately.
+- A mood model is attempted from **20 valid ratings** upward. A rating must fall in 1–10, and the
+  answer delay relative to its checkpoint must be 0–5 minutes. A negative delay is preserved and
+  flagged as a clock anomaly.
+- The continuous-use model additionally requires complete session coverage up to the answer. The
+  per-app model uses only intervals that lie within one session, whose adjacent actual answers are
+  (0, 120] minutes apart, whose coverage is complete, and which contain no relevant configuration
+  change.
+- No baseline is constructed when there is no preceding answer, and two different sessions are
+  never stitched into a usable pair. Unanswered checkpoints and unusable pairs are still exported.
+- `VERIFIED` coverage comes from a successful catch-up read chain anchored by
+  foreground/pause/lock/shutdown state, minus known gaps and pauses. Older data cannot be promoted
+  to complete coverage on the strength of a heartbeat alone. The limitation that Android may drop
+  events is stated explicitly and never absorbed.
 
-| 主题 | 模型与对比 | 展示规则 |
+## The three primary models
+
+| Topic | Model and contrast | Display rule |
 |---|---|---|
-| 每日用时趋势 | 完整结束日 `minutes ~ intercept + actual_day_index`；h 为首末有效日期的真实跨度 | ≥3 个完整结束日；变化幅度至少 `max(15分钟, 0.1×日用时中位数)` |
-| 连续使用与情绪 | 每个会话内中心化 mood 和累计主动分钟；WLS 权重 `1/n_session` | 单评分／时长不变会话不贡献斜率；h 为可用会话内时长跨度的中位数，上限30分钟 |
-| App 额外变化 | `end_score ~ intercept + start_score + phone_minutes + elapsed_minutes + app_minutes` | 系数×h 表示将其他 App 的 h 分钟换为目标 App 时的额外评分变化；不固定30分钟区间 |
+| Daily use trend | Over complete finished days, `minutes ~ intercept + actual_day_index`; *h* is the true span between the first and last valid date | ≥3 complete finished days; the change must reach `max(15 min, 0.1 × median daily use)` |
+| Continuous use and mood | Mood and cumulative active minutes centred within each session; WLS with weight `1/n_session` | A session with a single rating, or with no variation in duration, contributes no slope; *h* is the median within-session duration span, capped at 30 minutes |
+| Per-app extra change | `end_score ~ intercept + start_score + phone_minutes + elapsed_minutes + app_minutes` | Coefficient × *h* expresses the extra change in rating from substituting *h* minutes of other apps with the target app; it is **not** a fixed 30-minute window |
 
-会话截距是消去的会话平均水平，不是已测量的“当天自然心情”。App 系数是与其他 App 合并参考组的条件关联；不会根据 App 名称推断用户看了什么内容。
+The session intercept is an absorbed session-level mean, **not** a measured "natural mood for the
+day". An app coefficient is a conditional association against a pooled reference group of other
+apps; nothing is inferred about what the user was watching from an app's name.
 
-## App 的可比较支持
+## Comparable support for an app
 
-目标 App 至少在 5 个可用区间使用 ≥1 分钟。两条区间可比较的输入条件为：总主动时长差 ≤5 分钟、实际间隔差 ≤10 分钟、起始评分差 ≤1 分，目标 App 时长差 ≥2 分钟。至少 10 条不同区间参与这样的匹配。h 为所有匹配差值的中位数，上限30分钟。
+The target app must have been used for ≥1 minute in at least 5 usable intervals. Two intervals
+count as comparable when total active duration differs by ≤5 minutes, the actual gap differs by
+≤10 minutes, the starting rating differs by ≤1 point, and target-app duration differs by ≥2
+minutes. At least 10 distinct intervals must take part in such a match. *h* is the median of all
+matched differences, capped at 30 minutes.
 
-匹配只确定输入支持和展示对比量；主模型拟合全部有效区间。候选和 h 不根据结束评分、p 值或最强结果挑选。完全被控制变量解释的 App 时长不可识别，不能输出系数。实际样本 ID、保留项和删除控制项均导出。
+Matching only establishes input support and the contrast quantity for display; the primary model
+is fitted on **all** valid intervals. Neither the candidate nor *h* is chosen by looking at end
+ratings, p-values or the strongest result. App duration that is fully explained by the control
+variables is unidentifiable and yields no coefficient. The actual sample IDs, retained terms and
+dropped controls are all exported.
 
-## 求解、不确定性与稳定性
+## Solving, uncertainty and stability
 
-按固定列顺序，对加权列作 RMS 缩放和两次正交化，以相对阈值 `1e-9` 删除冗余控制项，再用 SVD 求解；不逆 `X'X`。目标项冗余、条件数超过 `1e8` 或主模型残余自由度不足则不可估计。返回原始单位的参数和协方差。
+Columns are processed in fixed order: RMS scaling of the weighted columns, two passes of
+orthogonalisation, removal of redundant controls at a relative threshold of `1e-9`, then a solve
+by SVD. `X'X` is never inverted. A model is not estimable if the target term is redundant, if the
+condition number exceeds `1e8`, or if the primary model lacks residual degrees of freedom.
+Parameters and covariance are returned in original units.
 
-不足20个日期用 HC3，明确标注它不能解决日内相关。会话模型的杠杆值包含消去的会话截距 `1/n_session`，残余自由度扣除会话数。≥20个日期使用按日聚类 CR1，修正为 `G/(G−1) × (n−1)/(n−p−absorbed_groups)`；t 自由度为 G−1。HC3 使用残余自由度。杠杆接近1时保留系数而不编造区间。
+Below 20 dates, HC3 is used, with an explicit note that it does not address within-day
+correlation. Leverage in the session model includes the absorbed session intercept `1/n_session`,
+and residual degrees of freedom are reduced by the number of sessions. From 20 dates upward,
+day-clustered CR1 is used with the correction `G/(G−1) × (n−1)/(n−p−absorbed_groups)`, and the
+*t* degrees of freedom are G−1. HC3 uses residual degrees of freedom. When leverage approaches 1,
+the coefficient is kept rather than an interval being invented.
 
-有≥3个日期时逐日删除，否则有≥3个会话时逐会话删除；每日趋势始终逐日删除。h 在重算时固定。每次删除的块、差值、可估计状态和是否同向且非微小均导出。失败重算仍计入分母。删除重算只需系数可识别，不要求额外残余自由度。
+With ≥3 dates, blocks are deleted day by day; otherwise, with ≥3 sessions, session by session.
+The daily trend is always deleted day by day. *h* is held fixed across refits. Every deleted
+block, its difference, its estimability, and whether it agrees in sign and is non-trivial are all
+exported. A refit that fails still counts in the denominator. A deletion refit only requires the
+coefficient to be identifiable — not extra residual degrees of freedom.
 
-情绪差值绝对值 <0.2 分标记“暂无明显倾向”；非微小但删除一致比例 <0.8 标记“混合倾向”；否则标记初步升高／降低。没有足够删除块时仍可给初步结果，并标明支持有限。CI 跨零或 p／BH-FDR 未达标都不阻止展示。
+A mood difference below 0.2 points in absolute value is labelled "no clear tendency yet". A
+non-trivial difference whose deletion agreement is below 0.8 is labelled "mixed tendency".
+Otherwise it is labelled a preliminary increase or decrease. A preliminary result may still be
+given when there are not enough deletion blocks, marked as having limited support. Neither a CI
+crossing zero nor a p/BH-FDR value failing to clear a threshold blocks display.
 
-BH-FDR 只在有有效 p 值的 App 主模型间计算，作为导出诊断。近乎零标准误不产生伪精确 p 值。
+BH-FDR is computed only across app primary models that have a valid p-value, and is exported as
+a diagnostic. A near-zero standard error does not manufacture a spuriously precise p-value.
 
-## 预定义时段检查和排序
+## Predefined time-of-day check and ranking
 
-App 有≥40个有效区间、≥7个日期、结束时间覆盖≥3个不同4小时段时，另拟合加入 `sin(2πhour/24)`、`cos(2πhour/24)` 的模型。使用同一批样本和 h。两者方向相反且敏感性差值达到0.2分，标记时段调整敏感，不替换主模型挑更强结果。
+When an app has ≥40 valid intervals, ≥7 dates, and end times spanning ≥3 distinct four-hour
+blocks, a second model is fitted adding `sin(2πhour/24)` and `cos(2πhour/24)`, on the same sample
+and the same *h*. If the two disagree in direction and the sensitivity difference reaches 0.2
+points, the result is flagged as sensitive to time-of-day adjustment. **The stronger result is
+not substituted for the primary model.**
 
-首版不加入 centered_day 漂移项；导出明确为 `NOT_IMPLEMENTED_IN_V1`，文案不声称已经控制慢趋势。
+The first version adds no centred-day drift term. This is exported explicitly as
+`NOT_IMPLEMENTED_IN_V1`, and the copy does not claim that slow trends have been controlled for.
 
-仅初步升高／降低的 App 进入重点卡片：先排有删除检查的结果，再按绝对对比差、样本数降序和 App ID 升序，最多3项。不够3项就展示实际数量。不同 App 的 h 必须随结果显示，排序不是因果影响排行榜。
+Only apps with a preliminary increase or decrease reach the highlighted card. They are ordered by
+whether a deletion check was available, then by absolute contrast difference, then by sample count
+descending, then by app ID ascending — at most three. If fewer than three qualify, fewer are
+shown. Each app's *h* must be displayed alongside its result. **This ordering is not a leaderboard
+of causal impact.**
 
-## 数值与工程验证
+## Numerical and engineering verification
 
-`AnalysisTest.kt` 用已知结果验证常量总时长、完全共线、等价参数化、会话基线消除、HC3、缺失覆盖、实际回答锚点、夏令时、当天20评分、可复现导出及三天趋势。`MigrationTest.kt` 验证1／2版数据库升级保留事实且不虚构覆盖。正式 JSON 经机器 schema 和跨字段不变量双重校验。
+`AnalysisTest.kt` checks against known results for: constant total duration, perfect
+collinearity, equivalent parameterisations, session baseline absorption, HC3, missing coverage,
+actual answer anchoring, daylight saving, 20 same-day ratings, reproducible export, and a
+three-day trend. `MigrationTest.kt` verifies that upgrading a version 1 or 2 database preserves
+facts and fabricates no coverage. The production JSON is checked twice: against the machine schema
+and against cross-field invariants.

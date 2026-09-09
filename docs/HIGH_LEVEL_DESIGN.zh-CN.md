@@ -1,36 +1,36 @@
-# PhoneMood — High Level Design
+# PhoneMood — 总体设计
 
-*Chinese version: [HIGH_LEVEL_DESIGN.zh-CN.md](HIGH_LEVEL_DESIGN.zh-CN.md)*
+*English version: [HIGH_LEVEL_DESIGN.md](HIGH_LEVEL_DESIGN.md)*
 
-Version: 1.0
-Platform: Android
-Implementation Language: Kotlin
-Minimum Android Version: Android 10 / API 29
-Primary Persistence: Room / SQLite
-AI Interchange Format: One self-contained JSON file per day
-
----
-
-# 1. Architecture Goals
-
-System design priorities, in order:
-
-1. Monitoring runs automatically wherever possible.
-2. Process death must not, by itself, cause unrecoverable data loss.
-3. A mood prompt lands as close to the 30-minute checkpoint as it can.
-4. Internal raw data can always be recomputed.
-5. One Health-AI-readable file is generated automatically each day.
-6. No backend server is required.
-7. No network access by default.
-8. Every core operation must be idempotent.
+版本：1.0
+平台：Android
+实现语言：Kotlin
+最低 Android 版本：Android 10 / API 29
+主要持久化：Room / SQLite
+AI 交换格式：每天一个自包含 JSON 文件
 
 ---
 
-# 2. Why Kotlin
+# 1. 架构目标
 
-Kotlin is an implementation choice, not a product requirement.
+系统设计优先级：
 
-The core of this application is not a complex cross-platform UI; it is Android's native capabilities:
+1. Monitoring 尽可能自动运行；
+2. Process death 不应直接导致不可恢复的数据缺失；
+3. Mood prompt 尽可能接近 30-minute checkpoint；
+4. 内部原始数据可重新计算；
+5. 每天自动生成一个 Health-AI-readable 单文件；
+6. 不需要后台服务器；
+7. 默认不联网；
+8. 所有核心操作必须 idempotent。
+
+---
+
+# 2. 为什么用 Kotlin
+
+Kotlin 不是产品要求，而是实现选择。
+
+这个应用的核心不是复杂跨平台 UI，而是 Android 原生能力：
 
 ```text
 UsageStatsManager
@@ -43,7 +43,7 @@ WorkManager
 MediaStore
 ```
 
-Hence:
+因此采用：
 
 ```text
 Kotlin
@@ -51,13 +51,13 @@ Kotlin
 Jetpack
 ```
 
-This avoids adding a bridge between Flutter / React Native and an Android native service.
+可以避免增加 Flutter / React Native 与 Android native service 之间的 bridge。
 
-If Java is ever needed, the architecture itself does not depend on Kotlin.
+如果未来需要 Java，架构本身不依赖 Kotlin。
 
 ---
 
-# 3. System Architecture
+# 3. 系统架构
 
 ```text
                    Android OS
@@ -111,54 +111,54 @@ UsageSegmentBuilder   SessionTracker
 
 ---
 
-# 4. Fundamental Reliability Model
+# 4. 基础可靠性模型
 
-The system cannot assume:
+系统不能假定：
 
 ```text
 "Our process will always be alive."
 ```
 
-Two layers are used.
+采用两层机制。
 
-## Layer 1 — Near Real-Time
+## 第一层 — 准实时
 
 ```text
 UsageMonitorService
 ```
 
-Responsible for:
+用于：
 
-* continuously querying the latest usage events;
-* updating the current session;
-* raising a mood checkpoint;
-* notifying the user promptly.
+* 持续查询最新 Usage Events；
+* 更新当前 Session；
+* 触发 Mood checkpoint；
+* 及时通知用户。
 
-## Layer 2 — Reconciliation
+## 第二层 — 对账补读
 
 ```text
 UsageStatsManager.queryEvents()
 ```
 
-Responsible for:
+用于：
 
-* backfilling after a service restart;
-* recovering missed time windows;
-* correcting internal state.
+* 服务重启后的 backfill；
+* 恢复遗漏时间窗口；
+* 校正内部状态。
 
-Android allows querying usage events over a time range, but these detailed events are retained for only a limited number of days, so local persistence remains mandatory.
+Android 允许查询一段时间内的 usage events，但这些详细 events 只保存有限数日，因此本地持久化仍然是必须的。
 
 ---
 
 # 5. UsageMonitorService
 
-Component:
+组件：
 
 ```text
 Foreground Service
 ```
 
-Responsibilities:
+职责：
 
 ```text
 read events
@@ -169,42 +169,43 @@ read events
 → persist
 ```
 
-Recommended polling interval:
+推荐 polling interval：
 
 ```text
 10 seconds
 ```
 
-This means a checkpoint is not guaranteed to fire at:
+这意味着 checkpoint 不保证：
 
 ```text
 30:00.000
 ```
 
+触发。
 
-It may fire at:
+可能：
 
 ```text
 30:04
 ```
 
-which the product accepts.
+触发，这是产品可以接受的。
 
 ---
 
-# 6. Foreground Service Type
+# 6. 前台服务类型
 
-Android 14+ requires a foreground service to declare a matching service type.
+Android 14+ 要求 foreground service 声明对应 service type。
 
-Where no standard type fits better, this project uses:
+如果没有更适合的标准类型，本项目可以使用：
 
 ```text
 specialUse
 ```
 
-Android defines this as a valid case that does not fall under any other standard foreground-service type. It requires declaring `FOREGROUND_SERVICE_SPECIAL_USE` and explaining the specific purpose in the manifest. If the app is later submitted to Google Play, that stated purpose goes through review.
+Android 官方将其定义为无法归到其他标准 foreground-service type 的有效场景；需要声明 `FOREGROUND_SERVICE_SPECIAL_USE`，并在 manifest 中解释具体用途。如果未来提交 Google Play，该用途会进入审核。
 
-Conceptual manifest:
+概念性 Manifest：
 
 ```xml
 <service
@@ -218,20 +219,20 @@ Conceptual manifest:
 </service>
 ```
 
-A foreground service carries a system-visible notification. That is a requirement of Android's foreground-service model itself.
+Foreground Service 会伴随系统可见 notification，这是 Android foreground-service 模型本身的要求。
 
 ---
 
 # 7. BootReceiver
 
-Listens for:
+监听：
 
 ```text
 BOOT_COMPLETED
 MY_PACKAGE_REPLACED
 ```
 
-Flow:
+流程：
 
 ```text
 Boot
@@ -245,25 +246,25 @@ Usage Access available?
 restore monitoring
 ```
 
-If the user has explicitly chosen:
+如果用户之前明确：
 
 ```text
 Pause Monitoring
 ```
 
-then:
+则：
 
 ```text
 monitoringEnabled = false
 ```
 
-and BootReceiver must not turn it back on.
+BootReceiver 不得重新开启。
 
 ---
 
 # 8. UsageEventReader
 
-Isolates the Android API.
+隔离 Android API。
 
 ```kotlin
 interface UsageEventReader {
@@ -274,7 +275,7 @@ interface UsageEventReader {
 }
 ```
 
-The unified internal model:
+内部统一模型：
 
 ```text
 DeviceUsageEvent
@@ -284,13 +285,13 @@ eventType
 packageName
 ```
 
-An Android adapter converts `UsageEvents.Event` into a domain event.
+Android adapter 负责把 `UsageEvents.Event` 转换成 domain event。
 
 ---
 
 # 9. EventProcessor
 
-Processing:
+处理：
 
 ```text
 Raw Events
@@ -306,7 +307,7 @@ Filter
 Domain Events
 ```
 
-What must be avoided:
+需要避免：
 
 ```text
 Service restart
@@ -314,13 +315,13 @@ Service restart
 → duplicate data
 ```
 
-Query overlap is permitted, for example:
+可以允许 query overlap，例如：
 
 ```text
 lastProcessedTimestamp - 5 seconds
 ```
 
-followed by deterministic deduplication on:
+然后使用：
 
 ```text
 timestamp
@@ -328,14 +329,15 @@ package
 event type
 ```
 
+确定性去重。
 
 ---
 
 # 10. UsageSegmentBuilder
 
-Turns foreground activity transitions into time spans.
+将 foreground activity transition 变成时间段。
 
-For example:
+例如：
 
 ```text
 09:00 Reddit resumed
@@ -343,7 +345,7 @@ For example:
 09:21 YouTube resumed
 ```
 
-produces:
+生成：
 
 ```text
 09:00–09:12 Reddit
@@ -351,7 +353,7 @@ produces:
 09:21–...   YouTube
 ```
 
-Core model:
+核心模型：
 
 ```text
 UsageSegment
@@ -368,7 +370,7 @@ sessionId
 
 # 11. AppFilter
 
-Ignored by default:
+默认忽略：
 
 ```text
 PhoneMood
@@ -378,9 +380,9 @@ Keyboard
 Permission Controller
 ```
 
-In future, the user will be able to maintain the excluded package list.
+未来用户可维护 excluded package list。
 
-An excluded app in the MVP is:
+MVP 的 excluded App：
 
 ```text
 not included in active phone-use duration
@@ -390,7 +392,7 @@ not included in active phone-use duration
 
 # 12. SessionTracker
 
-State machine:
+状态机：
 
 ```text
 IDLE
@@ -400,19 +402,19 @@ INTERRUPTED
 
 ## IDLE → ACTIVE
 
-A valid foreground app is detected.
+检测到有效前台 App。
 
 ## ACTIVE → ACTIVE
 
-An app switch.
+App switch。
 
-The session is unchanged.
+Session 不变。
 
 ## ACTIVE → INTERRUPTED
 
-The screen becomes non-interactive or locked.
+Screen becomes non-interactive / locked。
 
-Records:
+记录：
 
 ```text
 interruptionStart
@@ -420,25 +422,25 @@ interruptionStart
 
 ## INTERRUPTED → ACTIVE
 
-If:
+如果：
 
 ```text
 interruption < sessionResetThreshold
 ```
 
-the original session continues.
+继续原 Session。
 
 ## INTERRUPTED → IDLE
 
-If:
+如果：
 
 ```text
 interruption >= threshold
 ```
 
-the session ends.
+结束 Session。
 
-Default:
+默认：
 
 ```text
 threshold = 5 minutes
@@ -446,21 +448,21 @@ threshold = 5 minutes
 
 ---
 
-# 13. Active Duration
+# 13. 主动使用时长
 
-Two quantities must be kept apart:
+必须区分：
 
 ```text
 wall-clock session duration
 ```
 
-and:
+和：
 
 ```text
 active phone-use duration
 ```
 
-For example:
+例如：
 
 ```text
 10:00–10:20 active
@@ -468,14 +470,14 @@ For example:
 10:22–10:32 active
 ```
 
-Result:
+结果：
 
 ```text
 Wall clock = 32 min
 Active     = 30 min
 ```
 
-MoodScheduler uses:
+MoodScheduler 使用：
 
 ```text
 Active = 30 min
@@ -485,19 +487,19 @@ Active = 30 min
 
 # 14. MoodScheduler
 
-A session stores:
+Session 保存：
 
 ```text
 nextCheckpointMinutes
 ```
 
-Default:
+默认：
 
 ```text
 30
 ```
 
-The test:
+判断：
 
 ```text
 if activeMinutes >= nextCheckpoint:
@@ -505,25 +507,25 @@ if activeMinutes >= nextCheckpoint:
     nextCheckpoint += configuredInterval
 ```
 
-What must not be used:
+不能使用：
 
 ```text
 activeMinutes % 30 == 0
 ```
 
-because polling latency could then skip a checkpoint entirely.
+否则 polling 延迟可能直接错过 checkpoint。
 
 ---
 
-# 15. Mood Checkpoint Idempotency
+# 15. 检查点幂等性
 
-Database unique constraint:
+数据库唯一约束：
 
 ```text
 UNIQUE(sessionId, checkpointMinutes)
 ```
 
-The order must be:
+流程必须是：
 
 ```text
 Create/Persist checkpoint
@@ -531,9 +533,9 @@ Create/Persist checkpoint
 Send notification
 ```
 
-and never the reverse.
+而不是反过来。
 
-So that:
+这样：
 
 ```text
 service restart
@@ -541,13 +543,13 @@ replay
 duplicate event
 ```
 
-cannot produce a second 30-minute notification.
+不会产生第二个 30-minute notification。
 
 ---
 
 # 16. MoodRatingActivity
 
-Target UX:
+目标 UX：
 
 ```text
 notification
@@ -569,21 +571,21 @@ responseTimestampUtc
 score
 ```
 
-Checkpoint and response are persisted independently.
+Checkpoint 与 Response 独立保存。
 
 ---
 
-# 17. Operational Database
+# 17. 运行时数据库
 
-Uses:
+使用：
 
 ```text
 Room / SQLite
 ```
 
-The database is the internal store of fact.
+数据库是内部事实存储。
 
-Principal entities:
+主要实体：
 
 ```text
 UsageSegment
@@ -608,7 +610,7 @@ activeDurationMs
 status
 ```
 
-Status:
+Status：
 
 ```text
 ACTIVE
@@ -629,7 +631,7 @@ foregroundPackage
 responseStatus
 ```
 
-ResponseStatus:
+ResponseStatus：
 
 ```text
 PENDING
@@ -641,7 +643,7 @@ MISSED
 
 # 20. ConfigurationEvent
 
-A configuration change must be written to the database:
+配置变化必须进入数据库：
 
 ```text
 timestampUtc
@@ -650,14 +652,14 @@ oldValue
 newValue
 ```
 
-For example:
+例如：
 
 ```text
 moodIntervalMinutes
 30 → 60
 ```
 
-This matters a great deal for long-horizon AI analysis.
+这对于长期 AI 分析非常重要。
 
 ---
 
@@ -671,15 +673,15 @@ lastHeartbeatUtc
 currentSessionId
 ```
 
-The governing principle:
+关键原则：
 
-> Important state must not exist only in RAM.
+> 重要状态不能只存在于内存中。
 
 ---
 
-# 22. Recovery Algorithm
+# 22. 恢复算法
 
-For example:
+例如：
 
 ```text
 Last persisted event:
@@ -689,7 +691,7 @@ Service resumes:
 14:23
 ```
 
-Executes:
+执行：
 
 ```text
 Load MonitorState
@@ -710,15 +712,15 @@ Persist
 
 ---
 
-# 23. Data Quality and Monitoring Gaps
+# 23. 数据质量与记录缺口
 
-The system maintains:
+系统维护：
 
 ```text
 MonitoringGap
 ```
 
-For example:
+例如：
 
 ```text
 startUtc
@@ -726,7 +728,7 @@ endUtc
 reason
 ```
 
-Reason:
+Reason：
 
 ```text
 USAGE_ACCESS_REVOKED
@@ -735,15 +737,15 @@ PROCESS_RECOVERY_TOO_LATE
 UNKNOWN
 ```
 
-The daily AI file must include these gaps.
+Daily AI file 必须包含这些 gap。
 
 ---
 
 # 24. DailyReportGenerator
 
-This is a first-class core component.
+这是一级核心组件。
 
-Responsibilities:
+职责：
 
 ```text
 Room
@@ -759,7 +761,7 @@ Serialize JSON
 Atomic file replacement
 ```
 
-Interface:
+接口：
 
 ```kotlin
 interface DailyReportGenerator {
@@ -771,65 +773,67 @@ interface DailyReportGenerator {
 
 ---
 
-# 25. Daily Report Trigger Strategy
+# 25. 日报触发策略
 
-Exact alarms are not used.
+不使用 Exact Alarm。
 
-Three trigger points are used instead.
+采用三个触发点。
 
-## Trigger A — Date rollover detection
+## 触发点 A — 跨日检测
 
-On every processing pass, UsageMonitorService checks:
+UsageMonitorService 每次处理时检查：
 
 ```text
 currentLocalDate != previousLocalDate
 ```
 
-If the day has rolled over:
+如果跨日：
 
 ```text
 finalize yesterday
 ```
 
-## Trigger B — App startup / service recovery
+## 触发点 B — 应用启动／服务恢复
 
-On each recovery, it checks for a gap between:
+每次恢复时检查：
 
 ```text
 latestGeneratedDate
 ```
 
-and:
+与：
 
 ```text
 yesterday
 ```
 
+之间是否有缺失。
 
-Everything missing is generated.
+全部补生成。
 
-## Trigger C — WorkManager reconciliation
+## 触发点 C — WorkManager 对账
 
-A periodic worker checks:
+设置周期性 worker，负责检查：
 
 ```text
 Are any closed dates missing their report?
 ```
 
-WorkManager's minimum periodic interval is 15 minutes, and actual execution time is decided by system scheduling and constraints. It suits a fallback for eventual consistency, not a precise midnight timer.
+WorkManager 的 periodic work 最短周期为 15 分钟，实际执行时间由系统调度和约束决定；它适合作为最终一致性的兜底，而不是精确午夜 timer。
 
-The MVP runs report reconciliation every:
+MVP 可以每：
 
 ```text
 6 hours
 ```
 
+运行一次 report reconciliation。
 
 ---
 
-# 26. Daily Report State
+# 26. 日报状态
 
-Database:
+数据库：
 
 ```text
 DailyReportState
@@ -841,7 +845,7 @@ sourceRevision
 lateUpdateCount
 ```
 
-Status:
+Status：
 
 ```text
 MISSING
@@ -852,18 +856,18 @@ FINAL
 
 ---
 
-# 27. Late Responses
+# 27. 迟到的回答
 
-Boundary case:
+边界案例：
 
 ```text
 23:59 prompt
 00:02 response
 ```
 
-The MoodResponse still belongs to the previous day, through its checkpointId.
+MoodResponse 仍通过 checkpointId 属于前一天。
 
-The generation flow must support:
+生成流程必须支持：
 
 ```text
 Existing daily JSON
@@ -875,15 +879,15 @@ Rebuild from Room
 Atomic replace same JSON
 ```
 
-The file name does not change.
+文件名不改变。
 
 ---
 
-# 28. Atomic File Generation
+# 28. 原子化文件生成
 
-A half-written JSON file must never be left behind.
+绝不能留下半个 JSON。
 
-Flow:
+流程：
 
 ```text
 Build record in memory
@@ -899,13 +903,13 @@ Commit/replace
 Update DailyReportState
 ```
 
-The database always retains the raw data, so the JSON can be regenerated.
+数据库永远保留原始数据，因此 JSON 可以重新生成。
 
 ---
 
-# 29. DailyHealthRecord Schema
+# 29. DailyHealthRecord 结构
 
-Top level:
+顶层：
 
 ```text
 schema_version
@@ -923,36 +927,36 @@ data_quality
 
 ---
 
-# 30. Time Representation
+# 30. 时间表示
 
-The database uses one representation:
+数据库统一：
 
 ```text
 UTC epoch milliseconds
 ```
 
-Exported files use ISO-8601.
+导出文件采用 ISO-8601。
 
-For example:
+例如：
 
 ```text
 2026-09-05T09:30:10-07:00
 ```
 
-A daily record stores both:
+Daily record 同时记录：
 
 ```text
 UTC timestamp
 local offset / zone context
 ```
 
-If the device changes time zone during the day, each event's own offset information must survive, so that an AI does not order the timeline incorrectly.
+如果设备当天发生 timezone change，事件自身的 offset 信息必须能够保留，避免 AI 错误排列时间。
 
 ---
 
-# 31. AI File Design Principle
+# 31. AI 文件设计原则
 
-The JSON provides, together:
+JSON 内同时提供：
 
 ```text
 Raw-enough timeline
@@ -964,65 +968,66 @@ Measurement definitions
 Data-quality metadata
 ```
 
-A DailySummary can tell an AI:
+例如 DailySummary 可以告诉 AI：
 
 ```text
 Total use = 247 min
 ```
 
-while the timeline still lets the AI recompute it independently.
+同时 Timeline 仍允许 AI 自己重新计算。
 
-The app must not write:
+App 不应该写：
 
 ```text
 "Reddit worsened mood"
 ```
 
-It may write:
+可以写：
 
 ```text
 Mood at 30 min = 7
 Mood at 60 min = 5
 ```
 
-Causal or clinical interpretation is left to a downstream system.
+因果或临床解释交由 downstream system。
 
 ---
 
-# 32. Output Location
+# 32. 输出位置
 
-Recommended:
+推荐：
 
 ```text
 Download/PhoneMoodHealth/
 ```
 
-File:
+文件：
 
 ```text
 2026-09-05-phone-mood.json
 ```
 
-Written through:
+通过：
 
 ```text
 MediaStore.Downloads
 ```
 
+写入。
 
-On Android 10+, a `MediaStore.Downloads` file that the app created and owns does not require general storage permission.
+Android 10+ 对 App 自己创建并拥有的 `MediaStore.Downloads` 文件不要求一般 storage permission。
 
-So:
+因此：
 
 ```text
 minSdk = 29
 ```
 
-materially simplifies the storage design.
+可以显著简化 storage design。
 
 ---
 
-# 33. Daily JSON Example Shape
+# 33. 每日 JSON 示例结构
 
 ```json
 {
@@ -1057,15 +1062,15 @@ materially simplifies the storage design.
 
 ---
 
-# 34. Settings Storage
+# 34. 设置存储
 
-Uses:
+使用：
 
 ```text
 DataStore
 ```
 
-Storing the current configuration:
+保存当前配置：
 
 ```text
 monitoringEnabled
@@ -1074,11 +1079,11 @@ sessionResetMinutes
 excludedPackages
 ```
 
-Historical configuration changes are stored separately in Room's `ConfigurationEvent`.
+历史配置变化另外保存到 Room 的 `ConfigurationEvent`。
 
 ---
 
-# 35. UI Architecture
+# 35. 界面架构
 
 Compose UI：
 
@@ -1091,7 +1096,7 @@ MainActivity
    └── Settings
 ```
 
-The Reports screen only needs to show:
+Reports 页面只需要显示：
 
 ```text
 Sep 5   ✓ Generated
@@ -1099,13 +1104,13 @@ Sep 4   ✓ Generated
 Sep 3   ✓ Generated
 ```
 
-Day to day, the user is not required to open it.
+日常并不要求用户进入。
 
 ---
 
-# 36. Privacy Boundary
+# 36. 隐私边界
 
-The MVP has no:
+MVP 不设置：
 
 ```text
 Backend
@@ -1116,13 +1121,13 @@ Ad SDK
 Account
 ```
 
-and can decline to declare:
+并可以完全不声明：
 
 ```text
 INTERNET
 ```
 
-So the core data flow is:
+因此核心数据流为：
 
 ```text
 Android OS
@@ -1134,7 +1139,7 @@ Local JSON
 
 ---
 
-# 37. Technology Stack
+# 37. 技术栈
 
 ```text
 Kotlin
@@ -1154,7 +1159,7 @@ kotlinx.serialization
 
 ---
 
-# 38. Package Structure
+# 38. 包结构
 
 ```text
 com.phonemood
@@ -1198,7 +1203,7 @@ com.phonemood
 
 ---
 
-# 39. Critical Runtime Path
+# 39. 关键运行路径
 
 ```text
 Android Usage Events
@@ -1220,7 +1225,7 @@ MoodResponse
 Room
 ```
 
-Daily path：
+每日路径：
 
 ```text
 Calendar day closes
@@ -1238,21 +1243,21 @@ MediaStore.Downloads
 
 ---
 
-# 40. Failure Model
+# 40. 失败模型
 
-## Process killed
+## 进程被杀
 
 ```text
 Recover using UsageStats replay
 ```
 
-## Reboot
+## 重启
 
 ```text
 BootReceiver → restore
 ```
 
-## Usage permission revoked
+## 使用情况访问权限被撤销
 
 ```text
 Stop claiming healthy monitoring
@@ -1260,7 +1265,7 @@ Record gap
 Prompt next time UI opens
 ```
 
-## Notification permission revoked
+## 通知权限被撤销
 
 ```text
 Continue usage tracking
@@ -1268,20 +1273,20 @@ Mood prompting degraded
 Record data-quality issue
 ```
 
-## Daily Worker delayed
+## 日报 Worker 被延迟
 
 ```text
 Generate later
 ```
 
-## JSON generation fails
+## JSON 生成失败
 
 ```text
 Keep Room data
 Retry
 ```
 
-## Existing JSON stale
+## 已有 JSON 过期
 
 ```text
 Rebuild from Room
@@ -1290,9 +1295,9 @@ Atomically replace
 
 ---
 
-# 41. Non-Goals for MVP
+# 41. MVP 的非目标
 
-Out of scope:
+不做：
 
 ```text
 Cloud health record
@@ -1307,11 +1312,11 @@ Medical recommendation engine
 
 ---
 
-# 42. Architecture Summary
+# 42. 架构总结
 
-PhoneMood's system design reduces to two pipelines.
+PhoneMood 的系统设计可以浓缩成两条 pipeline：
 
-Real-time behaviour:
+实时行为：
 
 ```text
 Android UsageStats
@@ -1320,7 +1325,7 @@ Android UsageStats
 → Local durable storage
 ```
 
-Long-horizon health-AI data:
+长期 Health AI 数据：
 
 ```text
 Local durable storage
@@ -1329,6 +1334,6 @@ Local durable storage
 → User can directly give file to Health AI
 ```
 
-The single most important architectural principle:
+其中最关键的架构原则是：
 
-**Room is the store of fact. The foreground service is the real-time trigger. UsageStats is the recovery source. And the daily JSON is the stable, AI-facing product interface.**
+**Room 是事实存储，Foreground Service 是实时触发器，UsageStats 是恢复来源，而每日 JSON 是稳定的 AI-facing product interface。**

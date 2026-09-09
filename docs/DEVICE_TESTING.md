@@ -1,5 +1,7 @@
 # Device validation
 
+*Chinese version: [DEVICE_TESTING.zh-CN.md](DEVICE_TESTING.zh-CN.md)*
+
 Use an emulator or a spare Android 10+ device. Never substitute sample data for real records in production screens.
 
 - Fresh install: Today shows zero usage and setup; no monitor starts before explicit user action.
