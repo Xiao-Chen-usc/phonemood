@@ -9,6 +9,7 @@
     <queries>
         <intent><action android:name="android.intent.action.MAIN" /><category android:name="android.intent.category.HOME" /></intent>
         <intent><action android:name="android.view.InputMethod" /></intent>
+        <intent><action android:name="android.intent.action.MAIN" /><category android:name="android.intent.category.LAUNCHER" /></intent>
     </queries>
     <application android:name=".PhoneMoodApp" android:allowBackup="false" android:fullBackupContent="false" android:dataExtractionRules="@xml/data_extraction_rules" android:label="PhoneMood" android:icon="@drawable/ic_phonemood" android:theme="@style/Theme.PhoneMood" android:supportsRtl="true">
         <meta-data android:name="autoStoreLocales" android:value="true" />

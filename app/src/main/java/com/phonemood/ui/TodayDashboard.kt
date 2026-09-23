@@ -1,10 +1,14 @@
 package com.phonemood.ui
 
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Timer
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.Color
@@ -14,12 +18,48 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.phonemood.R
 import com.phonemood.data.MoodResponse
+import com.phonemood.data.PhoneSession
 import com.phonemood.data.UsageSegment
 import com.phonemood.report.DayWindow
 import java.util.Date
+
+@Composable
+fun NextReminderCard(session: PhoneSession?, intervalMinutes: Int, enabled: Boolean, synchronized: Boolean,
+                     now: Long, recordedAt: Long) {
+    val context = LocalContext.current
+    val locale = LocalConfiguration.current.locales[0]
+    // Keep the number visible when a heartbeat is late. Interpolation is bounded, so stale
+    // data freezes instead of oscillating between a countdown and a dash every poll.
+    val remainingMs = com.phonemood.monitoring.reminderRemainingMs(session, intervalMinutes,
+        recordedAt, now, advance = enabled)
+    val seconds = (remainingMs + 999) / 1_000
+    val value = when {
+        !enabled -> context.getString(R.string.tracking_paused)
+        else -> String.format(locale, "%02d:%02d", seconds / 60, seconds % 60)
+    }
+    val hint = context.getString(when {
+        !enabled -> R.string.next_reminder_paused
+        !synchronized -> R.string.next_reminder_syncing
+        else -> R.string.next_reminder_active_use
+    })
+    Surface(shape = RoundedCornerShape(16.dp), color = Color.White, border = BorderStroke(1.dp, Line)) {
+        Row(Modifier.fillMaxWidth().padding(horizontal = 14.dp, vertical = 12.dp),
+            verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+            Icon(Icons.Outlined.Timer, contentDescription = null, tint = Forest, modifier = Modifier.size(22.dp))
+            Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
+                Text(context.getString(R.string.next_reminder_title), style = MaterialTheme.typography.labelLarge, color = Ink)
+                Text(hint, style = MaterialTheme.typography.bodySmall.copy(fontSize = 12.sp, lineHeight = 17.sp), color = Muted)
+            }
+            Text(value, color = Forest, style = MaterialTheme.typography.titleLarge.copy(
+                fontFamily = FontFamily.Monospace, fontSize = 24.sp, fontWeight = FontWeight.Medium))
+        }
+    }
+}
 
 @Composable
 fun TodayMetrics(active: Long, ratings: List<MoodResponse>, reminders: Int, started: Boolean) {

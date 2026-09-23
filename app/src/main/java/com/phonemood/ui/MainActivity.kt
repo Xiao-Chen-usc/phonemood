@@ -48,11 +48,13 @@ import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.phonemood.data.*
 import com.phonemood.monitoring.*
 import com.phonemood.mood.*
 import com.phonemood.phoneMood
 import com.phonemood.report.DayWindow
+import com.phonemood.settings.AppLocale
 import com.phonemood.settings.Configuration
 import kotlinx.coroutines.*
 import java.time.*
@@ -87,6 +89,7 @@ fun PhoneMoodScreen() {
     val dao = app.repository.dao
     val state by dao.watchState().collectAsStateWithLifecycle(null)
     val segments by dao.watchSegments().collectAsStateWithLifecycle(emptyList())
+    val sessions by dao.watchSessions().collectAsStateWithLifecycle(emptyList())
     val checkpoints by dao.watchCheckpoints().collectAsStateWithLifecycle(emptyList())
     val promptStates by dao.watchPromptStates().collectAsStateWithLifecycle(emptyList())
     val responses by dao.watchResponses().collectAsStateWithLifecycle(emptyList())
@@ -108,7 +111,11 @@ fun PhoneMoodScreen() {
         val observer = LifecycleEventObserver { _, event -> if (event == Lifecycle.Event.ON_RESUME) { usageAccess = context.hasUsageAccess(); overlayPermission = Settings.canDrawOverlays(context); reach = MoodNotificationManager(context).reach(); now = System.currentTimeMillis() } }
         lifecycle.lifecycle.addObserver(observer); onDispose { lifecycle.lifecycle.removeObserver(observer) }
     }
-    LaunchedEffect(Unit) { while (true) { now = System.currentTimeMillis(); delay(10_000) } }
+    LaunchedEffect(lifecycle) {
+        lifecycle.lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED) {
+            while (true) { now = System.currentTimeMillis(); delay(1_000) }
+        }
+    }
     fun message(text: String) { scope.launch { snackbar.showSnackbar(text) } }
     fun configure(next: Configuration) {
         scope.launch {
@@ -208,7 +215,14 @@ fun PhoneMoodScreen() {
                     val appLocales = AppCompatDelegate.getApplicationLocales()
                     val followsSystem = appLocales.isEmpty
                     fun selectLanguage(languageTags: String) {
+                        // Recorded first, so the monitor can read the choice from a context
+                        // AppCompat never reaches and a process that outlives this screen.
+                        AppLocale.remember(context, languageTags)
                         AppCompatDelegate.setApplicationLocales(LocaleListCompat.forLanguageTags(languageTags))
+                        if (config.enabled) runCatching {
+                            ContextCompat.startForegroundService(context, Intent(context, UsageMonitorService::class.java)
+                                .setAction(UsageMonitorService.ACTION_LANGUAGE_CHANGED))
+                        }
                         (context as? Activity)?.recreate()
                     }
                     item { SettingsCard(context.getString(R.string.language)) {
@@ -221,6 +235,17 @@ fun PhoneMoodScreen() {
                     } }
                     item { TextButton(onClick={advancedSettings=!advancedSettings}) { Text(context.getString(R.string.settings_advanced)) } }
                     if(advancedSettings) {
+                    item {
+                        NextReminderCard(
+                            session = sessions.firstOrNull { it.sessionId == state?.currentSessionId && it.status != "CLOSED" },
+                            intervalMinutes = config.interval,
+                            enabled = config.enabled,
+                            now = now,
+                            recordedAt = state?.lastSuccessfulQueryUtc ?: now,
+                            synchronized = state != null && usageAccess && state?.error == null &&
+                                now - (state?.lastSuccessfulQueryUtc ?: 0) in 0 until 45_000,
+                        )
+                    }
                     item { SettingsCard(context.getString(R.string.settings_tests)) {
                         SettingRow(context.getString(R.string.test_a_check_in), context.getString(R.string.hear_whether_one_reaches_you_inside_a_fullscreen_video)) { TextButton(onClick = ::testNotification) { Text(context.getString(R.string.try_it)) } }
                         SettingRow(context.getString(R.string.preview_in_5_seconds), context.getString(R.string.switch_to_another_app_after_tapping_preview_scores_are_not_recorded)) { TextButton(onClick = ::previewOverlay, enabled = overlayPermission) { Text(context.getString(R.string.try_it)) } }

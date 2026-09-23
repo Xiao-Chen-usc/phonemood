@@ -9,10 +9,16 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import com.phonemood.R
 import com.phonemood.data.*
+import com.phonemood.settings.AppLocale
 import com.phonemood.ui.MainActivity
 import kotlinx.coroutines.sync.withLock
 
-class MoodNotificationManager(private val context: Context) {
+class MoodNotificationManager(base: Context) {
+    /**
+     * A check-in reaches the user from a service, and a service context answers in the system
+     * language rather than the chosen one wherever AppCompat cannot reach it.
+     */
+    private val context = AppLocale.wrap(base)
     private val manager = context.getSystemService(NotificationManager::class.java)
     fun createChannels() {
         // Android overwrites a channel's lockscreen visibility with the package-level setting the
@@ -59,8 +65,8 @@ class MoodNotificationManager(private val context: Context) {
         .setContentText(if (preview) context.getString(R.string.switch_to_another_app_a_preview_appears_in_5_seconds) else context.getString(R.string.your_next_check_in_follows_active_phone_use_tap_to_pause))
         .setVisibility(NotificationCompat.VISIBILITY_SECRET).setOnlyAlertOnce(true).setShowWhen(false)
         .setOngoing(true).setSilent(true).setContentIntent(PendingIntent.getActivity(context, 0, Intent(context, MainActivity::class.java), PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)).build()
-    suspend fun deliver(repository: Repository, allowPrompt: Boolean = true, silentCheckpointId: String? = null) = repository.mutex.withLock {
-        val now = System.currentTimeMillis()
+    suspend fun deliver(repository: Repository, allowPrompt: Boolean = true, silentCheckpointId: String? = null,
+                        now: Long = System.currentTimeMillis()) = repository.mutex.withLock {
         val latestForegroundPackage = repository.dao.lastResume()?.packageName
         val pending = repository.dao.checkpoints().filter { it.responseStatus == "PENDING" }
         // A long call or an hour of video can leave several check-ins held open at once. Only the
@@ -82,7 +88,14 @@ class MoodNotificationManager(private val context: Context) {
             val heldOpen = latestForegroundPackage != null && latestForegroundPackage == checkpoint.foregroundPackage && !state.dismissed
             when (OverlayPolicy.action(now, prompt, latestForegroundPackage)) {
                 OverlayPolicy.PromptAction.EXPIRE -> {
-                    repository.dao.updateCheckpoint(checkpoint.copy(responseStatus = "MISSED"))
+                    // A check-in reconstructed after the monitor stopped can arrive already past
+                    // its window, having never been notified and never drawn. Retiring that as a
+                    // miss would read as the user ignoring a question nobody ever asked, so it is
+                    // written down as the lost coverage it actually is.
+                    val presented = checkpoint.notifiedUtc != null || state.lastNotifiedUtc != null || state.overlayShownUtc != null
+                    repository.dao.updateCheckpoint(checkpoint.copy(responseStatus = OverlayPolicy.expiry(state.dismissed, presented)))
+                    if (!presented && !state.dismissed) repository.dao.insertGap(MonitoringGap(
+                        "unasked:${checkpoint.checkpointId}", checkpoint.promptTimestampUtc, now, OverlayPolicy.NEVER_PRESENTED))
                     cancel(checkpoint.checkpointId)
                 }
                 OverlayPolicy.PromptAction.NOTIFY -> if (canPrompt() && allowPrompt && screenAvailable() && repository.dao.state()?.monitoringEnabled == true) {

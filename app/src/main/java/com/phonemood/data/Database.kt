@@ -47,20 +47,20 @@ interface PhoneMoodDao {
     @Query("SELECT * FROM raw_events WHERE type = 'START' ORDER BY timestampUtc LIMIT 1") suspend fun firstStart(): RawEvent?
     @Query("UPDATE MonitorState SET sourceRevision = sourceRevision + 1 WHERE id = 1") suspend fun bumpRevision()
     @Query("SELECT * FROM raw_events ORDER BY timestampUtc") suspend fun events(): List<RawEvent>
+    /** PhoneMood counts as foreground use just like any other included application. */
     @Query("SELECT * FROM raw_events WHERE type = 'RESUME' ORDER BY timestampUtc DESC, id DESC LIMIT 1") suspend fun lastResume(): RawEvent?
     @Insert(onConflict = OnConflictStrategy.IGNORE) suspend fun insertEvents(events: List<RawEvent>)
     @Query("SELECT * FROM UsageSegment ORDER BY startUtc") suspend fun segments(): List<UsageSegment>
     @Query("SELECT * FROM UsageSegment ORDER BY startUtc DESC") fun watchSegments(): Flow<List<UsageSegment>>
-    @Query("DELETE FROM UsageSegment") suspend fun clearSegments()
+    @Query("DELETE FROM UsageSegment WHERE id IN (:ids)") suspend fun deleteSegments(ids: List<String>)
     @Insert(onConflict = OnConflictStrategy.REPLACE) suspend fun insertSegments(segments: List<UsageSegment>)
     @Query("SELECT * FROM PhoneSession ORDER BY startUtc") suspend fun sessions(): List<PhoneSession>
     @Query("SELECT * FROM PhoneSession ORDER BY startUtc DESC") fun watchSessions(): Flow<List<PhoneSession>>
-    @Query("DELETE FROM PhoneSession") suspend fun clearSessions()
+    @Query("DELETE FROM PhoneSession WHERE sessionId IN (:ids)") suspend fun deleteSessions(ids: List<String>)
     @Insert(onConflict = OnConflictStrategy.REPLACE) suspend fun insertSessions(sessions: List<PhoneSession>)
     @Query("SELECT * FROM MoodCheckpoint ORDER BY promptTimestampUtc") suspend fun checkpoints(): List<MoodCheckpoint>
     @Query("SELECT * FROM MoodCheckpoint ORDER BY promptTimestampUtc DESC") fun watchCheckpoints(): Flow<List<MoodCheckpoint>>
     @Query("SELECT * FROM MoodCheckpoint WHERE checkpointId = :id") suspend fun checkpoint(id: String): MoodCheckpoint?
-    @Query("SELECT COUNT(*) FROM MoodCheckpoint WHERE responseStatus = 'PENDING'") suspend fun pendingCheckpoints(): Int
     @Insert(onConflict = OnConflictStrategy.IGNORE) suspend fun insertCheckpoints(checkpoints: List<MoodCheckpoint>)
     @Update suspend fun updateCheckpointRow(checkpoint: MoodCheckpoint)
     @Transaction suspend fun updateCheckpoint(checkpoint: MoodCheckpoint) { updateCheckpointRow(checkpoint); bumpRevision() }

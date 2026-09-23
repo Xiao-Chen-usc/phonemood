@@ -16,6 +16,7 @@ import android.os.PowerManager
 import androidx.core.app.ServiceCompat
 import com.phonemood.phoneMood
 import com.phonemood.mood.MoodNotificationManager
+import com.phonemood.settings.AppLocale
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.sync.withLock
@@ -54,6 +55,12 @@ class UsageMonitorService : Service() {
         val notifications = MoodNotificationManager(this)
         if (job?.isActive == true) pollRequests.trySend(Unit)
         ServiceCompat.startForeground(this, 1, notifications.ongoing(intent?.action == ACTION_PREVIEW), if (Build.VERSION.SDK_INT >= 34) ServiceInfo.FOREGROUND_SERVICE_TYPE_SPECIAL_USE else 0)
+        // The service running at all is what says monitoring is on, so this is the one place
+        // the safety net needs arming from.
+        MonitorWatchdog.schedule(this)
+        // Below Android 13 a language change never reaches a Service as a configuration change,
+        // so the app says so directly and the card, the channels and the shade catch up here.
+        if (intent?.action == ACTION_LANGUAGE_CHANGED) relabel()
         if (intent?.action == ACTION_TEST_NOTIFICATION) {
             // Five seconds is time enough to get back into the video that swallows check-ins.
             testJob?.cancel()
@@ -65,7 +72,7 @@ class UsageMonitorService : Service() {
                 try {
                     delay(5_000)
                     withContext(Dispatchers.Main.immediate) {
-                        if (!overlays.showPreview()) android.widget.Toast.makeText(this@UsageMonitorService, getString(R.string.allow_floating_cards_and_unlock_your_phone_to_preview), android.widget.Toast.LENGTH_LONG).show()
+                        if (!overlays.showPreview()) android.widget.Toast.makeText(this@UsageMonitorService, AppLocale.wrap(this@UsageMonitorService).getString(R.string.allow_floating_cards_and_unlock_your_phone_to_preview), android.widget.Toast.LENGTH_LONG).show()
                     }
                     delay(20_000)
                 } finally {
@@ -76,29 +83,40 @@ class UsageMonitorService : Service() {
         if (job?.isActive != true) job = scope.launch {
             var reportDay: LocalDate? = null
             while (isActive) {
-                if (!phoneMood.repository.configuration().enabled) {
-                    if (previewJob?.isActive == true || testJob?.isActive == true) { delay(1_000); continue }
-                    stopSelf(); break
-                }
                 try {
-                    phoneMood.repository.poll()
-                    val visibleCheckpoint = overlays.reconcile()
-                    // Any fullscreen video surface may hide an attached overlay. Keep the
-                    // heads-up notification audible while the same app remains foreground.
-                    val silentCheckpoint = visibleCheckpoint?.takeUnless { id ->
-                        phoneMood.repository.dao.checkpoint(id)?.foregroundPackage ==
-                            phoneMood.repository.dao.lastResume()?.packageName
+                    // A transient settings read must not kill the timer until MainActivity
+                    // happens to start the service again.
+                    if (!phoneMood.repository.configuration().enabled) {
+                        if (previewJob?.isActive == true || testJob?.isActive == true) { delay(1_000); continue }
+                        MonitorWatchdog.cancel(this@UsageMonitorService)
+                        stopSelf(); break
                     }
-                    notifications.deliver(phoneMood.repository, silentCheckpointId = silentCheckpoint)
+                    phoneMood.repository.poll()
+                    // Deliver first so a retry opens a fresh, bounded overlay window on this poll.
+                    // An attached window is not proof it is visible over another application.
+                    // Built per iteration so a language chosen mid-run reaches the next check-in.
+                    MoodNotificationManager(this@UsageMonitorService).deliver(phoneMood.repository)
+                    // Overlay failures must not terminate monitoring after notification delivery.
+                    try { overlays.reconcile() }
+                    catch (e: CancellationException) { throw e }
+                    catch (e: Exception) {
+                        android.util.Log.w("PhoneMood", "Overlay failed after notification delivery", e)
+                        null
+                    }
                     if (reportDay != LocalDate.now()) { phoneMood.reconcileSoon(); reportDay = LocalDate.now() }
                 } catch (e: CancellationException) { throw e }
                 catch (e: Exception) {
-                    phoneMood.repository.mutex.withLock { phoneMood.repository.dao.state()?.let { phoneMood.repository.dao.saveState(it.copy(error = e.message ?: "Monitoring interrupted")) } }
+                    android.util.Log.e("PhoneMood", "Monitor iteration failed; retrying", e)
+                    try {
+                        phoneMood.repository.mutex.withLock { phoneMood.repository.dao.state()?.let { phoneMood.repository.dao.saveState(it.copy(error = e.message ?: "Monitoring interrupted")) } }
+                    } catch (cancelled: CancellationException) { throw cancelled }
+                    catch (storageError: Exception) {
+                        android.util.Log.e("PhoneMood", "Could not persist monitor error", storageError)
+                    }
                 }
                 val power = getSystemService(PowerManager::class.java)
                 val locked = getSystemService(KeyguardManager::class.java).isKeyguardLocked
-                val pending = runCatching { phoneMood.repository.dao.pendingCheckpoints() > 0 }.getOrDefault(false)
-                val interval = PollingPolicy.intervalMillis(power.isInteractive, locked, power.isPowerSaveMode, pending)
+                val interval = PollingPolicy.intervalMillis(power.isInteractive, locked, power.isPowerSaveMode)
                 // Broadcasts interrupt the wait without cancelling an in-flight database transaction.
                 if (interval == null) pollRequests.receive()
                 else withTimeoutOrNull(interval) { pollRequests.receive() }
@@ -108,15 +126,29 @@ class UsageMonitorService : Service() {
     }
     override fun onConfigurationChanged(newConfig: android.content.res.Configuration) {
         super.onConfigurationChanged(newConfig)
+        relabel()
+    }
+    /** Redraw everything this service has already put on screen in the current language. */
+    private fun relabel() {
         overlays.window.refreshLanguage()
         val notifications = MoodNotificationManager(this)
         notifications.createChannels()
         getSystemService(android.app.NotificationManager::class.java).notify(1, notifications.ongoing(previewJob?.isActive == true))
+        scope.launch { runCatching { MoodNotificationManager(this@UsageMonitorService).refreshLanguage(phoneMood.repository) } }
+    }
+    /**
+     * A swipe out of recents ends the task, and on some builds the process with it. Ask for the
+     * comeback now, while there is still a process to ask from.
+     */
+    override fun onTaskRemoved(rootIntent: Intent?) {
+        MonitorWatchdog.rearm(this)
+        super.onTaskRemoved(rootIntent)
     }
     override fun onDestroy() { scope.cancel(); overlays.destroy(); unregisterReceiver(screenReceiver); super.onDestroy() }
     companion object {
         const val ACTION_PREVIEW = "com.phonemood.PREVIEW_OVERLAY"
         const val ACTION_TEST_NOTIFICATION = "com.phonemood.TEST_NOTIFICATION"
+        const val ACTION_LANGUAGE_CHANGED = "com.phonemood.LANGUAGE_CHANGED"
     }
     override fun onBind(intent: Intent?): IBinder? = null
 }

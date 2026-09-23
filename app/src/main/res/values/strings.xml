@@ -194,4 +194,8 @@
     <string name="hear_whether_one_reaches_you_inside_a_fullscreen_video">Hear whether one reaches you inside a fullscreen video</string>
     <string name="try_it">Try it</string>
     <string name="a_test_check_in_arrives_in_5_seconds_open_the_app_that_swallows_them">A test check-in arrives in 5 seconds. Open the app that swallows them.</string>
+    <string name="next_reminder_title">Next scheduled check-in</string>
+    <string name="next_reminder_active_use">Active use remaining · includes PhoneMood</string>
+    <string name="next_reminder_paused">Resume tracking to continue</string>
+    <string name="next_reminder_syncing">Waiting for tracking update</string>
 </resources>

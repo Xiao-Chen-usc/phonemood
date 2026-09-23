@@ -105,8 +105,21 @@ class Repository(val context: Context, val db: PhoneMoodDatabase, val settings: 
     }
     private suspend fun rebuild(now: Long): Reconstruction {
         val result = engine.rebuild(dao.events().map { it.domain() }, now)
-        dao.clearSegments(); dao.insertSegments(result.segments.map { UsageSegment(it.id, it.start, it.end, it.pkg, it.app, it.sessionId, it.zone, it.zoneInferred) })
-        dao.clearSessions(); dao.insertSessions(result.sessions.map { PhoneSession(it.id, it.start, it.end, it.active, it.status, it.next) })
+        // Replay rebuilds the whole history, but between polls only the open tail moves: the last
+        // segment's end and the running session total. Clearing both tables and writing every row
+        // back turned that into one delete and one insert per stored row, on every poll, growing
+        // with the record. Comparing first keeps the write proportional to the change. Rows are
+        // only ever removed when late events revise history, which is what the deletes are for.
+        val segments = result.segments.map { UsageSegment(it.id, it.start, it.end, it.pkg, it.app, it.sessionId, it.zone, it.zoneInferred) }
+        val storedSegments = dao.segments().associateBy { it.id }
+        val liveSegments = segments.mapTo(HashSet()) { it.id }
+        storedSegments.keys.filterNot { it in liveSegments }.chunked(500).forEach { dao.deleteSegments(it) }
+        segments.filter { storedSegments[it.id] != it }.takeIf { it.isNotEmpty() }?.let { dao.insertSegments(it) }
+        val sessions = result.sessions.map { PhoneSession(it.id, it.start, it.end, it.active, it.status, it.next) }
+        val storedSessions = dao.sessions().associateBy { it.sessionId }
+        val liveSessions = sessions.mapTo(HashSet()) { it.sessionId }
+        storedSessions.keys.filterNot { it in liveSessions }.chunked(500).forEach { dao.deleteSessions(it) }
+        sessions.filter { storedSessions[it.sessionId] != it }.takeIf { it.isNotEmpty() }?.let { dao.insertSessions(it) }
         val reconstructed = result.checkpoints.associateBy { it.id }
         dao.checkpoints().forEach { previous ->
             val corrected = reconstructed[previous.checkpointId]

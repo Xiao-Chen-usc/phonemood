@@ -13,12 +13,20 @@ import android.view.*
 import android.widget.*
 import androidx.annotation.MainThread
 import androidx.core.view.ViewCompat
+import com.phonemood.settings.AppLocale
+import kotlin.math.abs
 
 /** One bounded, touchable window. The rest of the screen stays available to the underlying app. */
-class MoodOverlayWindow(context: Context) {
-    private val context = ContextThemeWrapper(context, android.R.style.Theme_Material_Light_NoActionBar)
-    private val wm = context.getSystemService(WindowManager::class.java)
+class MoodOverlayWindow(private val base: Context) {
+    /**
+     * Rebuilt for every card rather than held from construction, so a language chosen after the
+     * monitor started reaches the next card without waiting for the service to be recreated.
+     */
+    private var context = themed()
+    private fun themed() = ContextThemeWrapper(AppLocale.wrap(base), android.R.style.Theme_Material_Light_NoActionBar)
+    private val wm = base.getSystemService(WindowManager::class.java)
     private var root: View? = null
+    private var layout: WindowManager.LayoutParams? = null
     private var redraw: (() -> Boolean)? = null
     private var isSaving = false
     private var statusLabel: TextView? = null
@@ -30,6 +38,45 @@ class MoodOverlayWindow(context: Context) {
     private val muted = Color.rgb(100, 114, 102)
     private fun dp(value: Int) = (value * context.resources.displayMetrics.density).toInt()
     fun available() = Settings.canDrawOverlays(context) && context.getSystemService(PowerManager::class.java).isInteractive && !context.getSystemService(KeyguardManager::class.java).isKeyguardLocked
+    /**
+     * Pushing a card aside is how people get rid of one. Without the gesture the only way out is
+     * a small ×, so a card the user shoved at and ignored stays unanswered, the check-in never
+     * retires, and the phone keeps a pending prompt open indefinitely. A push means the same
+     * thing the × does: not now.
+     */
+    private inner class PushAway(private val onPushed: () -> Unit) : ScrollView(this@MoodOverlayWindow.context) {
+        private val slop = ViewConfiguration.get(context).scaledTouchSlop
+        private var startX = 0f
+        private var startY = 0f
+        private var sliding = false
+        override fun onInterceptTouchEvent(e: MotionEvent): Boolean {
+            when (e.actionMasked) {
+                MotionEvent.ACTION_DOWN -> { startX = e.rawX; startY = e.rawY; sliding = false }
+                // Sideways only, so the card can still be scrolled when it is taller than the screen.
+                MotionEvent.ACTION_MOVE -> if (!sliding && abs(e.rawX - startX) > slop && abs(e.rawX - startX) > abs(e.rawY - startY)) sliding = true
+            }
+            return sliding || super.onInterceptTouchEvent(e)
+        }
+        override fun onTouchEvent(e: MotionEvent): Boolean {
+            when (e.actionMasked) {
+                MotionEvent.ACTION_DOWN -> { startX = e.rawX; startY = e.rawY }
+                MotionEvent.ACTION_MOVE -> if (sliding) slide(e.rawX - startX)
+                MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> if (sliding) {
+                    sliding = false
+                    if (abs(e.rawX - startX) > width / 3f) { onPushed(); return true }
+                    slide(0f)
+                }
+            }
+            return sliding || super.onTouchEvent(e)
+        }
+        override fun performClick(): Boolean = super.performClick()
+        private fun slide(dx: Float) {
+            val params = layout ?: return
+            params.x = dx.toInt()
+            params.alpha = (1f - abs(dx) / (width.coerceAtLeast(1) * 1.5f)).coerceIn(.2f, 1f)
+            runCatching { wm.updateViewLayout(this, params) }
+        }
+    }
     private fun background(color: Int, radius: Int = 16) = GradientDrawable().apply { setColor(color); cornerRadius = dp(radius).toFloat() }
     private fun label(text: String, size: Float, color: Int = ink) = TextView(context).apply { this.text = text; textSize = size; setTextColor(color) }
 
@@ -38,6 +85,7 @@ class MoodOverlayWindow(context: Context) {
         if (!available()) { hide(); return false }
         if (checkpointId == id && root != null) return true
         hide()
+        context = themed()
         val card = LinearLayout(context).apply {
             orientation = LinearLayout.VERTICAL; setPadding(dp(20), dp(12), dp(20), dp(16))
             background = background(Color.rgb(248, 248, 242), 24); elevation = dp(12).toFloat()
@@ -83,7 +131,7 @@ class MoodOverlayWindow(context: Context) {
         // five-minute lifetime; it is disabled when snoozing is no longer valid.
         buttons += later
         card.addView(later, LinearLayout.LayoutParams(-1, dp(48)))
-        val scroll = ScrollView(context).apply { isFillViewport = false; addView(card); clipToPadding = false }
+        val scroll = PushAway(onDismiss).apply { isFillViewport = false; addView(card); clipToPadding = false }
         val metrics = context.resources.displayMetrics
         val width = minOf(dp(380), metrics.widthPixels - dp(32))
         val heightLimit = (metrics.heightPixels - dp(140)).coerceAtLeast(dp(140))
@@ -93,7 +141,7 @@ class MoodOverlayWindow(context: Context) {
             gravity = Gravity.TOP or Gravity.CENTER_HORIZONTAL; y = dp(56)
             setTitle(context.getString(R.string.phonemood_mood_card))
         }
-        return try { wm.addView(scroll, params); root = scroll; checkpointId = id; redraw = { show(id, minutes, preview, canSnooze, onScore, onLater, onDismiss) }; true }
+        return try { wm.addView(scroll, params); root = scroll; layout = params; checkpointId = id; redraw = { show(id, minutes, preview, canSnooze, onScore, onLater, onDismiss) }; true }
         catch (_: WindowManager.BadTokenException) { hide(); false }
         catch (_: SecurityException) { hide(); false }
     }
@@ -108,6 +156,6 @@ class MoodOverlayWindow(context: Context) {
     @MainThread fun error(message: String) { isSaving = false; buttons.forEach { it.isEnabled = true }; statusLabel?.text = message }
     @MainThread fun hide() {
         root?.let { runCatching { wm.removeViewImmediate(it) } }
-        root = null; redraw = null; isSaving = false; checkpointId = null; statusLabel = null; buttons.clear()
+        root = null; layout = null; redraw = null; isSaving = false; checkpointId = null; statusLabel = null; buttons.clear()
     }
 }

@@ -194,4 +194,8 @@
     <string name="hear_whether_one_reaches_you_inside_a_fullscreen_video">看看全屏视频时能不能听见</string>
     <string name="try_it">试一下</string>
     <string name="a_test_check_in_arrives_in_5_seconds_open_the_app_that_swallows_them">5 秒后发送测试提醒，请打开收不到提醒的那个应用。</string>
+    <string name="next_reminder_title">下一次定时提醒</string>
+    <string name="next_reminder_active_use">剩余使用时长 · 包含 PhoneMood</string>
+    <string name="next_reminder_paused">开启记录后继续计时</string>
+    <string name="next_reminder_syncing">等待记录更新，保留当前进度</string>
 </resources>

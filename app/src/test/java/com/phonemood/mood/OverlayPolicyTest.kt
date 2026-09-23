@@ -65,11 +65,16 @@ class OverlayPolicyTest {
         assertEquals(OverlayPolicy.PromptAction.EXPIRE, OverlayPolicy.action(threshold + 300_001,
             prompt(lastNotifiedUtc = threshold, notifiedPackage = video, dismissed = true), video))
     }
-    @Test fun `a prompt returns when another app comes forward`() {
-        assertTrue(OverlayPolicy.represent("PENDING", dismissed = false, snoozedUntil = null, foregroundChanged = true))
-        assertFalse(OverlayPolicy.represent("PENDING", dismissed = false, snoozedUntil = null, foregroundChanged = false))
-        assertFalse(OverlayPolicy.represent("PENDING", dismissed = true, snoozedUntil = null, foregroundChanged = true))
-        assertFalse(OverlayPolicy.represent("MISSED", dismissed = false, snoozedUntil = null, foregroundChanged = true))
+    @Test fun `a notification retry opens a bounded card window without requiring an app switch`() {
+        val retryAt = threshold + 600_000
+        val windowStart = OverlayPolicy.cardWindowStart(threshold, retryAt)
+        assertTrue(OverlayPolicy.eligible(retryAt, windowStart, "PENDING", false, null))
+        assertFalse(OverlayPolicy.eligible(retryAt + 300_000, windowStart, "PENDING", false, null))
+        assertFalse(OverlayPolicy.eligible(retryAt, windowStart, "PENDING", true, null))
+        assertFalse(OverlayPolicy.eligible(retryAt, windowStart, "ANSWERED", false, null))
+        assertFalse(OverlayPolicy.eligible(retryAt, windowStart, "PENDING", false, retryAt + 60_000))
+        assertEquals(threshold, OverlayPolicy.cardWindowStart(threshold, null))
+        assertEquals(threshold, OverlayPolicy.cardWindowStart(threshold, threshold - 1))
     }
     @Test fun `a notification outlives nothing, except while the prompt is held open`() {
         assertEquals(301_000L, OverlayPolicy.answerableUntil(1_000, null, null, heldOpen = false))
@@ -86,5 +91,67 @@ class OverlayPolicyTest {
     @Test fun `retiring a replaced check-in keeps asked and never-asked apart`() {
         assertEquals("MISSED", OverlayPolicy.retirement(everNotified = true))
         assertEquals("SUPERSEDED", OverlayPolicy.retirement(everNotified = false))
+    }
+    @Test fun `a card pushed aside retires in half a minute, not five`() {
+        // Answering is two taps. Holding a turned-down prompt pending for the full lifetime kept
+        // the tightest polling interval alive for five minutes with nothing left to ask.
+        val pushed = prompt(overlayShownUtc = threshold, lastNotifiedUtc = threshold, notifyCount = 1, notifiedPackage = video, dismissed = true)
+        assertEquals(OverlayPolicy.PromptAction.WAIT, OverlayPolicy.action(threshold + 30_000, pushed, video))
+        assertEquals(OverlayPolicy.PromptAction.EXPIRE, OverlayPolicy.action(threshold + 30_001, pushed, video))
+    }
+    @Test fun `a prompt turned down is never nudged again, in or out of its app`() {
+        val pushed = prompt(overlayShownUtc = threshold, lastNotifiedUtc = threshold, notifyCount = 1, notifiedPackage = video, dismissed = true)
+        assertEquals(OverlayPolicy.PromptAction.WAIT, OverlayPolicy.action(threshold + 1_000, pushed, other))
+        assertEquals(OverlayPolicy.PromptAction.EXPIRE, OverlayPolicy.action(threshold + 60_000, pushed, other))
+    }
+    @Test fun `being pushed aside is a decision, and never counts as a miss`() {
+        assertEquals("DISMISSED", OverlayPolicy.expiry(dismissed = true))
+        assertEquals("MISSED", OverlayPolicy.expiry(dismissed = false))
+    }
+    @Test fun `a check-in nobody was ever shown is not a check-in the user ignored`() {
+        // Monitoring stopped, the stretch was reconstructed later, and the prompt arrived past
+        // its own window having never been notified or drawn.
+        assertEquals("UNASKED", OverlayPolicy.expiry(dismissed = false, everPresented = false))
+        assertEquals("MISSED", OverlayPolicy.expiry(dismissed = false, everPresented = true))
+        // A card the user pushed aside was seen, whatever the delivery record says afterwards.
+        assertEquals("DISMISSED", OverlayPolicy.expiry(dismissed = true, everPresented = false))
+    }
+    @Test fun `the card outlives its delivery window while its own app is still in front`() {
+        // The budget for making a sound ran out long ago; the question is still unanswered and
+        // the user never left the video, so the card has no business disappearing.
+        val past = OverlayPolicy.PROMPT_LIFETIME_MS * 4
+        assertFalse(OverlayPolicy.eligible(1_000 + past, 1_000, "PENDING", false, null))
+        assertTrue(OverlayPolicy.eligible(1_000 + past, 1_000, "PENDING", false, null, heldOpen = true))
+    }
+    @Test fun `holding a card open never overrides an answer, a snooze or a push`() {
+        val past = OverlayPolicy.PROMPT_LIFETIME_MS * 4
+        assertFalse(OverlayPolicy.eligible(1_000 + past, 1_000, "ANSWERED", false, null, heldOpen = true))
+        assertFalse(OverlayPolicy.eligible(1_000 + past, 1_000, "PENDING", true, null, heldOpen = true))
+        assertFalse(OverlayPolicy.eligible(2_000, 1_000, "PENDING", false, 61_000, heldOpen = true))
+        // And it never brings a card forward before the check-in is due.
+        assertFalse(OverlayPolicy.eligible(999, 1_000, "PENDING", false, null, heldOpen = true))
+    }
+
+    @Test fun `three hours of video still produce twelve independent reminders when earlier ones are ignored`() {
+        val engine = com.phonemood.monitoring.SessionEngine()
+        val events = listOf(
+            com.phonemood.monitoring.Event(0, "START", interval = 15),
+            com.phonemood.monitoring.Event(0, "RESUME", video))
+        val unanswered = mutableListOf<OverlayPolicy.Prompt>()
+        repeat(12) { index ->
+            val now = (index + 1) * 900_000L
+            assertEquals(index, engine.rebuild(events, now - 1).checkpoints.size)
+            val checkpoint = engine.rebuild(events, now).checkpoints.last()
+            assertEquals(now, checkpoint.at)
+            val next = OverlayPolicy.Prompt(checkpoint.at, video)
+            unanswered += next
+            val live = OverlayPolicy.live(unanswered) { it.thresholdUtc }!!
+            assertEquals(next, live)
+            assertEquals(OverlayPolicy.PromptAction.NOTIFY, OverlayPolicy.action(now, live, video))
+            // Alternate between dismissal and no response, keeping previous prompt state.
+            unanswered[unanswered.lastIndex] = next.copy(lastNotifiedUtc = now,
+                notifyCount = 1, notifiedPackage = video, dismissed = index % 2 == 0)
+        }
+        assertEquals(12, engine.rebuild(events, 187 * 60_000L).checkpoints.size)
     }
 }

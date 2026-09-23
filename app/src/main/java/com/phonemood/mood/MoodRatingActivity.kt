@@ -1,6 +1,7 @@
 package com.phonemood.mood
 
 import com.phonemood.R
+import android.content.Context
 import android.os.Bundle
 import android.widget.Toast
 import androidx.compose.ui.semantics.semantics
@@ -29,6 +30,13 @@ import com.phonemood.ui.*
 import kotlinx.coroutines.*
 
 class MoodRatingActivity : ComponentActivity() {
+    /**
+     * The check-in notification opens this screen, and below Android 13 AppCompat applies a
+     * per-app language to its own Activity base class alone. This one is not that class, so it
+     * asks for the chosen language itself rather than answering in the system's.
+     */
+    override fun attachBaseContext(newBase: Context) = super.attachBaseContext(com.phonemood.settings.AppLocale.wrap(newBase))
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState); enableEdgeToEdge()
         val id = intent.getStringExtra("checkpointId") ?: run { finish(); return }

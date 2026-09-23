@@ -40,7 +40,13 @@ class OverlayTest {
     }
     @After fun cleanup() { instrumentation.runOnMainSync { controller.destroy() }; db.close() }
     private suspend fun checkpoint(at: Long = System.currentTimeMillis()) = MoodCheckpoint("overlay-test", "session", 30, at, "test.app", "UTC").also { db.dao().insertCheckpoints(listOf(it)) }
-    private fun button(description: String): UiObject2 = checkNotNull(device.wait(Until.findObject(By.desc(description)), 5_000)) { "Missing overlay action: $description" }
+    /**
+     * WindowManager accepts the card well before its contents reach the accessibility tree, and
+     * an emulator under load can stretch that gap past five seconds. Waiting longer costs
+     * nothing except where a card is genuinely missing, which is the case worth failing on.
+     */
+    private val cardTimeoutMs = 15_000L
+    private fun button(description: String): UiObject2 = checkNotNull(device.wait(Until.findObject(By.desc(description)), cardTimeoutMs)) { "Missing overlay action: $description" }
     @Test fun tapOverAnotherAppSavesOnceAndCloses() = runBlocking {
         val c = checkpoint()
         assertEquals(c.checkpointId, controller.reconcile())
@@ -51,6 +57,28 @@ class OverlayTest {
         assertEquals("ANSWERED", db.dao().checkpoint(c.checkpointId)!!.responseStatus)
         assertNull(controller.reconcile())
         assertEquals(1, db.dao().responses().size)
+    }
+    private suspend fun heldOpenPastItsBudget(): MoodCheckpoint {
+        // Three deliveries is all a check-in is allowed inside the app that raised it, and the
+        // last of them was several lifetimes ago. The user never left the video.
+        val at = System.currentTimeMillis() - OverlayPolicy.PROMPT_LIFETIME_MS * 3
+        db.dao().insertEvents(listOf(RawEvent("resume-test-app", at, "RESUME", "test.app", "Test", "UTC")))
+        val c = checkpoint(at)
+        db.dao().savePromptState(MoodPromptState(c.checkpointId, lastNotifiedUtc = at,
+            notifyCount = OverlayPolicy.MAX_NOTIFICATIONS, notifiedPackage = "test.app"))
+        return c
+    }
+    @Test fun aCardStaysUpPastItsDeliveryBudgetWhileTheSameAppIsInFront() = runBlocking {
+        val c = heldOpenPastItsBudget()
+        assertEquals(c.checkpointId, controller.reconcile())
+        assertNotNull(button(context.getString(R.string.score_accessibility, 7)))
+    }
+    @Test fun aHeldOpenCardComesDownOnceAnotherAppComesForward() = runBlocking {
+        val c = heldOpenPastItsBudget()
+        assertEquals(c.checkpointId, controller.reconcile())
+        db.dao().insertEvents(listOf(RawEvent("resume-other", c.promptTimestampUtc + 1, "RESUME", "com.example.other", "Other", "UTC")))
+        assertNull(controller.reconcile())
+        assertTrue(device.wait(Until.gone(By.desc(context.getString(R.string.score_accessibility, 7))), 5_000))
     }
     @Test fun repeatedPollUsesOneWindowAndDismissalSurvivesControllerRecreation() = runBlocking {
         val c = checkpoint()
@@ -104,5 +132,83 @@ class OverlayTest {
         // evidence that it was seen; only the notification carries delivery for this case.
         assertNull(state.overlayShownUtc)
         assertEquals(MoodOverlayController.MAY_BE_COVERED, state.lastOverlayError)
+    }
+
+    @Test fun dismissingNewestCardDoesNotReviveOlderUnansweredCard() = runBlocking {
+        val now = System.currentTimeMillis()
+        val old = checkpoint(now - 900_000)
+        val next = old.copy(checkpointId = "next-quarter-hour", checkpointMinutes = 45, promptTimestampUtc = now)
+        db.dao().insertCheckpoints(listOf(next))
+        db.dao().savePromptState(MoodPromptState(next.checkpointId, dismissed = true))
+        // Unknown/changed foreground would otherwise make the old card eligible again.
+        db.dao().insertEvents(listOf(RawEvent("other", now, "RESUME", "other.app", "Other", "UTC")))
+        assertNull(controller.reconcile(now))
+    }
+
+    @Test fun everyQuarterHourShowsFreshCardAfterSwipeOrIgnoringPrevious() = runBlocking {
+        device.executeShellCommand("pm grant ${context.packageName} android.permission.POST_NOTIFICATIONS")
+        val notifications = MoodNotificationManager(context)
+        notifications.createChannels()
+        val start = System.currentTimeMillis()
+        val events = listOf(
+            com.phonemood.monitoring.Event(start, "START", interval = 15),
+            com.phonemood.monitoring.Event(start, "RESUME", "test.app"))
+        db.dao().insertEvents(listOf(RawEvent("video", start, "RESUME", "test.app", "Video", "UTC")))
+        val engine = com.phonemood.monitoring.SessionEngine()
+        try { repeat(12) { index ->
+            val now = start + (index + 1) * 900_000L
+            val checkpoints = engine.rebuild(events, now).checkpoints
+            db.dao().insertCheckpoints(checkpoints.map {
+                MoodCheckpoint(it.id, it.sessionId, it.minutes, it.at, it.pkg, it.zone)
+            })
+            val id = checkpoints.last().id
+            notifications.deliver(repository, now = now)
+            assertEquals(id, controller.reconcile(now))
+            // Wait for this quarter-hour's card, not the previous card's stale accessibility tree.
+            val minutesText = context.getString(R.string.overlay_minutes, (index + 1) * 15)
+            assertTrue("Quarter-hour $index never showed \"$minutesText\"",
+                device.wait(Until.hasObject(By.text(minutesText)), cardTimeoutMs))
+            assertEquals(now, db.dao().checkpoint(id)!!.notifiedUtc)
+            // notify() returns before the system notification service publishes its state.
+            withTimeout(5_000) {
+                while (context.getSystemService(android.app.NotificationManager::class.java)
+                    .activeNotifications.none { it.tag == id }) delay(50)
+            }
+            val score = button(context.getString(R.string.score_accessibility, 7))
+            if (index % 2 == 0) {
+                // Swipe the card far enough to dismiss it, then keep the same video in front.
+                val bounds = score.visibleBounds
+                device.swipe(bounds.centerX(), bounds.centerY(), device.displayWidth - 1, bounds.centerY(), 12)
+                assertTrue(device.wait(Until.gone(By.desc(context.getString(R.string.score_accessibility, 7))), 5_000))
+                assertTrue(db.dao().promptState(id)!!.dismissed)
+                assertNull(controller.reconcile(now + 1))
+                notifications.deliver(repository, now = now + 60_000)
+                assertEquals("DISMISSED", db.dao().checkpoint(id)!!.responseStatus)
+            }
+            // On the other iterations leave the card open and completely unanswered.
+        }
+        assertEquals(12, db.dao().checkpoints().size)
+        assertEquals(12, db.dao().checkpoints().count { it.notifiedUtc != null })
+        assertTrue(db.dao().responses().isEmpty())
+        } finally { db.dao().checkpoints().forEach { notifications.cancel(it.checkpointId) } }
+    }
+
+    @Test fun aCardHeldOpenInItsVideoTakesTheOrdinaryWindowOnceTheUserLeaves() = runBlocking {
+        val now = System.currentTimeMillis()
+        val c = checkpoint(now - 600_000)
+        db.dao().insertEvents(listOf(RawEvent("video", now - 900_000, "RESUME", "test.app", "Video", "UTC")))
+        // Ten minutes past its own window with no retry behind it, and the user never left the
+        // video. The question is unanswered, so it stays where it can be answered.
+        assertEquals(c.checkpointId, controller.reconcile(now))
+        assertNotNull(button(context.getString(R.string.score_accessibility, 7)))
+        db.dao().savePromptState(MoodPromptState(c.checkpointId, lastNotifiedUtc = now, notifyCount = 2, notifiedPackage = "test.app"))
+        assertEquals(c.checkpointId, controller.reconcile(now))
+        // Coming back to PhoneMood ends the hold: from here the ordinary window decides, and
+        // switching somewhere else later does not revive the card.
+        db.dao().insertEvents(listOf(RawEvent("self", now + 1, "RESUME", context.packageName, "PhoneMood", "UTC")))
+        assertEquals(c.checkpointId, controller.reconcile(now + 1))
+        assertNull(controller.reconcile(now + 300_000))
+        db.dao().insertEvents(listOf(RawEvent("other", now + 300_001, "RESUME", "other.app", "Other", "UTC")))
+        assertNull(controller.reconcile(now + 300_001))
     }
 }

@@ -75,8 +75,21 @@ class StorageAndExportTest {
     @Test fun settingsFallbackHomeDoesNotExcludeSettingsApp() {
         val filter = com.phonemood.monitoring.AppFilter(context, com.phonemood.settings.Configuration())
         assertFalse(filter.excludes("com.android.settings"))
-        assertTrue(filter.excludes(context.packageName))
+        assertFalse(filter.excludes(context.packageName))
         assertTrue(filter.excludes("com.android.systemui"))
+    }
+    @Test fun phoneMoodCountsTowardReminderAndIsTheLatestForeground() = runBlocking {
+        val filter = com.phonemood.monitoring.AppFilter(context, com.phonemood.settings.Configuration())
+        val own = com.phonemood.monitoring.Event(start, "RESUME", context.packageName,
+            excluded = filter.excludes(context.packageName))
+        val result = com.phonemood.monitoring.SessionEngine().rebuild(listOf(
+            com.phonemood.monitoring.Event(start, "START", interval = 15), own), start + 900_000)
+        assertEquals(900_000L, result.sessions.single().active)
+        assertEquals(context.packageName, result.checkpoints.single().pkg)
+        db.dao().insertEvents(listOf(
+            RawEvent("video", start + 1, "RESUME", "video.app", "Video", "UTC"),
+            RawEvent("self", start + 2, "RESUME", context.packageName, "PhoneMood", "UTC")))
+        assertEquals(context.packageName, db.dao().lastResume()!!.packageName)
     }
     @Test fun overlaySettingDoesNotResetUsageAccounting() = runBlocking {
         val events = db.dao().events()

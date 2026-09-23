@@ -16,7 +16,7 @@ fun Context.hasUsageAccess(): Boolean = getSystemService(AppOpsManager::class.ja
 
 class AppFilter(context: Context, private val configuration: Configuration) {
     private val ignored = buildSet {
-        add(context.packageName); add("com.android.systemui"); add("com.android.permissioncontroller"); add("com.google.android.permissioncontroller")
+        add("com.android.systemui"); add("com.android.permissioncontroller"); add("com.google.android.permissioncontroller")
         // All HOME handlers include Settings.FallbackHome on Android. Excluding every
         // handler accidentally excludes the entire Settings app. Only exclude the selected home.
         context.packageManager.resolveActivity(Intent(Intent.ACTION_MAIN).addCategory(Intent.CATEGORY_HOME), android.content.pm.PackageManager.MATCH_DEFAULT_ONLY)?.activityInfo?.packageName?.takeUnless { it == "android" }?.let { add(it) }
@@ -51,7 +51,7 @@ class AndroidUsageEventReader(private val context: Context, configuration: Confi
             } ?: continue
             val pkg = event.packageName.orEmpty()
             val label = labels.getOrPut(pkg) { runCatching { context.packageManager.getApplicationLabel(context.packageManager.getApplicationInfo(pkg, 0)).toString() }.getOrDefault(pkg) }
-            result += Event(event.timeStamp, type, pkg, label, zone, excluded = filter.excludes(pkg), zoneInferred = toMillis - event.timeStamp > 20_000)
+            result += Event(event.timeStamp, type, pkg, label, zone, excluded = filter.excludes(pkg), zoneInferred = toMillis - event.timeStamp > 2 * PollingPolicy.ACTIVE_MS)
         }
         return result
     }
