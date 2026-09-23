@@ -10,7 +10,6 @@ object AnalysisPolicy {
     const val WINDOW = 30 * 60_000L
     const val MAX_PAIR = 120 * 60_000L
     const val MAX_LATENCY = 5 * 60_000L
-    const val MIN_RATINGS = 20
     const val MIN_EARLY_RATINGS = 6
     const val MIN_APP_RATINGS = 10
     const val NEAR_ZERO = .2

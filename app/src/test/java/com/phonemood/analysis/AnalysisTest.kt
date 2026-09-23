@@ -69,16 +69,6 @@ class AnalysisTest {
         assertEquals(original.beta,fit.beta,1e-10)
     }
 
-    @Test fun differentSessionMeanMoodDoesNotBecomeWithinSessionSlope() {
-        val rows=(0 until 8).flatMap { s -> (0 until 3).map { j ->
-            MoodRow("$s:$j","s$s",(s*200+j*10)*minute,"day$s",2+s,0,0,emptyMap(),true,
-                (s*20+j*10)*minute,true,emptyList())
-        } }
-        assertEquals(0.0,StatisticalEngine.sessionFit(rows)!!.beta,1e-12)
-        val singleton=rows+MoodRow("single","single",0,"day",10,0,0,emptyMap(),true,900*minute,true,emptyList())
-        assertEquals(24,StatisticalEngine.sessionFit(singleton)!!.result.sampleIds.size)
-    }
-
     @Test fun hc3MatchesIndependentInterceptMeanCalculation() {
         val ys=doubleArrayOf(1.0,2.0,4.0,5.0)
         val fit=LinearFit.fit("mean","y",List(4){"$it"},List(4){doubleArrayOf(1.0)},ys,listOf("intercept"),"intercept")!!
@@ -148,16 +138,6 @@ class AnalysisTest {
         val f=fixture(); val data=PeriodDatasetBuilder.build(f.copy(responses=f.responses.take(1)),30)
         assertEquals(1,data.rows.size)
         assertTrue(data.transitions.isEmpty())
-    }
-
-    @Test fun threeCompleteDaysCanBeCheckedWithoutRequiringResidualDfInDeletedFit() = runBlocking {
-        val d=PeriodDatasetBuilder.build(fixture(),7)
-        val daily=d.daily.take(3).mapIndexed { i,it -> it.copy(activeMs=(60+i*30)*minute,complete=true,ongoing=false) }
-        val stats=StatisticalEngine.analyze(d.copy(daily=daily,rows=emptyList(),transitions=emptyList()))
-        val f=stats.findings.first { it.kind=="DAILY_USE_TREND" }
-        assertEquals("EARLY_HIGHER",f.status)
-        assertEquals(60.0,f.difference!!,1e-10)
-        assertEquals("DAYS",f.comparisonUnit)
     }
 
     @Test fun historicalDayExcludesLaterAnswersAndEndsAtMidnight() = runBlocking {

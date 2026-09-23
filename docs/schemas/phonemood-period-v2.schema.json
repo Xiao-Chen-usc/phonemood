@@ -11,7 +11,7 @@
       "const": "2.0"
     },
     "analysis_version": {
-      "const": "1.0"
+      "const": "1.1"
     },
     "export_metadata": {
       "type": "object",
@@ -128,7 +128,7 @@
           "type": "object",
           "properties": {
             "mood_interval_minutes": {
-              "const": 30
+              "const": 15
             },
             "session_reset_minutes": {
               "const": 5
@@ -591,7 +591,7 @@
       "type": "object",
       "properties": {
         "policy_version": {
-          "const": "1.0"
+          "const": "1.1"
         },
         "models": {
           "type": "array",
@@ -659,10 +659,7 @@
                 ]
               },
               "comparison_unit": {
-                "enum": [
-                  "DAYS",
-                  "MINUTES"
-                ]
+                "const": "MINUTES"
               },
               "observations": {
                 "type": "integer",
@@ -1173,9 +1170,7 @@
         },
         "outcome": {
           "enum": [
-            "DAILY_MINUTES",
             "MOOD_SCORE",
-            "MOOD_SCORE_WITHIN_SESSION",
             "END_MOOD_SCORE"
           ]
         },
@@ -1274,8 +1269,7 @@
         },
         "kind": {
           "enum": [
-            "DAILY_USE_TREND",
-            "SESSION_LENGTH",
+            "PHONE_USAGE",
             "APP_USAGE"
           ]
         },
@@ -1439,17 +1433,10 @@
           }
         },
         "comparison_unit": {
-          "enum": [
-            "DAYS",
-            "MINUTES"
-          ]
+          "const": "MINUTES"
         },
         "contrast_outcome": {
-          "enum": [
-            "DAILY_MINUTES_CHANGE",
-            "WITHIN_SESSION_MOOD_CHANGE",
-            "EXTRA_MOOD_CHANGE"
-          ]
+          "const": "EXTRA_MOOD_CHANGE"
         }
       },
       "required": [
@@ -1480,16 +1467,16 @@
       "type": "object",
       "properties": {
         "minimum_ratings": {
-          "const": 20
+          "const": 6
+        },
+        "app_minimum_ratings": {
+          "const": 10
         },
         "max_pair_ms": {
           "const": 7200000
         },
         "max_response_latency_ms": {
           "const": 300000
-        },
-        "minimum_complete_trend_days": {
-          "const": 3
         },
         "near_zero_mood_points": {
           "const": 0.2
@@ -1498,10 +1485,10 @@
           "const": 0.8
         },
         "app_min_exposed_rows": {
-          "const": 5
+          "const": 3
         },
         "app_min_matched_rows": {
-          "const": 10
+          "const": 6
         },
         "app_min_comparison_minutes": {
           "const": 2
@@ -1539,12 +1526,6 @@
         "rank_tolerance": {
           "const": 1e-09
         },
-        "daily_min_change_minutes": {
-          "const": 15
-        },
-        "daily_relative_change_threshold": {
-          "const": 0.1
-        },
         "contrast_cap_minutes": {
           "const": 30
         },
@@ -1556,9 +1537,6 @@
         },
         "max_condition_number": {
           "const": 100000000.0
-        },
-        "session_weight": {
-          "const": "ONE_OVER_SESSION_RATING_COUNT"
         },
         "block_selection": {
           "const": "DAY_IF_AT_LEAST_3_ELSE_SESSION"
@@ -1572,9 +1550,9 @@
       },
       "required": [
         "minimum_ratings",
+        "app_minimum_ratings",
         "max_pair_ms",
         "max_response_latency_ms",
-        "minimum_complete_trend_days",
         "near_zero_mood_points",
         "block_consistency_threshold",
         "app_min_exposed_rows",
@@ -1591,13 +1569,10 @@
         "require_fdr_for_display",
         "solver",
         "rank_tolerance",
-        "daily_min_change_minutes",
-        "daily_relative_change_threshold",
         "contrast_cap_minutes",
         "cluster_min_days",
         "minimum_blocks_for_deletion_check",
         "max_condition_number",
-        "session_weight",
         "block_selection",
         "daily_drift_sensitivity",
         "sampling"

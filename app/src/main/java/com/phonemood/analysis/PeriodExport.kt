@@ -72,9 +72,9 @@ object PeriodExport {
             val reasons=when {
                 included -> emptyList()
                 model.status!="OK" -> model.warnings
-                model.outcome=="DAILY_MINUTES" || (row!=null && model.outcome=="END_MOOD_SCORE") || (transition!=null && model.outcome!="END_MOOD_SCORE") -> listOf("DIFFERENT_MODEL_ROW_UNIT")
+                (row!=null && model.outcome=="END_MOOD_SCORE") || (transition!=null && model.outcome!="END_MOOD_SCORE") -> listOf("DIFFERENT_MODEL_ROW_UNIT")
                 transition!=null -> transition.reasons.ifEmpty { listOf("NOT_IN_MODEL_SAMPLE") }
-                row!=null -> row.reasons + if(!row.sessionComplete) listOf("INCOMPLETE_SESSION_COVERAGE") else listOf("NO_WITHIN_SESSION_VARIATION")
+                row!=null -> row.reasons.ifEmpty { listOf("NOT_IN_MODEL_SAMPLE") }
                 else -> listOf("NOT_IN_MODEL_SAMPLE")
             }
             put("model_id",model.id);put("included",included);put("exclusion_reasons",strings(reasons))
@@ -149,16 +149,16 @@ object PeriodExport {
                 serialized.forEach { (k,v) -> put(k,v) }
                 put("policy_snapshot",buildJsonObject {
                     put("minimum_ratings",AnalysisPolicy.MIN_EARLY_RATINGS);put("app_minimum_ratings",AnalysisPolicy.MIN_APP_RATINGS);put("max_pair_ms",AnalysisPolicy.MAX_PAIR);put("max_response_latency_ms",AnalysisPolicy.MAX_LATENCY)
-                    put("minimum_complete_trend_days",3);put("near_zero_mood_points",.2);put("block_consistency_threshold",.8)
+                    put("near_zero_mood_points",.2);put("block_consistency_threshold",.8)
                     put("app_min_exposed_rows",AnalysisPolicy.MIN_APP_EXPOSED);put("app_min_matched_rows",2*AnalysisPolicy.MIN_APP_COMPARISONS);put("app_min_comparison_minutes",2)
                     put("app_match_total_minutes_tolerance",5);put("app_match_elapsed_minutes_tolerance",10);put("app_match_start_score_tolerance",1)
                     put("app_comparison","Median absolute app-minute difference among supported pairs, capped at 30; not a fixed exposure window.")
                     put("time_sensitivity_min_rows",40);put("time_sensitivity_min_days",7);put("time_sensitivity_min_4h_bins",3)
                     put("require_significance_for_display",false);put("require_fdr_for_display",false)
                     put("solver","SVD_SCALED_INDEPENDENT_COLUMNS");put("rank_tolerance",AnalysisPolicy.RANK_TOLERANCE)
-                    put("daily_min_change_minutes",15);put("daily_relative_change_threshold",.1);put("contrast_cap_minutes",30)
+                    put("contrast_cap_minutes",30)
                     put("cluster_min_days",20);put("minimum_blocks_for_deletion_check",3);put("max_condition_number",1e8)
-                    put("session_weight","ONE_OVER_SESSION_RATING_COUNT");put("block_selection","DAY_IF_AT_LEAST_3_ELSE_SESSION")
+                    put("block_selection","DAY_IF_AT_LEAST_3_ELSE_SESSION")
                     put("daily_drift_sensitivity","NOT_IMPLEMENTED_IN_V1");put("sampling","No random inference or AI calls")
                 })
             } })
@@ -191,11 +191,11 @@ object PeriodExport {
             put("mood","Self-reported integer 1-10, higher is better; no unobserved natural daily mood is assumed.")
             put("missing","null means unknown or unavailable, never zero. Missing app in COMPLETE coverage means zero; elsewhere it is unknown.")
             put("coverage","VERIFIED means anchored successful query-chain evidence minus known gaps/pauses, not a guarantee Android never omitted events. Legacy history may be UNKNOWN.")
-            put("analysis_matrix","One actual answer and preceding 30 wall-clock-minute behavior. Session model uses session_active_ms_at_answer, not final session duration.")
+            put("analysis_matrix","One actual answer and preceding 30 wall-clock-minute behavior. session_active_ms_at_answer is active time so far in that session, not final session duration.")
             put("transitions","Consecutive actual answers; usable only within the same session, <=120 minutes, full coverage, response latency <=5 minutes and no relevant configuration change. App model uses this whole interval, not the last 30 minutes.")
             put("non_active_ms","Elapsed minus included foreground activity. May include excluded apps; not measured rest.")
-            put("models","Daily: minutes~date. Session: within-session centered, weight=1/n_session. App: end_score~start_score+phone_minutes+elapsed_minutes+app_minutes. Redundant control columns are dropped deterministically; app coefficient must be identifiable. Covariance follows retained terms, in original units.")
-            put("findings","App difference is extra mood change for replacing comparison_value minutes of other app time, holding total time, starting score and elapsed time fixed. Session difference is within-session change across comparison_value minutes. comparison_unit explicitly distinguishes MINUTES from DAYS; daily difference is minutes across the day-index span.")
+            put("models","Phone: mood_score~previous_mood+elapsed_minutes+hour_sin+hour_cos+phone_minutes. App: end_score~start_score+phone_minutes+elapsed_minutes+app_minutes. Redundant control columns are dropped deterministically; the focal coefficient must be identifiable. Covariance follows retained terms, in original units.")
+            put("findings","App difference is extra mood change for replacing comparison_value minutes of other app time, holding total time, starting score and elapsed time fixed. Phone difference is mood change across comparison_value additional active minutes, holding previous mood, elapsed time and time of day fixed. comparison_unit is always MINUTES.")
             put("consistency","Fraction of leave-day/session-out refits retaining direction and nontrivial size; not a confidence probability. Null means insufficient blocks. HC3 does not resolve serial dependence.")
             put("app_comparison","Other apps form an aggregate reference, not each individual app. Compare only within observed support. Overall average includes the target app and is not its other-app baseline.")
             put("provenance","One snapshot; overlapping 1/7/30-day exports repeat stable observation IDs. Deduplicate before pooling. Default settings apply until overridden; configuration_events includes the last known change before context per setting plus changes through snapshot. Values preserve recorded strings. System packages are also excluded by the app filter.")

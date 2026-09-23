@@ -45,7 +45,9 @@ import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 import kotlin.math.abs
 
-data class AnalysisContent(val data: PeriodDataset, val stats: Statistics, val longTermData: PeriodDataset = data, val longTermStats: Statistics = stats)
+data class AnalysisContent(val data: PeriodDataset, val stats: Statistics, val longTermData: PeriodDataset = data, val longTermStats: Statistics = stats,
+    /** The long-term half was carried over from an earlier moment, so it is not export-coherent. */
+    val longTermReused: Boolean = false)
 data class AnalysisUiState(val days: Int = 7, val endDate: LocalDate? = null, val content: AnalysisContent? = null, val loading: Boolean = false, val error: Boolean = false)
 
 class AnalysisViewModel(application: Application): AndroidViewModel(application) {
@@ -59,14 +61,17 @@ class AnalysisViewModel(application: Application): AndroidViewModel(application)
     private var generation=0L
     
     private var exportPayload: String? = null
+    /** Set by the signals that actually move the cumulative dataset, cleared once it is rebuilt. */
+    private var longTermDirty = false
     fun select(days: Int, endDate: LocalDate) {
         require(days in listOf(1,3,7,30) && endDate <= today())
         mutable.value=AnalysisUiState(days=days,endDate=endDate)
         refresh()
     }
-    fun refresh() {
+    fun refresh(longTerm: Boolean = true) {
         job?.cancel(); val token=++generation; val days=mutable.value.days
         val requestedEnd=mutable.value.endDate
+        val reusable=mutable.value.content?.takeIf { !longTerm }
         mutable.value=mutable.value.copy(loading=true,error=false)
         job=viewModelScope.launch {
             try {
@@ -78,8 +83,12 @@ class AnalysisViewModel(application: Application): AndroidViewModel(application)
                 }
                 val result=withContext(Dispatchers.Default) {
                     val data=PeriodDatasetBuilder.build(facts,days,requestedEnd ?: Instant.ofEpochMilli(facts.asOf).atZone(ZoneId.of(facts.zone)).toLocalDate().minusDays(1))
-                    val longTerm = PeriodDatasetBuilder.cumulative(facts)
-                    AnalysisContent(data,StatisticalEngine.analyze(data),longTerm,StatisticalEngine.analyze(longTerm))
+                    // The cumulative dataset spans the whole record, and its leave-one-day-out
+                    // refits grow with its length. It moves only when an answer or a setting
+                    // changes, so the minute tick keeps today's figures current and reuses it.
+                    if(reusable!=null) AnalysisContent(data,StatisticalEngine.analyze(data),reusable.longTermData,reusable.longTermStats,longTermReused=true)
+                    else { val longTerm = PeriodDatasetBuilder.cumulative(facts)
+                        AnalysisContent(data,StatisticalEngine.analyze(data),longTerm,StatisticalEngine.analyze(longTerm)) }
                 }
                 if(token==generation) {
                     mutable.value=AnalysisUiState(days=days,endDate=LocalDate.parse(result.data.daily.last().date),content=result)
@@ -91,13 +100,22 @@ class AnalysisViewModel(application: Application): AndroidViewModel(application)
     fun cancelRefresh() { generation++;job?.cancel();mutable.value=mutable.value.copy(loading=false) }
     @OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
     suspend fun observeWhileVisible() {
-        merge(flow { while(currentCoroutineContext().isActive) { emit(Unit);delay(60_000) } },
-            app.repository.dao.watchAnswerCount().distinctUntilChanged().drop(1).map { Unit },
-            app.repository.dao.watchConfigurationTime().distinctUntilChanged().drop(1).map { Unit })
-            .debounce(300).collect { refresh() }
+        merge(flow { while(currentCoroutineContext().isActive) { emit(false);delay(60_000) } },
+            app.repository.dao.watchAnswerCount().distinctUntilChanged().drop(1).map { true },
+            app.repository.dao.watchConfigurationTime().distinctUntilChanged().drop(1).map { true })
+            // Debounce keeps only the last signal, so a data change arriving next to a tick would
+            // otherwise be forgotten. The flag carries it across the window instead.
+            .onEach { if(it) longTermDirty=true }
+            .debounce(300).collect { refresh(longTerm=longTermDirty.also { longTermDirty=false }) }
     }
     suspend fun prepareExport(content: AnalysisContent): String = withContext(Dispatchers.Default) {
-        exportPayload=PeriodExport.encodeScreen(content.data,content.stats,content.longTermData,content.longTermStats,app.packageManager.getPackageInfo(app.packageName,0).versionName.orEmpty())
+        // On screen a carried-over long-term half is harmless, but the document states when it was
+        // observed, and two halves taken at different moments would misreport that. Exporting is a
+        // deliberate, rare action, so it pays for the recomputation and both halves share one
+        // `facts` again, exactly as they did before the minute tick stopped rebuilding it.
+        val longTermData=if(content.longTermReused) PeriodDatasetBuilder.cumulative(content.data.facts) else content.longTermData
+        val longTermStats=if(content.longTermReused) StatisticalEngine.analyze(longTermData) else content.longTermStats
+        exportPayload=PeriodExport.encodeScreen(content.data,content.stats,longTermData,longTermStats,app.packageManager.getPackageInfo(app.packageName,0).versionName.orEmpty())
         "PhoneMood_${content.data.days}d_${content.data.daily.first().date}_${content.data.daily.last().date}_${content.data.end}.json"
     }
     suspend fun save(uri: Uri) = withContext(Dispatchers.IO) {
@@ -230,27 +248,28 @@ fun AnalysisScreen(vm: AnalysisViewModel = viewModel()) {
             }
             val longStats=content.longTermStats
             val phoneFinding=longStats.findings.firstOrNull { it.kind=="PHONE_USAGE" && it.status!="INSUFFICIENT_DATA" }
-            val appFindings=longStats.topAppIds.take(if(phoneFinding==null) 3 else 2).map { id -> longStats.findings.first { it.id==id } }
-            if(phoneFinding==null && appFindings.isEmpty()) item {
+            val clearApps=clearAppFindings(longStats,content.longTermData)
+            val preview=if(phoneFinding==null) 3 else 2
+            if(phoneFinding==null && clearApps.isEmpty()) item {
                 SoftCard(Sage) {
                     Text(context.getString(R.string.analysis_collecting_title),style=MaterialTheme.typography.titleLarge)
                     Text(context.getString(R.string.analysis_collecting_body),color=Muted)
                 }
             }
-            phoneFinding?.let { finding -> item {
-                SoftCard(Sage) {
-                    Text(context.getString(R.string.analysis_phone_mood),style=MaterialTheme.typography.titleLarge)
-                    Text(context.getString(R.string.analysis_early_observation),style=MaterialTheme.typography.labelMedium,color=Muted)
-                    FindingBody(finding)
+            phoneFinding?.let { finding -> item { LongTermCard(finding) } }
+            item {
+                var showAllApps by rememberSaveable { mutableStateOf(false) }
+                Column(verticalArrangement=Arrangement.spacedBy(18.dp)) {
+                    (if(showAllApps) clearApps else clearApps.take(preview)).forEach { finding ->
+                        // n counts every transition the model saw, not the ones this app appeared in.
+                        val exposure=finding.appId?.let { id -> content.longTermData.transitions.count { it.usable && (it.apps[id] ?: 0) >= 60_000 } } ?: 0
+                        LongTermCard(finding,appLabel(content.longTermData.names[finding.appId],finding.appId),exposure)
+                    }
+                    if(clearApps.size>preview) TextButton(onClick={showAllApps=!showAllApps}, modifier=Modifier.fillMaxWidth().heightIn(min=48.dp)) {
+                        Text(if(showAllApps) context.getString(R.string.analysis_hide_all_apps) else context.getString(R.string.analysis_show_all_apps,clearApps.size))
+                    }
                 }
-            } }
-            appFindings.forEach { finding -> item {
-                SoftCard(Sage) {
-                    Text(content.longTermData.names[finding.appId] ?: finding.appId.orEmpty(),style=MaterialTheme.typography.titleLarge)
-                    Text(context.getString(R.string.analysis_early_observation),style=MaterialTheme.typography.labelMedium,color=Muted)
-                    FindingBody(finding,content.longTermData.names[finding.appId] ?: finding.appId.orEmpty())
-                }
-            } }
+            }
             item {
                 TextButton(onClick={showMethodPage=true}, modifier=Modifier.fillMaxWidth().heightIn(min=48.dp)) {
                     Text(context.getString(R.string.analysis_method_link), modifier=Modifier.weight(1f))
@@ -269,7 +288,7 @@ fun AnalysisScreen(vm: AnalysisViewModel = viewModel()) {
                         }
                         Text(context.getString(R.string.where_your_time_went),style=MaterialTheme.typography.titleMedium)
                         val apps=data.daily.flatMap { it.apps.entries }.groupBy({it.key},{it.value}).mapValues { it.value.sum() }
-                        apps.entries.sortedByDescending { it.value }.take(5).forEach { (id,ms) -> Text("${data.names[id] ?: id} · ${formatAnalysisDuration(ms)}") }
+                        apps.entries.sortedByDescending { it.value }.take(5).forEach { (id,ms) -> Text("${appLabel(data.names[id],id)} · ${formatAnalysisDuration(ms)}") }
                     }
                 }
             }
@@ -321,25 +340,64 @@ private fun MethodSection(title: String, body: String) {
 @Composable
 private fun formatAnalysisDuration(ms: Long): String = LocalContext.current.getString(R.string.analysis_duration,ms/3_600_000,(ms/60_000)%60)
 
+/** Falls back to a readable last segment when the launcher label could not be resolved. */
+internal fun appLabel(name: String?,pkg: String?): String {
+    val id=pkg.orEmpty()
+    val label=name?.takeIf { it.isNotBlank() } ?: id
+    if(label!=id || !id.contains('.')) return label
+    val part=id.split('.').lastOrNull { it.length>1 } ?: return label
+    return part.replaceFirstChar { it.uppercase() }
+}
+
+/** Apps with a clear direction, most-used first over the same history the findings came from. */
+internal fun clearAppFindings(stats: Statistics,data: PeriodDataset): List<Finding> {
+    val usage=data.daily.flatMap { it.apps.entries }.groupBy({ it.key },{ it.value }).mapValues { it.value.sum() }
+    return stats.findings.filter { it.kind=="APP_USAGE" && it.status in setOf("EARLY_HIGHER","EARLY_LOWER") }
+        .sortedWith(compareByDescending<Finding> { usage[it.appId] ?: 0L }.thenBy { it.appId })
+}
+
+/** Every card quotes the same span of minutes so the effects can be read against each other. */
+private const val COMPARISON_MINUTES = 15.0
+/** Findings with numbers speak for themselves; the rest need their subject named first. */
+@Composable
+private fun LongTermCard(f: Finding,name: String = "",exposure: Int = 0) {
+    val context=LocalContext.current
+    val phone=f.kind=="PHONE_USAGE"
+    val early=f.status=="EARLY_HIGHER" || f.status=="EARLY_LOWER"
+    SoftCard(Sage) {
+        if(!early) {
+            val headline=when(f.status) {
+                "NO_NOTICEABLE_TENDENCY" -> if(phone) R.string.analysis_headline_phone_flat else R.string.analysis_headline_app_flat
+                "MIXED_TENDENCY" -> if(phone) R.string.analysis_headline_phone_mixed else R.string.analysis_headline_app_mixed
+                else -> if(phone) R.string.analysis_headline_phone_waiting else R.string.analysis_headline_app_waiting
+            }
+            Text(if(phone) context.getString(headline) else context.getString(headline,name),style=MaterialTheme.typography.titleLarge,color=Ink)
+        }
+        FindingBody(f,name)
+        Text(when {
+            !early -> context.getString(R.string.analysis_observation_pending)
+            phone -> context.getString(R.string.analysis_early_observation,f.n)
+            else -> context.getString(R.string.analysis_early_observation_app,exposure,name)
+        },style=MaterialTheme.typography.labelSmall,color=Muted)
+    }
+}
+
 @Composable
 private fun FindingBody(f: Finding,name: String = "") {
     val context=LocalContext.current
     val text=when(f.status) {
         "EARLY_HIGHER","EARLY_LOWER" -> {
             val direction=context.getString(if(f.status=="EARLY_HIGHER") R.string.analysis_higher else R.string.analysis_lower)
-            when(f.kind) {
-                "DAILY_USE_TREND" -> context.getString(R.string.analysis_trend,context.getString(if(f.status=="EARLY_HIGHER") R.string.analysis_increasing else R.string.analysis_decreasing),abs(f.difference ?: 0.0))
-                "SESSION_LENGTH" -> context.getString(R.string.analysis_session_finding,f.comparisonValue ?: 0.0,direction,abs(f.difference ?: 0.0))
-                "PHONE_USAGE" -> context.getString(R.string.analysis_phone_finding,f.comparisonValue ?: 0.0,direction,abs(f.difference ?: 0.0))
-                else -> context.getString(R.string.analysis_app_finding,name,f.comparisonValue ?: 0.0,direction,abs(f.difference ?: 0.0))
-            }
+            // beta is points per minute, so the effect rescales linearly with the span quoted.
+            val support=f.comparisonValue ?: 0.0
+            val points=if(support>0) abs(f.difference ?: 0.0)*COMPARISON_MINUTES/support else abs(f.difference ?: 0.0)
+            if(f.kind=="PHONE_USAGE") context.getString(R.string.analysis_phone_finding,COMPARISON_MINUTES,direction,points)
+            else context.getString(R.string.analysis_app_finding,name,COMPARISON_MINUTES,direction,points)
         }
         "NO_NOTICEABLE_TENDENCY" -> context.getString(R.string.analysis_no_tendency)
         "MIXED_TENDENCY" -> context.getString(if(f.templateKey=="TIME_ADJUSTMENT_SENSITIVE") R.string.analysis_time_sensitive else R.string.analysis_mixed)
         else -> context.getString(when(f.reasons.firstOrNull()) {
-            "NEED_20_RATINGS","NEED_APP_RATINGS" -> R.string.analysis_need_ratings
-            "NEED_COMPLETE_DAYS" -> R.string.analysis_need_days
-            "NEED_WITHIN_SESSION_VARIATION" -> R.string.analysis_need_sessions
+            "NEED_APP_RATINGS" -> R.string.analysis_need_ratings
             "RARE_APP","NO_SUPPORTED_COMPARISON" -> R.string.analysis_need_app_support
             else -> R.string.analysis_not_estimable
         })

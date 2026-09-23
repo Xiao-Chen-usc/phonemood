@@ -12,7 +12,7 @@ and for schema/business validation. They are not real user data.**
 - `PhoneMood_7d_SYNTHETIC.json` — a rolling seven calendar days.
 - `PhoneMood_30d_SYNTHETIC.json` — a rolling thirty calendar days.
 
-The per-app variation, the tendency toward continuous use, and the daily trends in these samples
+The per-app variation and the phone-use tendency in these samples
 are all computed from fixed synthetic inputs. This lets a future reader — including an AI reading
 `statistical_analysis` — go back to the raw `analysis_matrix` and `transitions` and check the
 numbers for themselves.

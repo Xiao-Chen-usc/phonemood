@@ -8,4 +8,4 @@
 - `PhoneMood_7d_SYNTHETIC.json`：滚动七个自然日。
 - `PhoneMood_30d_SYNTHETIC.json`：滚动三十个自然日。
 
-样本中的 App 额外变化、连续使用倾向和每日趋势都是由固定合成输入计算出来的，方便未来 AI 读取 `statistical_analysis` 并回到原始 `analysis_matrix`／`transitions` 复核。
+样本中的 App 额外变化和手机用量倾向都是由固定合成输入计算出来的，方便未来 AI 读取 `statistical_analysis` 并回到原始 `analysis_matrix`／`transitions` 复核。

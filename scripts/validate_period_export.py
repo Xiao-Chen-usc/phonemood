@@ -104,7 +104,7 @@ def validate(data):
     for model in models.values():
         k = len(model['terms']); assert k == len(model['coefficients'])
         assert not model['covariance'] or len(model['covariance']) == k and all(len(r) == k for r in model['covariance'])
-        universe = set(d['date'] for d in data['days'] if d['eligible_for_daily_statistics']) if model['outcome'] == 'DAILY_MINUTES' else set(transitions) if model['outcome'] == 'END_MOOD_SCORE' else set(answered)
+        universe = set(transitions) if model['outcome'] == 'END_MOOD_SCORE' else set(answered)
         assert set(model['sample_ids']) <= universe
         assert len(model['sample_ids']) == len(set(model['sample_ids']))
     for row in rows + list(transitions.values()):
@@ -115,7 +115,7 @@ def validate(data):
     for finding in findings.values():
         assert finding['model_id'] in models
         if finding['app_id'] is not None: assert finding['app_id'] in apps
-        assert finding['comparison_unit'] == ('DAYS' if finding['kind'] == 'DAILY_USE_TREND' else 'MINUTES')
+        assert finding['comparison_unit'] == 'MINUTES'
         if finding['sensitivity_model_id'] is not None: assert finding['sensitivity_model_id'] in models
         if finding['block_refits']:
             assert finding['consistency'] == sum(r['agrees'] for r in finding['block_refits']) / len(finding['block_refits'])

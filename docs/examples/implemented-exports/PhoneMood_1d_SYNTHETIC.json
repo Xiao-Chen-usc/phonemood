@@ -2,7 +2,7 @@
     "record_type": "phonemood_period_export",
     "schema_version": "2.0",
     "calculation_version": "2.0",
-    "analysis_version": "1.0",
+    "analysis_version": "1.1",
     "export_metadata": {
         "generated_at_utc": "2026-09-06T23:00:00Z",
         "source_revision": 42,
@@ -34,7 +34,7 @@
         "daily_summary_population": "COMPLETE_FINISHED_DAYS",
         "percentile_method": "LINEAR_TYPE_7",
         "default_settings": {
-            "mood_interval_minutes": 30,
+            "mood_interval_minutes": 15,
             "session_reset_minutes": 5,
             "excluded_packages": []
         },
@@ -2062,26 +2062,21 @@
                 "quality_flags": [],
                 "model_membership": [
                     {
-                        "model_id": "daily_trend",
+                        "model_id": "phone_mood",
                         "included": false,
                         "exclusion_reasons": [
-                            "NEED_COMPLETE_DAYS"
+                            "NEED_PHONE_VARIATION"
                         ]
                     },
                     {
-                        "model_id": "session_mood",
-                        "included": true,
-                        "exclusion_reasons": []
-                    },
-                    {
-                        "model_id": "app:other",
+                        "model_id": "app:other:time",
                         "included": false,
                         "exclusion_reasons": [
                             "DIFFERENT_MODEL_ROW_UNIT"
                         ]
                     },
                     {
-                        "model_id": "app:x",
+                        "model_id": "app:x:time",
                         "included": false,
                         "exclusion_reasons": [
                             "DIFFERENT_MODEL_ROW_UNIT"
@@ -2122,26 +2117,21 @@
                 "quality_flags": [],
                 "model_membership": [
                     {
-                        "model_id": "daily_trend",
+                        "model_id": "phone_mood",
                         "included": false,
                         "exclusion_reasons": [
-                            "NEED_COMPLETE_DAYS"
+                            "NEED_PHONE_VARIATION"
                         ]
                     },
                     {
-                        "model_id": "session_mood",
-                        "included": true,
-                        "exclusion_reasons": []
-                    },
-                    {
-                        "model_id": "app:other",
+                        "model_id": "app:other:time",
                         "included": false,
                         "exclusion_reasons": [
                             "DIFFERENT_MODEL_ROW_UNIT"
                         ]
                     },
                     {
-                        "model_id": "app:x",
+                        "model_id": "app:x:time",
                         "included": false,
                         "exclusion_reasons": [
                             "DIFFERENT_MODEL_ROW_UNIT"
@@ -2178,26 +2168,21 @@
                 "quality_flags": [],
                 "model_membership": [
                     {
-                        "model_id": "daily_trend",
+                        "model_id": "phone_mood",
                         "included": false,
                         "exclusion_reasons": [
-                            "NEED_COMPLETE_DAYS"
+                            "NEED_PHONE_VARIATION"
                         ]
                     },
                     {
-                        "model_id": "session_mood",
-                        "included": true,
-                        "exclusion_reasons": []
-                    },
-                    {
-                        "model_id": "app:other",
+                        "model_id": "app:other:time",
                         "included": false,
                         "exclusion_reasons": [
                             "DIFFERENT_MODEL_ROW_UNIT"
                         ]
                     },
                     {
-                        "model_id": "app:x",
+                        "model_id": "app:x:time",
                         "included": false,
                         "exclusion_reasons": [
                             "DIFFERENT_MODEL_ROW_UNIT"
@@ -2234,26 +2219,21 @@
                 "quality_flags": [],
                 "model_membership": [
                     {
-                        "model_id": "daily_trend",
+                        "model_id": "phone_mood",
                         "included": false,
                         "exclusion_reasons": [
-                            "NEED_COMPLETE_DAYS"
+                            "NEED_PHONE_VARIATION"
                         ]
                     },
                     {
-                        "model_id": "session_mood",
-                        "included": true,
-                        "exclusion_reasons": []
-                    },
-                    {
-                        "model_id": "app:other",
+                        "model_id": "app:other:time",
                         "included": false,
                         "exclusion_reasons": [
                             "DIFFERENT_MODEL_ROW_UNIT"
                         ]
                     },
                     {
-                        "model_id": "app:x",
+                        "model_id": "app:x:time",
                         "included": false,
                         "exclusion_reasons": [
                             "DIFFERENT_MODEL_ROW_UNIT"
@@ -2294,26 +2274,21 @@
                 "quality_flags": [],
                 "model_membership": [
                     {
-                        "model_id": "daily_trend",
+                        "model_id": "phone_mood",
                         "included": false,
                         "exclusion_reasons": [
-                            "NEED_COMPLETE_DAYS"
+                            "NEED_PHONE_VARIATION"
                         ]
                     },
                     {
-                        "model_id": "session_mood",
-                        "included": true,
-                        "exclusion_reasons": []
-                    },
-                    {
-                        "model_id": "app:other",
+                        "model_id": "app:other:time",
                         "included": false,
                         "exclusion_reasons": [
                             "DIFFERENT_MODEL_ROW_UNIT"
                         ]
                     },
                     {
-                        "model_id": "app:x",
+                        "model_id": "app:x:time",
                         "included": false,
                         "exclusion_reasons": [
                             "DIFFERENT_MODEL_ROW_UNIT"
@@ -2350,26 +2325,21 @@
                 "quality_flags": [],
                 "model_membership": [
                     {
-                        "model_id": "daily_trend",
+                        "model_id": "phone_mood",
                         "included": false,
                         "exclusion_reasons": [
-                            "NEED_COMPLETE_DAYS"
+                            "NEED_PHONE_VARIATION"
                         ]
                     },
                     {
-                        "model_id": "session_mood",
-                        "included": true,
-                        "exclusion_reasons": []
-                    },
-                    {
-                        "model_id": "app:other",
+                        "model_id": "app:other:time",
                         "included": false,
                         "exclusion_reasons": [
                             "DIFFERENT_MODEL_ROW_UNIT"
                         ]
                     },
                     {
-                        "model_id": "app:x",
+                        "model_id": "app:x:time",
                         "included": false,
                         "exclusion_reasons": [
                             "DIFFERENT_MODEL_ROW_UNIT"
@@ -2406,26 +2376,21 @@
                 "quality_flags": [],
                 "model_membership": [
                     {
-                        "model_id": "daily_trend",
+                        "model_id": "phone_mood",
                         "included": false,
                         "exclusion_reasons": [
-                            "NEED_COMPLETE_DAYS"
+                            "NEED_PHONE_VARIATION"
                         ]
                     },
                     {
-                        "model_id": "session_mood",
-                        "included": true,
-                        "exclusion_reasons": []
-                    },
-                    {
-                        "model_id": "app:other",
+                        "model_id": "app:other:time",
                         "included": false,
                         "exclusion_reasons": [
                             "DIFFERENT_MODEL_ROW_UNIT"
                         ]
                     },
                     {
-                        "model_id": "app:x",
+                        "model_id": "app:x:time",
                         "included": false,
                         "exclusion_reasons": [
                             "DIFFERENT_MODEL_ROW_UNIT"
@@ -2462,26 +2427,21 @@
                 "quality_flags": [],
                 "model_membership": [
                     {
-                        "model_id": "daily_trend",
+                        "model_id": "phone_mood",
                         "included": false,
                         "exclusion_reasons": [
-                            "NEED_COMPLETE_DAYS"
+                            "NEED_PHONE_VARIATION"
                         ]
                     },
                     {
-                        "model_id": "session_mood",
-                        "included": true,
-                        "exclusion_reasons": []
-                    },
-                    {
-                        "model_id": "app:other",
+                        "model_id": "app:other:time",
                         "included": false,
                         "exclusion_reasons": [
                             "DIFFERENT_MODEL_ROW_UNIT"
                         ]
                     },
                     {
-                        "model_id": "app:x",
+                        "model_id": "app:x:time",
                         "included": false,
                         "exclusion_reasons": [
                             "DIFFERENT_MODEL_ROW_UNIT"
@@ -2518,26 +2478,21 @@
                 "quality_flags": [],
                 "model_membership": [
                     {
-                        "model_id": "daily_trend",
+                        "model_id": "phone_mood",
                         "included": false,
                         "exclusion_reasons": [
-                            "NEED_COMPLETE_DAYS"
+                            "NEED_PHONE_VARIATION"
                         ]
                     },
                     {
-                        "model_id": "session_mood",
-                        "included": true,
-                        "exclusion_reasons": []
-                    },
-                    {
-                        "model_id": "app:other",
+                        "model_id": "app:other:time",
                         "included": false,
                         "exclusion_reasons": [
                             "DIFFERENT_MODEL_ROW_UNIT"
                         ]
                     },
                     {
-                        "model_id": "app:x",
+                        "model_id": "app:x:time",
                         "included": false,
                         "exclusion_reasons": [
                             "DIFFERENT_MODEL_ROW_UNIT"
@@ -2578,26 +2533,21 @@
                 "quality_flags": [],
                 "model_membership": [
                     {
-                        "model_id": "daily_trend",
+                        "model_id": "phone_mood",
                         "included": false,
                         "exclusion_reasons": [
-                            "NEED_COMPLETE_DAYS"
+                            "NEED_PHONE_VARIATION"
                         ]
                     },
                     {
-                        "model_id": "session_mood",
-                        "included": true,
-                        "exclusion_reasons": []
-                    },
-                    {
-                        "model_id": "app:other",
+                        "model_id": "app:other:time",
                         "included": false,
                         "exclusion_reasons": [
                             "DIFFERENT_MODEL_ROW_UNIT"
                         ]
                     },
                     {
-                        "model_id": "app:x",
+                        "model_id": "app:x:time",
                         "included": false,
                         "exclusion_reasons": [
                             "DIFFERENT_MODEL_ROW_UNIT"
@@ -2634,26 +2584,21 @@
                 "quality_flags": [],
                 "model_membership": [
                     {
-                        "model_id": "daily_trend",
+                        "model_id": "phone_mood",
                         "included": false,
                         "exclusion_reasons": [
-                            "NEED_COMPLETE_DAYS"
+                            "NEED_PHONE_VARIATION"
                         ]
                     },
                     {
-                        "model_id": "session_mood",
-                        "included": true,
-                        "exclusion_reasons": []
-                    },
-                    {
-                        "model_id": "app:other",
+                        "model_id": "app:other:time",
                         "included": false,
                         "exclusion_reasons": [
                             "DIFFERENT_MODEL_ROW_UNIT"
                         ]
                     },
                     {
-                        "model_id": "app:x",
+                        "model_id": "app:x:time",
                         "included": false,
                         "exclusion_reasons": [
                             "DIFFERENT_MODEL_ROW_UNIT"
@@ -2690,26 +2635,21 @@
                 "quality_flags": [],
                 "model_membership": [
                     {
-                        "model_id": "daily_trend",
+                        "model_id": "phone_mood",
                         "included": false,
                         "exclusion_reasons": [
-                            "NEED_COMPLETE_DAYS"
+                            "NEED_PHONE_VARIATION"
                         ]
                     },
                     {
-                        "model_id": "session_mood",
-                        "included": true,
-                        "exclusion_reasons": []
-                    },
-                    {
-                        "model_id": "app:other",
+                        "model_id": "app:other:time",
                         "included": false,
                         "exclusion_reasons": [
                             "DIFFERENT_MODEL_ROW_UNIT"
                         ]
                     },
                     {
-                        "model_id": "app:x",
+                        "model_id": "app:x:time",
                         "included": false,
                         "exclusion_reasons": [
                             "DIFFERENT_MODEL_ROW_UNIT"
@@ -2746,26 +2686,21 @@
                 "quality_flags": [],
                 "model_membership": [
                     {
-                        "model_id": "daily_trend",
+                        "model_id": "phone_mood",
                         "included": false,
                         "exclusion_reasons": [
-                            "NEED_COMPLETE_DAYS"
+                            "NEED_PHONE_VARIATION"
                         ]
                     },
                     {
-                        "model_id": "session_mood",
-                        "included": true,
-                        "exclusion_reasons": []
-                    },
-                    {
-                        "model_id": "app:other",
+                        "model_id": "app:other:time",
                         "included": false,
                         "exclusion_reasons": [
                             "DIFFERENT_MODEL_ROW_UNIT"
                         ]
                     },
                     {
-                        "model_id": "app:x",
+                        "model_id": "app:x:time",
                         "included": false,
                         "exclusion_reasons": [
                             "DIFFERENT_MODEL_ROW_UNIT"
@@ -2802,26 +2737,21 @@
                 "quality_flags": [],
                 "model_membership": [
                     {
-                        "model_id": "daily_trend",
+                        "model_id": "phone_mood",
                         "included": false,
                         "exclusion_reasons": [
-                            "NEED_COMPLETE_DAYS"
+                            "NEED_PHONE_VARIATION"
                         ]
                     },
                     {
-                        "model_id": "session_mood",
-                        "included": true,
-                        "exclusion_reasons": []
-                    },
-                    {
-                        "model_id": "app:other",
+                        "model_id": "app:other:time",
                         "included": false,
                         "exclusion_reasons": [
                             "DIFFERENT_MODEL_ROW_UNIT"
                         ]
                     },
                     {
-                        "model_id": "app:x",
+                        "model_id": "app:x:time",
                         "included": false,
                         "exclusion_reasons": [
                             "DIFFERENT_MODEL_ROW_UNIT"
@@ -2862,26 +2792,21 @@
                 "quality_flags": [],
                 "model_membership": [
                     {
-                        "model_id": "daily_trend",
+                        "model_id": "phone_mood",
                         "included": false,
                         "exclusion_reasons": [
-                            "NEED_COMPLETE_DAYS"
+                            "NEED_PHONE_VARIATION"
                         ]
                     },
                     {
-                        "model_id": "session_mood",
-                        "included": true,
-                        "exclusion_reasons": []
-                    },
-                    {
-                        "model_id": "app:other",
+                        "model_id": "app:other:time",
                         "included": false,
                         "exclusion_reasons": [
                             "DIFFERENT_MODEL_ROW_UNIT"
                         ]
                     },
                     {
-                        "model_id": "app:x",
+                        "model_id": "app:x:time",
                         "included": false,
                         "exclusion_reasons": [
                             "DIFFERENT_MODEL_ROW_UNIT"
@@ -2918,26 +2843,21 @@
                 "quality_flags": [],
                 "model_membership": [
                     {
-                        "model_id": "daily_trend",
+                        "model_id": "phone_mood",
                         "included": false,
                         "exclusion_reasons": [
-                            "NEED_COMPLETE_DAYS"
+                            "NEED_PHONE_VARIATION"
                         ]
                     },
                     {
-                        "model_id": "session_mood",
-                        "included": true,
-                        "exclusion_reasons": []
-                    },
-                    {
-                        "model_id": "app:other",
+                        "model_id": "app:other:time",
                         "included": false,
                         "exclusion_reasons": [
                             "DIFFERENT_MODEL_ROW_UNIT"
                         ]
                     },
                     {
-                        "model_id": "app:x",
+                        "model_id": "app:x:time",
                         "included": false,
                         "exclusion_reasons": [
                             "DIFFERENT_MODEL_ROW_UNIT"
@@ -2974,26 +2894,21 @@
                 "quality_flags": [],
                 "model_membership": [
                     {
-                        "model_id": "daily_trend",
+                        "model_id": "phone_mood",
                         "included": false,
                         "exclusion_reasons": [
-                            "NEED_COMPLETE_DAYS"
+                            "NEED_PHONE_VARIATION"
                         ]
                     },
                     {
-                        "model_id": "session_mood",
-                        "included": true,
-                        "exclusion_reasons": []
-                    },
-                    {
-                        "model_id": "app:other",
+                        "model_id": "app:other:time",
                         "included": false,
                         "exclusion_reasons": [
                             "DIFFERENT_MODEL_ROW_UNIT"
                         ]
                     },
                     {
-                        "model_id": "app:x",
+                        "model_id": "app:x:time",
                         "included": false,
                         "exclusion_reasons": [
                             "DIFFERENT_MODEL_ROW_UNIT"
@@ -3034,26 +2949,21 @@
                 "quality_flags": [],
                 "model_membership": [
                     {
-                        "model_id": "daily_trend",
+                        "model_id": "phone_mood",
                         "included": false,
                         "exclusion_reasons": [
-                            "NEED_COMPLETE_DAYS"
+                            "NEED_PHONE_VARIATION"
                         ]
                     },
                     {
-                        "model_id": "session_mood",
-                        "included": true,
-                        "exclusion_reasons": []
-                    },
-                    {
-                        "model_id": "app:other",
+                        "model_id": "app:other:time",
                         "included": false,
                         "exclusion_reasons": [
                             "DIFFERENT_MODEL_ROW_UNIT"
                         ]
                     },
                     {
-                        "model_id": "app:x",
+                        "model_id": "app:x:time",
                         "included": false,
                         "exclusion_reasons": [
                             "DIFFERENT_MODEL_ROW_UNIT"
@@ -3090,26 +3000,21 @@
                 "quality_flags": [],
                 "model_membership": [
                     {
-                        "model_id": "daily_trend",
+                        "model_id": "phone_mood",
                         "included": false,
                         "exclusion_reasons": [
-                            "NEED_COMPLETE_DAYS"
+                            "NEED_PHONE_VARIATION"
                         ]
                     },
                     {
-                        "model_id": "session_mood",
-                        "included": true,
-                        "exclusion_reasons": []
-                    },
-                    {
-                        "model_id": "app:other",
+                        "model_id": "app:other:time",
                         "included": false,
                         "exclusion_reasons": [
                             "DIFFERENT_MODEL_ROW_UNIT"
                         ]
                     },
                     {
-                        "model_id": "app:x",
+                        "model_id": "app:x:time",
                         "included": false,
                         "exclusion_reasons": [
                             "DIFFERENT_MODEL_ROW_UNIT"
@@ -3150,26 +3055,21 @@
                 "quality_flags": [],
                 "model_membership": [
                     {
-                        "model_id": "daily_trend",
+                        "model_id": "phone_mood",
                         "included": false,
                         "exclusion_reasons": [
-                            "NEED_COMPLETE_DAYS"
+                            "NEED_PHONE_VARIATION"
                         ]
                     },
                     {
-                        "model_id": "session_mood",
-                        "included": true,
-                        "exclusion_reasons": []
-                    },
-                    {
-                        "model_id": "app:other",
+                        "model_id": "app:other:time",
                         "included": false,
                         "exclusion_reasons": [
                             "DIFFERENT_MODEL_ROW_UNIT"
                         ]
                     },
                     {
-                        "model_id": "app:x",
+                        "model_id": "app:x:time",
                         "included": false,
                         "exclusion_reasons": [
                             "DIFFERENT_MODEL_ROW_UNIT"
@@ -3206,26 +3106,21 @@
                 "quality_flags": [],
                 "model_membership": [
                     {
-                        "model_id": "daily_trend",
+                        "model_id": "phone_mood",
                         "included": false,
                         "exclusion_reasons": [
-                            "NEED_COMPLETE_DAYS"
+                            "NEED_PHONE_VARIATION"
                         ]
                     },
                     {
-                        "model_id": "session_mood",
-                        "included": true,
-                        "exclusion_reasons": []
-                    },
-                    {
-                        "model_id": "app:other",
+                        "model_id": "app:other:time",
                         "included": false,
                         "exclusion_reasons": [
                             "DIFFERENT_MODEL_ROW_UNIT"
                         ]
                     },
                     {
-                        "model_id": "app:x",
+                        "model_id": "app:x:time",
                         "included": false,
                         "exclusion_reasons": [
                             "DIFFERENT_MODEL_ROW_UNIT"
@@ -3262,26 +3157,21 @@
                 "quality_flags": [],
                 "model_membership": [
                     {
-                        "model_id": "daily_trend",
+                        "model_id": "phone_mood",
                         "included": false,
                         "exclusion_reasons": [
-                            "NEED_COMPLETE_DAYS"
+                            "NEED_PHONE_VARIATION"
                         ]
                     },
                     {
-                        "model_id": "session_mood",
-                        "included": true,
-                        "exclusion_reasons": []
-                    },
-                    {
-                        "model_id": "app:other",
+                        "model_id": "app:other:time",
                         "included": false,
                         "exclusion_reasons": [
                             "DIFFERENT_MODEL_ROW_UNIT"
                         ]
                     },
                     {
-                        "model_id": "app:x",
+                        "model_id": "app:x:time",
                         "included": false,
                         "exclusion_reasons": [
                             "DIFFERENT_MODEL_ROW_UNIT"
@@ -3322,26 +3212,21 @@
                 "quality_flags": [],
                 "model_membership": [
                     {
-                        "model_id": "daily_trend",
+                        "model_id": "phone_mood",
                         "included": false,
                         "exclusion_reasons": [
-                            "NEED_COMPLETE_DAYS"
+                            "NEED_PHONE_VARIATION"
                         ]
                     },
                     {
-                        "model_id": "session_mood",
-                        "included": true,
-                        "exclusion_reasons": []
-                    },
-                    {
-                        "model_id": "app:other",
+                        "model_id": "app:other:time",
                         "included": false,
                         "exclusion_reasons": [
                             "DIFFERENT_MODEL_ROW_UNIT"
                         ]
                     },
                     {
-                        "model_id": "app:x",
+                        "model_id": "app:x:time",
                         "included": false,
                         "exclusion_reasons": [
                             "DIFFERENT_MODEL_ROW_UNIT"
@@ -3378,26 +3263,21 @@
                 "quality_flags": [],
                 "model_membership": [
                     {
-                        "model_id": "daily_trend",
+                        "model_id": "phone_mood",
                         "included": false,
                         "exclusion_reasons": [
-                            "NEED_COMPLETE_DAYS"
+                            "NEED_PHONE_VARIATION"
                         ]
                     },
                     {
-                        "model_id": "session_mood",
-                        "included": true,
-                        "exclusion_reasons": []
-                    },
-                    {
-                        "model_id": "app:other",
+                        "model_id": "app:other:time",
                         "included": false,
                         "exclusion_reasons": [
                             "DIFFERENT_MODEL_ROW_UNIT"
                         ]
                     },
                     {
-                        "model_id": "app:x",
+                        "model_id": "app:x:time",
                         "included": false,
                         "exclusion_reasons": [
                             "DIFFERENT_MODEL_ROW_UNIT"
@@ -3443,21 +3323,14 @@
             ],
             "model_membership": [
                 {
-                    "model_id": "daily_trend",
+                    "model_id": "phone_mood",
                     "included": false,
                     "exclusion_reasons": [
-                        "NEED_COMPLETE_DAYS"
+                        "NEED_PHONE_VARIATION"
                     ]
                 },
                 {
-                    "model_id": "session_mood",
-                    "included": false,
-                    "exclusion_reasons": [
-                        "DIFFERENT_MODEL_ROW_UNIT"
-                    ]
-                },
-                {
-                    "model_id": "app:other",
+                    "model_id": "app:other:time",
                     "included": false,
                     "exclusion_reasons": [
                         "DIFFERENT_SESSION",
@@ -3465,7 +3338,7 @@
                     ]
                 },
                 {
-                    "model_id": "app:x",
+                    "model_id": "app:x:time",
                     "included": false,
                     "exclusion_reasons": [
                         "DIFFERENT_SESSION",
@@ -3510,26 +3383,19 @@
             "exclusion_reasons": [],
             "model_membership": [
                 {
-                    "model_id": "daily_trend",
+                    "model_id": "phone_mood",
                     "included": false,
                     "exclusion_reasons": [
-                        "NEED_COMPLETE_DAYS"
+                        "NEED_PHONE_VARIATION"
                     ]
                 },
                 {
-                    "model_id": "session_mood",
-                    "included": false,
-                    "exclusion_reasons": [
-                        "DIFFERENT_MODEL_ROW_UNIT"
-                    ]
-                },
-                {
-                    "model_id": "app:other",
+                    "model_id": "app:other:time",
                     "included": true,
                     "exclusion_reasons": []
                 },
                 {
-                    "model_id": "app:x",
+                    "model_id": "app:x:time",
                     "included": true,
                     "exclusion_reasons": []
                 }
@@ -3567,26 +3433,19 @@
             "exclusion_reasons": [],
             "model_membership": [
                 {
-                    "model_id": "daily_trend",
+                    "model_id": "phone_mood",
                     "included": false,
                     "exclusion_reasons": [
-                        "NEED_COMPLETE_DAYS"
+                        "NEED_PHONE_VARIATION"
                     ]
                 },
                 {
-                    "model_id": "session_mood",
-                    "included": false,
-                    "exclusion_reasons": [
-                        "DIFFERENT_MODEL_ROW_UNIT"
-                    ]
-                },
-                {
-                    "model_id": "app:other",
+                    "model_id": "app:other:time",
                     "included": true,
                     "exclusion_reasons": []
                 },
                 {
-                    "model_id": "app:x",
+                    "model_id": "app:x:time",
                     "included": true,
                     "exclusion_reasons": []
                 }
@@ -3624,26 +3483,19 @@
             "exclusion_reasons": [],
             "model_membership": [
                 {
-                    "model_id": "daily_trend",
+                    "model_id": "phone_mood",
                     "included": false,
                     "exclusion_reasons": [
-                        "NEED_COMPLETE_DAYS"
+                        "NEED_PHONE_VARIATION"
                     ]
                 },
                 {
-                    "model_id": "session_mood",
-                    "included": false,
-                    "exclusion_reasons": [
-                        "DIFFERENT_MODEL_ROW_UNIT"
-                    ]
-                },
-                {
-                    "model_id": "app:other",
+                    "model_id": "app:other:time",
                     "included": true,
                     "exclusion_reasons": []
                 },
                 {
-                    "model_id": "app:x",
+                    "model_id": "app:x:time",
                     "included": true,
                     "exclusion_reasons": []
                 }
@@ -3685,26 +3537,19 @@
             "exclusion_reasons": [],
             "model_membership": [
                 {
-                    "model_id": "daily_trend",
+                    "model_id": "phone_mood",
                     "included": false,
                     "exclusion_reasons": [
-                        "NEED_COMPLETE_DAYS"
+                        "NEED_PHONE_VARIATION"
                     ]
                 },
                 {
-                    "model_id": "session_mood",
-                    "included": false,
-                    "exclusion_reasons": [
-                        "DIFFERENT_MODEL_ROW_UNIT"
-                    ]
-                },
-                {
-                    "model_id": "app:other",
+                    "model_id": "app:other:time",
                     "included": true,
                     "exclusion_reasons": []
                 },
                 {
-                    "model_id": "app:x",
+                    "model_id": "app:x:time",
                     "included": true,
                     "exclusion_reasons": []
                 }
@@ -3742,26 +3587,19 @@
             "exclusion_reasons": [],
             "model_membership": [
                 {
-                    "model_id": "daily_trend",
+                    "model_id": "phone_mood",
                     "included": false,
                     "exclusion_reasons": [
-                        "NEED_COMPLETE_DAYS"
+                        "NEED_PHONE_VARIATION"
                     ]
                 },
                 {
-                    "model_id": "session_mood",
-                    "included": false,
-                    "exclusion_reasons": [
-                        "DIFFERENT_MODEL_ROW_UNIT"
-                    ]
-                },
-                {
-                    "model_id": "app:other",
+                    "model_id": "app:other:time",
                     "included": true,
                     "exclusion_reasons": []
                 },
                 {
-                    "model_id": "app:x",
+                    "model_id": "app:x:time",
                     "included": true,
                     "exclusion_reasons": []
                 }
@@ -3802,21 +3640,14 @@
             ],
             "model_membership": [
                 {
-                    "model_id": "daily_trend",
+                    "model_id": "phone_mood",
                     "included": false,
                     "exclusion_reasons": [
-                        "NEED_COMPLETE_DAYS"
+                        "NEED_PHONE_VARIATION"
                     ]
                 },
                 {
-                    "model_id": "session_mood",
-                    "included": false,
-                    "exclusion_reasons": [
-                        "DIFFERENT_MODEL_ROW_UNIT"
-                    ]
-                },
-                {
-                    "model_id": "app:other",
+                    "model_id": "app:other:time",
                     "included": false,
                     "exclusion_reasons": [
                         "DIFFERENT_SESSION",
@@ -3824,7 +3655,7 @@
                     ]
                 },
                 {
-                    "model_id": "app:x",
+                    "model_id": "app:x:time",
                     "included": false,
                     "exclusion_reasons": [
                         "DIFFERENT_SESSION",
@@ -3865,26 +3696,19 @@
             "exclusion_reasons": [],
             "model_membership": [
                 {
-                    "model_id": "daily_trend",
+                    "model_id": "phone_mood",
                     "included": false,
                     "exclusion_reasons": [
-                        "NEED_COMPLETE_DAYS"
+                        "NEED_PHONE_VARIATION"
                     ]
                 },
                 {
-                    "model_id": "session_mood",
-                    "included": false,
-                    "exclusion_reasons": [
-                        "DIFFERENT_MODEL_ROW_UNIT"
-                    ]
-                },
-                {
-                    "model_id": "app:other",
+                    "model_id": "app:other:time",
                     "included": true,
                     "exclusion_reasons": []
                 },
                 {
-                    "model_id": "app:x",
+                    "model_id": "app:x:time",
                     "included": true,
                     "exclusion_reasons": []
                 }
@@ -3922,26 +3746,19 @@
             "exclusion_reasons": [],
             "model_membership": [
                 {
-                    "model_id": "daily_trend",
+                    "model_id": "phone_mood",
                     "included": false,
                     "exclusion_reasons": [
-                        "NEED_COMPLETE_DAYS"
+                        "NEED_PHONE_VARIATION"
                     ]
                 },
                 {
-                    "model_id": "session_mood",
-                    "included": false,
-                    "exclusion_reasons": [
-                        "DIFFERENT_MODEL_ROW_UNIT"
-                    ]
-                },
-                {
-                    "model_id": "app:other",
+                    "model_id": "app:other:time",
                     "included": true,
                     "exclusion_reasons": []
                 },
                 {
-                    "model_id": "app:x",
+                    "model_id": "app:x:time",
                     "included": true,
                     "exclusion_reasons": []
                 }
@@ -3983,26 +3800,19 @@
             "exclusion_reasons": [],
             "model_membership": [
                 {
-                    "model_id": "daily_trend",
+                    "model_id": "phone_mood",
                     "included": false,
                     "exclusion_reasons": [
-                        "NEED_COMPLETE_DAYS"
+                        "NEED_PHONE_VARIATION"
                     ]
                 },
                 {
-                    "model_id": "session_mood",
-                    "included": false,
-                    "exclusion_reasons": [
-                        "DIFFERENT_MODEL_ROW_UNIT"
-                    ]
-                },
-                {
-                    "model_id": "app:other",
+                    "model_id": "app:other:time",
                     "included": true,
                     "exclusion_reasons": []
                 },
                 {
-                    "model_id": "app:x",
+                    "model_id": "app:x:time",
                     "included": true,
                     "exclusion_reasons": []
                 }
@@ -4040,26 +3850,19 @@
             "exclusion_reasons": [],
             "model_membership": [
                 {
-                    "model_id": "daily_trend",
+                    "model_id": "phone_mood",
                     "included": false,
                     "exclusion_reasons": [
-                        "NEED_COMPLETE_DAYS"
+                        "NEED_PHONE_VARIATION"
                     ]
                 },
                 {
-                    "model_id": "session_mood",
-                    "included": false,
-                    "exclusion_reasons": [
-                        "DIFFERENT_MODEL_ROW_UNIT"
-                    ]
-                },
-                {
-                    "model_id": "app:other",
+                    "model_id": "app:other:time",
                     "included": true,
                     "exclusion_reasons": []
                 },
                 {
-                    "model_id": "app:x",
+                    "model_id": "app:x:time",
                     "included": true,
                     "exclusion_reasons": []
                 }
@@ -4097,26 +3900,19 @@
             "exclusion_reasons": [],
             "model_membership": [
                 {
-                    "model_id": "daily_trend",
+                    "model_id": "phone_mood",
                     "included": false,
                     "exclusion_reasons": [
-                        "NEED_COMPLETE_DAYS"
+                        "NEED_PHONE_VARIATION"
                     ]
                 },
                 {
-                    "model_id": "session_mood",
-                    "included": false,
-                    "exclusion_reasons": [
-                        "DIFFERENT_MODEL_ROW_UNIT"
-                    ]
-                },
-                {
-                    "model_id": "app:other",
+                    "model_id": "app:other:time",
                     "included": true,
                     "exclusion_reasons": []
                 },
                 {
-                    "model_id": "app:x",
+                    "model_id": "app:x:time",
                     "included": true,
                     "exclusion_reasons": []
                 }
@@ -4157,21 +3953,14 @@
             ],
             "model_membership": [
                 {
-                    "model_id": "daily_trend",
+                    "model_id": "phone_mood",
                     "included": false,
                     "exclusion_reasons": [
-                        "NEED_COMPLETE_DAYS"
+                        "NEED_PHONE_VARIATION"
                     ]
                 },
                 {
-                    "model_id": "session_mood",
-                    "included": false,
-                    "exclusion_reasons": [
-                        "DIFFERENT_MODEL_ROW_UNIT"
-                    ]
-                },
-                {
-                    "model_id": "app:other",
+                    "model_id": "app:other:time",
                     "included": false,
                     "exclusion_reasons": [
                         "DIFFERENT_SESSION",
@@ -4179,7 +3968,7 @@
                     ]
                 },
                 {
-                    "model_id": "app:x",
+                    "model_id": "app:x:time",
                     "included": false,
                     "exclusion_reasons": [
                         "DIFFERENT_SESSION",
@@ -4220,26 +4009,19 @@
             "exclusion_reasons": [],
             "model_membership": [
                 {
-                    "model_id": "daily_trend",
+                    "model_id": "phone_mood",
                     "included": false,
                     "exclusion_reasons": [
-                        "NEED_COMPLETE_DAYS"
+                        "NEED_PHONE_VARIATION"
                     ]
                 },
                 {
-                    "model_id": "session_mood",
-                    "included": false,
-                    "exclusion_reasons": [
-                        "DIFFERENT_MODEL_ROW_UNIT"
-                    ]
-                },
-                {
-                    "model_id": "app:other",
+                    "model_id": "app:other:time",
                     "included": true,
                     "exclusion_reasons": []
                 },
                 {
-                    "model_id": "app:x",
+                    "model_id": "app:x:time",
                     "included": true,
                     "exclusion_reasons": []
                 }
@@ -4281,26 +4063,19 @@
             "exclusion_reasons": [],
             "model_membership": [
                 {
-                    "model_id": "daily_trend",
+                    "model_id": "phone_mood",
                     "included": false,
                     "exclusion_reasons": [
-                        "NEED_COMPLETE_DAYS"
+                        "NEED_PHONE_VARIATION"
                     ]
                 },
                 {
-                    "model_id": "session_mood",
-                    "included": false,
-                    "exclusion_reasons": [
-                        "DIFFERENT_MODEL_ROW_UNIT"
-                    ]
-                },
-                {
-                    "model_id": "app:other",
+                    "model_id": "app:other:time",
                     "included": true,
                     "exclusion_reasons": []
                 },
                 {
-                    "model_id": "app:x",
+                    "model_id": "app:x:time",
                     "included": true,
                     "exclusion_reasons": []
                 }
@@ -4338,26 +4113,19 @@
             "exclusion_reasons": [],
             "model_membership": [
                 {
-                    "model_id": "daily_trend",
+                    "model_id": "phone_mood",
                     "included": false,
                     "exclusion_reasons": [
-                        "NEED_COMPLETE_DAYS"
+                        "NEED_PHONE_VARIATION"
                     ]
                 },
                 {
-                    "model_id": "session_mood",
-                    "included": false,
-                    "exclusion_reasons": [
-                        "DIFFERENT_MODEL_ROW_UNIT"
-                    ]
-                },
-                {
-                    "model_id": "app:other",
+                    "model_id": "app:other:time",
                     "included": true,
                     "exclusion_reasons": []
                 },
                 {
-                    "model_id": "app:x",
+                    "model_id": "app:x:time",
                     "included": true,
                     "exclusion_reasons": []
                 }
@@ -4395,26 +4163,19 @@
             "exclusion_reasons": [],
             "model_membership": [
                 {
-                    "model_id": "daily_trend",
+                    "model_id": "phone_mood",
                     "included": false,
                     "exclusion_reasons": [
-                        "NEED_COMPLETE_DAYS"
+                        "NEED_PHONE_VARIATION"
                     ]
                 },
                 {
-                    "model_id": "session_mood",
-                    "included": false,
-                    "exclusion_reasons": [
-                        "DIFFERENT_MODEL_ROW_UNIT"
-                    ]
-                },
-                {
-                    "model_id": "app:other",
+                    "model_id": "app:other:time",
                     "included": true,
                     "exclusion_reasons": []
                 },
                 {
-                    "model_id": "app:x",
+                    "model_id": "app:x:time",
                     "included": true,
                     "exclusion_reasons": []
                 }
@@ -4456,26 +4217,19 @@
             "exclusion_reasons": [],
             "model_membership": [
                 {
-                    "model_id": "daily_trend",
+                    "model_id": "phone_mood",
                     "included": false,
                     "exclusion_reasons": [
-                        "NEED_COMPLETE_DAYS"
+                        "NEED_PHONE_VARIATION"
                     ]
                 },
                 {
-                    "model_id": "session_mood",
-                    "included": false,
-                    "exclusion_reasons": [
-                        "DIFFERENT_MODEL_ROW_UNIT"
-                    ]
-                },
-                {
-                    "model_id": "app:other",
+                    "model_id": "app:other:time",
                     "included": true,
                     "exclusion_reasons": []
                 },
                 {
-                    "model_id": "app:x",
+                    "model_id": "app:x:time",
                     "included": true,
                     "exclusion_reasons": []
                 }
@@ -4516,21 +4270,14 @@
             ],
             "model_membership": [
                 {
-                    "model_id": "daily_trend",
+                    "model_id": "phone_mood",
                     "included": false,
                     "exclusion_reasons": [
-                        "NEED_COMPLETE_DAYS"
+                        "NEED_PHONE_VARIATION"
                     ]
                 },
                 {
-                    "model_id": "session_mood",
-                    "included": false,
-                    "exclusion_reasons": [
-                        "DIFFERENT_MODEL_ROW_UNIT"
-                    ]
-                },
-                {
-                    "model_id": "app:other",
+                    "model_id": "app:other:time",
                     "included": false,
                     "exclusion_reasons": [
                         "DIFFERENT_SESSION",
@@ -4538,7 +4285,7 @@
                     ]
                 },
                 {
-                    "model_id": "app:x",
+                    "model_id": "app:x:time",
                     "included": false,
                     "exclusion_reasons": [
                         "DIFFERENT_SESSION",
@@ -4583,26 +4330,19 @@
             "exclusion_reasons": [],
             "model_membership": [
                 {
-                    "model_id": "daily_trend",
+                    "model_id": "phone_mood",
                     "included": false,
                     "exclusion_reasons": [
-                        "NEED_COMPLETE_DAYS"
+                        "NEED_PHONE_VARIATION"
                     ]
                 },
                 {
-                    "model_id": "session_mood",
-                    "included": false,
-                    "exclusion_reasons": [
-                        "DIFFERENT_MODEL_ROW_UNIT"
-                    ]
-                },
-                {
-                    "model_id": "app:other",
+                    "model_id": "app:other:time",
                     "included": true,
                     "exclusion_reasons": []
                 },
                 {
-                    "model_id": "app:x",
+                    "model_id": "app:x:time",
                     "included": true,
                     "exclusion_reasons": []
                 }
@@ -4640,26 +4380,19 @@
             "exclusion_reasons": [],
             "model_membership": [
                 {
-                    "model_id": "daily_trend",
+                    "model_id": "phone_mood",
                     "included": false,
                     "exclusion_reasons": [
-                        "NEED_COMPLETE_DAYS"
+                        "NEED_PHONE_VARIATION"
                     ]
                 },
                 {
-                    "model_id": "session_mood",
-                    "included": false,
-                    "exclusion_reasons": [
-                        "DIFFERENT_MODEL_ROW_UNIT"
-                    ]
-                },
-                {
-                    "model_id": "app:other",
+                    "model_id": "app:other:time",
                     "included": true,
                     "exclusion_reasons": []
                 },
                 {
-                    "model_id": "app:x",
+                    "model_id": "app:x:time",
                     "included": true,
                     "exclusion_reasons": []
                 }
@@ -4697,26 +4430,19 @@
             "exclusion_reasons": [],
             "model_membership": [
                 {
-                    "model_id": "daily_trend",
+                    "model_id": "phone_mood",
                     "included": false,
                     "exclusion_reasons": [
-                        "NEED_COMPLETE_DAYS"
+                        "NEED_PHONE_VARIATION"
                     ]
                 },
                 {
-                    "model_id": "session_mood",
-                    "included": false,
-                    "exclusion_reasons": [
-                        "DIFFERENT_MODEL_ROW_UNIT"
-                    ]
-                },
-                {
-                    "model_id": "app:other",
+                    "model_id": "app:other:time",
                     "included": true,
                     "exclusion_reasons": []
                 },
                 {
-                    "model_id": "app:x",
+                    "model_id": "app:x:time",
                     "included": true,
                     "exclusion_reasons": []
                 }
@@ -4758,26 +4484,19 @@
             "exclusion_reasons": [],
             "model_membership": [
                 {
-                    "model_id": "daily_trend",
+                    "model_id": "phone_mood",
                     "included": false,
                     "exclusion_reasons": [
-                        "NEED_COMPLETE_DAYS"
+                        "NEED_PHONE_VARIATION"
                     ]
                 },
                 {
-                    "model_id": "session_mood",
-                    "included": false,
-                    "exclusion_reasons": [
-                        "DIFFERENT_MODEL_ROW_UNIT"
-                    ]
-                },
-                {
-                    "model_id": "app:other",
+                    "model_id": "app:other:time",
                     "included": true,
                     "exclusion_reasons": []
                 },
                 {
-                    "model_id": "app:x",
+                    "model_id": "app:x:time",
                     "included": true,
                     "exclusion_reasons": []
                 }
@@ -4815,26 +4534,19 @@
             "exclusion_reasons": [],
             "model_membership": [
                 {
-                    "model_id": "daily_trend",
+                    "model_id": "phone_mood",
                     "included": false,
                     "exclusion_reasons": [
-                        "NEED_COMPLETE_DAYS"
+                        "NEED_PHONE_VARIATION"
                     ]
                 },
                 {
-                    "model_id": "session_mood",
-                    "included": false,
-                    "exclusion_reasons": [
-                        "DIFFERENT_MODEL_ROW_UNIT"
-                    ]
-                },
-                {
-                    "model_id": "app:other",
+                    "model_id": "app:other:time",
                     "included": true,
                     "exclusion_reasons": []
                 },
                 {
-                    "model_id": "app:x",
+                    "model_id": "app:x:time",
                     "included": true,
                     "exclusion_reasons": []
                 }
@@ -4842,11 +4554,11 @@
         }
     ],
     "statistical_analysis": {
-        "policy_version": "1.0",
+        "policy_version": "1.1",
         "models": [
             {
-                "id": "daily_trend",
-                "outcome": "DAILY_MINUTES",
+                "id": "phone_mood",
+                "outcome": "END_MOOD_SCORE",
                 "status": "NOT_ESTIMABLE",
                 "sample_ids": [],
                 "terms": [],
@@ -4856,59 +4568,11 @@
                 "standard_error_method": null,
                 "dropped_controls": [],
                 "warnings": [
-                    "NEED_COMPLETE_DAYS"
+                    "NEED_PHONE_VARIATION"
                 ]
             },
             {
-                "id": "session_mood",
-                "outcome": "MOOD_SCORE_WITHIN_SESSION",
-                "status": "OK",
-                "sample_ids": [
-                    "29:0:0",
-                    "29:0:1",
-                    "29:0:2",
-                    "29:0:3",
-                    "29:0:4",
-                    "29:0:5",
-                    "29:1:0",
-                    "29:1:1",
-                    "29:1:2",
-                    "29:1:3",
-                    "29:1:4",
-                    "29:1:5",
-                    "29:2:0",
-                    "29:2:1",
-                    "29:2:2",
-                    "29:2:3",
-                    "29:2:4",
-                    "29:2:5",
-                    "29:3:0",
-                    "29:3:1",
-                    "29:3:2",
-                    "29:3:3",
-                    "29:3:4",
-                    "29:3:5"
-                ],
-                "terms": [
-                    "session_minutes_within"
-                ],
-                "coefficients": [
-                    -0.011428571428571425
-                ],
-                "covariance": [
-                    [
-                        1.9703983672373995E-6
-                    ]
-                ],
-                "degrees_of_freedom": 19.0,
-                "standard_error_method": "HC3",
-                "dropped_controls": [],
-                "warnings": [
-                    "HC3_DOES_NOT_ACCOUNT_FOR_SERIAL_DEPENDENCE"
-                ]
-            },
-            {
-                "id": "app:other",
+                "id": "app:other:time",
                 "outcome": "END_MOOD_SCORE",
                 "status": "OK",
                 "sample_ids": [
@@ -4936,31 +4600,55 @@
                 "terms": [
                     "intercept",
                     "start_mood",
+                    "hour_sin",
+                    "hour_cos",
                     "app_minutes"
                 ],
                 "coefficients": [
-                    -1.9999999999999964,
-                    1.0000000000000013,
-                    0.06666666666666667
+                    -2.000000000000023,
+                    1.0000000000000033,
+                    -1.88411095042053E-15,
+                    2.4336433109598517E-15,
+                    0.06666666666666675
                 ],
                 "covariance": [
                     [
-                        2.949729506378207E-27,
-                        -3.420496952208632E-28,
-                        -1.900942969934982E-29
+                        2.0121621844699952E-28,
+                        -2.5230972437968878E-29,
+                        1.0020484846524928E-29,
+                        -1.3586640969545253E-29,
+                        -1.067774524926531E-30
                     ],
                     [
-                        -3.420496952208632E-28,
-                        4.2253410328651066E-29,
-                        1.5285714207117438E-30
+                        -2.5230972437968878E-29,
+                        3.38178035079296E-30,
+                        -1.273208454404472E-30,
+                        1.9768875143848432E-30,
+                        7.580370523254077E-32
                     ],
                     [
-                        -1.900942969934982E-29,
-                        1.5285714207117442E-30,
-                        3.170030113587687E-31
+                        1.0020484846524928E-29,
+                        -1.273208454404472E-30,
+                        2.36309284123264E-30,
+                        -8.590755187362268E-31,
+                        -6.884495615816539E-32
+                    ],
+                    [
+                        -1.3586640969545253E-29,
+                        1.9768875143848435E-30,
+                        -8.590755187362268E-31,
+                        2.7042794880375292E-30,
+                        1.7654268408087003E-32
+                    ],
+                    [
+                        -1.067774524926531E-30,
+                        7.580370523254076E-32,
+                        -6.884495615816539E-32,
+                        1.7654268408087E-32,
+                        2.1980533121796823E-32
                     ]
                 ],
-                "degrees_of_freedom": 17.0,
+                "degrees_of_freedom": 15.0,
                 "standard_error_method": "HC3",
                 "dropped_controls": [
                     "phone_minutes",
@@ -4971,7 +4659,7 @@
                 ]
             },
             {
-                "id": "app:x",
+                "id": "app:x:time",
                 "outcome": "END_MOOD_SCORE",
                 "status": "OK",
                 "sample_ids": [
@@ -4999,31 +4687,55 @@
                 "terms": [
                     "intercept",
                     "start_mood",
+                    "hour_sin",
+                    "hour_cos",
                     "app_minutes"
                 ],
                 "coefficients": [
-                    -1.3322676295501878E-14,
-                    1.0000000000000002,
-                    -0.0666666666666668
+                    -1.5987211554602254E-14,
+                    1.000000000000002,
+                    1.9626155733547185E-15,
+                    3.1401849173675503E-16,
+                    -0.0666666666666667
                 ],
                 "covariance": [
                     [
-                        2.180906266726791E-27,
-                        -3.0662010000982673E-28,
-                        8.993598688813312E-30
+                        1.907873552617621E-28,
+                        -2.6107997652099014E-29,
+                        1.7662954567432338E-30,
+                        -4.2592918914820545E-30,
+                        5.706059885467266E-31
                     ],
                     [
-                        -3.0662010000982673E-28,
-                        4.3444225339604176E-29,
-                        -1.4335592055050855E-30
+                        -2.6107997652099014E-29,
+                        3.592112498388582E-30,
+                        -3.6917659625548943E-31,
+                        6.4530609734777E-31,
+                        -8.942461427210225E-32
                     ],
                     [
-                        8.993598688813312E-30,
-                        -1.4335592055050855E-30,
-                        3.2665161995277507E-31
+                        1.7662954567432338E-30,
+                        -3.6917659625548943E-31,
+                        1.5346000454046358E-30,
+                        -3.2695796151204893E-31,
+                        4.241003703170924E-32
+                    ],
+                    [
+                        -4.2592918914820545E-30,
+                        6.4530609734777E-31,
+                        -3.2695796151204898E-31,
+                        1.4682697224040869E-30,
+                        -7.21087679263329E-32
+                    ],
+                    [
+                        5.706059885467266E-31,
+                        -8.942461427210225E-32,
+                        4.2410037031709234E-32,
+                        -7.210876792633291E-32,
+                        1.7773597354116193E-32
                     ]
                 ],
-                "degrees_of_freedom": 17.0,
+                "degrees_of_freedom": 15.0,
                 "standard_error_method": "HC3",
                 "dropped_controls": [
                     "phone_minutes",
@@ -5036,14 +4748,14 @@
         ],
         "findings": [
             {
-                "id": "daily_trend",
-                "model_id": "daily_trend",
-                "kind": "DAILY_USE_TREND",
+                "id": "phone_mood",
+                "model_id": "phone_mood",
+                "kind": "PHONE_USAGE",
                 "app_id": null,
                 "status": "INSUFFICIENT_DATA",
                 "difference": null,
                 "comparison_value": null,
-                "n": 0,
+                "n": 20,
                 "groups": 0,
                 "consistency": null,
                 "ci_low": null,
@@ -5052,75 +4764,26 @@
                 "q": null,
                 "template_key": "INSUFFICIENT_DATA",
                 "reasons": [
-                    "NEED_COMPLETE_DAYS"
+                    "NEED_PHONE_VARIATION"
                 ],
                 "sensitivity_model_id": null,
                 "block_refits": [],
-                "comparison_unit": "DAYS",
-                "contrast_outcome": "DAILY_MINUTES_CHANGE"
-            },
-            {
-                "id": "session_mood",
-                "model_id": "session_mood",
-                "kind": "SESSION_LENGTH",
-                "app_id": null,
-                "status": "EARLY_LOWER",
-                "difference": -0.34285714285714275,
-                "comparison_value": 30.0,
-                "n": 24,
-                "groups": 4,
-                "consistency": 1.0,
-                "ci_low": -0.4309970307453272,
-                "ci_high": -0.2547172549689583,
-                "p": 1.2899826558989554E-7,
-                "q": null,
-                "template_key": "SESSION_LENGTH_EARLY_LOWER",
-                "reasons": [
-                    "HC3_DOES_NOT_ACCOUNT_FOR_SERIAL_DEPENDENCE"
-                ],
-                "sensitivity_model_id": null,
-                "block_refits": [
-                    {
-                        "excluded_block": "29:0",
-                        "difference": -0.3333333333333333,
-                        "agrees": true,
-                        "status": "OK"
-                    },
-                    {
-                        "excluded_block": "29:1",
-                        "difference": -0.37142857142857144,
-                        "agrees": true,
-                        "status": "OK"
-                    },
-                    {
-                        "excluded_block": "29:2",
-                        "difference": -0.3333333333333333,
-                        "agrees": true,
-                        "status": "OK"
-                    },
-                    {
-                        "excluded_block": "29:3",
-                        "difference": -0.3333333333333333,
-                        "agrees": true,
-                        "status": "OK"
-                    }
-                ],
                 "comparison_unit": "MINUTES",
-                "contrast_outcome": "WITHIN_SESSION_MOOD_CHANGE"
+                "contrast_outcome": "EXTRA_MOOD_CHANGE"
             },
             {
-                "id": "app:other",
-                "model_id": "app:other",
+                "id": "app:other:time",
+                "model_id": "app:other:time",
                 "kind": "APP_USAGE",
                 "app_id": "other",
                 "status": "EARLY_HIGHER",
-                "difference": 1.0,
+                "difference": 1.0000000000000013,
                 "comparison_value": 15.0,
                 "n": 20,
                 "groups": 4,
                 "consistency": 1.0,
-                "ci_low": 0.9999999999999822,
-                "ci_high": 1.0000000000000178,
+                "ci_low": 0.9999999999999966,
+                "ci_high": 1.000000000000006,
                 "p": null,
                 "q": null,
                 "template_key": "APP_USAGE_EARLY_HIGHER",
@@ -5131,25 +4794,25 @@
                 "block_refits": [
                     {
                         "excluded_block": "29:0",
-                        "difference": 1.0000000000000053,
+                        "difference": 1.0000000000000016,
                         "agrees": true,
                         "status": "OK"
                     },
                     {
                         "excluded_block": "29:1",
-                        "difference": 0.9999999999999981,
+                        "difference": 0.9999999999999998,
                         "agrees": true,
                         "status": "OK"
                     },
                     {
                         "excluded_block": "29:2",
-                        "difference": 0.9999999999999986,
+                        "difference": 0.9999999999999973,
                         "agrees": true,
                         "status": "OK"
                     },
                     {
                         "excluded_block": "29:3",
-                        "difference": 1.0,
+                        "difference": 0.9999999999999991,
                         "agrees": true,
                         "status": "OK"
                     }
@@ -5158,18 +4821,18 @@
                 "contrast_outcome": "EXTRA_MOOD_CHANGE"
             },
             {
-                "id": "app:x",
-                "model_id": "app:x",
+                "id": "app:x:time",
+                "model_id": "app:x:time",
                 "kind": "APP_USAGE",
                 "app_id": "x",
                 "status": "EARLY_LOWER",
-                "difference": -1.000000000000002,
+                "difference": -1.0000000000000004,
                 "comparison_value": 15.0,
                 "n": 20,
                 "groups": 4,
                 "consistency": 1.0,
-                "ci_low": -1.00000000000002,
-                "ci_high": -0.9999999999999839,
+                "ci_low": -1.0000000000000047,
+                "ci_high": -0.9999999999999962,
                 "p": null,
                 "q": null,
                 "template_key": "APP_USAGE_EARLY_LOWER",
@@ -5180,25 +4843,25 @@
                 "block_refits": [
                     {
                         "excluded_block": "29:0",
-                        "difference": -1.000000000000003,
+                        "difference": -1.0000000000000018,
                         "agrees": true,
                         "status": "OK"
                     },
                     {
                         "excluded_block": "29:1",
-                        "difference": -1.0000000000000016,
+                        "difference": -0.9999999999999998,
                         "agrees": true,
                         "status": "OK"
                     },
                     {
                         "excluded_block": "29:2",
-                        "difference": -0.9999999999999996,
+                        "difference": -0.9999999999999979,
                         "agrees": true,
                         "status": "OK"
                     },
                     {
                         "excluded_block": "29:3",
-                        "difference": -0.9999999999999983,
+                        "difference": -1.0000000000000002,
                         "agrees": true,
                         "status": "OK"
                     }
@@ -5208,18 +4871,18 @@
             }
         ],
         "top_app_finding_ids": [
-            "app:x",
-            "app:other"
+            "app:other:time",
+            "app:x:time"
         ],
         "policy_snapshot": {
-            "minimum_ratings": 20,
+            "minimum_ratings": 6,
+            "app_minimum_ratings": 10,
             "max_pair_ms": 7200000,
             "max_response_latency_ms": 300000,
-            "minimum_complete_trend_days": 3,
             "near_zero_mood_points": 0.2,
             "block_consistency_threshold": 0.8,
-            "app_min_exposed_rows": 5,
-            "app_min_matched_rows": 10,
+            "app_min_exposed_rows": 3,
+            "app_min_matched_rows": 6,
             "app_min_comparison_minutes": 2,
             "app_match_total_minutes_tolerance": 5,
             "app_match_elapsed_minutes_tolerance": 10,
@@ -5232,13 +4895,10 @@
             "require_fdr_for_display": false,
             "solver": "SVD_SCALED_INDEPENDENT_COLUMNS",
             "rank_tolerance": 1.0E-9,
-            "daily_min_change_minutes": 15,
-            "daily_relative_change_threshold": 0.1,
             "contrast_cap_minutes": 30,
             "cluster_min_days": 20,
             "minimum_blocks_for_deletion_check": 3,
             "max_condition_number": 1.0E8,
-            "session_weight": "ONE_OVER_SESSION_RATING_COUNT",
             "block_selection": "DAY_IF_AT_LEAST_3_ELSE_SESSION",
             "daily_drift_sensitivity": "NOT_IMPLEMENTED_IN_V1",
             "sampling": "No random inference or AI calls"
@@ -5246,32 +4906,21 @@
     },
     "user_insights": [
         {
-            "finding_id": "daily_trend",
+            "finding_id": "phone_mood",
             "template_key": "INSUFFICIENT_DATA",
             "arguments": {
                 "difference": null,
                 "comparison_value": null,
-                "comparison_unit": "DAYS",
-                "observations": 0,
-                "app_id": null
-            }
-        },
-        {
-            "finding_id": "session_mood",
-            "template_key": "SESSION_LENGTH_EARLY_LOWER",
-            "arguments": {
-                "difference": -0.34285714285714275,
-                "comparison_value": 30.0,
                 "comparison_unit": "MINUTES",
-                "observations": 24,
+                "observations": 20,
                 "app_id": null
             }
         },
         {
-            "finding_id": "app:other",
+            "finding_id": "app:other:time",
             "template_key": "APP_USAGE_EARLY_HIGHER",
             "arguments": {
-                "difference": 1.0,
+                "difference": 1.0000000000000013,
                 "comparison_value": 15.0,
                 "comparison_unit": "MINUTES",
                 "observations": 20,
@@ -5279,10 +4928,10 @@
             }
         },
         {
-            "finding_id": "app:x",
+            "finding_id": "app:x:time",
             "template_key": "APP_USAGE_EARLY_LOWER",
             "arguments": {
-                "difference": -1.000000000000002,
+                "difference": -1.0000000000000004,
                 "comparison_value": 15.0,
                 "comparison_unit": "MINUTES",
                 "observations": 20,
@@ -5296,11 +4945,11 @@
             "mood": "Self-reported integer 1-10, higher is better; no unobserved natural daily mood is assumed.",
             "missing": "null means unknown or unavailable, never zero. Missing app in COMPLETE coverage means zero; elsewhere it is unknown.",
             "coverage": "VERIFIED means anchored successful query-chain evidence minus known gaps/pauses, not a guarantee Android never omitted events. Legacy history may be UNKNOWN.",
-            "analysis_matrix": "One actual answer and preceding 30 wall-clock-minute behavior. Session model uses session_active_ms_at_answer, not final session duration.",
+            "analysis_matrix": "One actual answer and preceding 30 wall-clock-minute behavior. session_active_ms_at_answer is active time so far in that session, not final session duration.",
             "transitions": "Consecutive actual answers; usable only within the same session, <=120 minutes, full coverage, response latency <=5 minutes and no relevant configuration change. App model uses this whole interval, not the last 30 minutes.",
             "non_active_ms": "Elapsed minus included foreground activity. May include excluded apps; not measured rest.",
-            "models": "Daily: minutes~date. Session: within-session centered, weight=1/n_session. App: end_score~start_score+phone_minutes+elapsed_minutes+app_minutes. Redundant control columns are dropped deterministically; app coefficient must be identifiable. Covariance follows retained terms, in original units.",
-            "findings": "App difference is extra mood change for replacing comparison_value minutes of other app time, holding total time, starting score and elapsed time fixed. Session difference is within-session change across comparison_value minutes. comparison_unit explicitly distinguishes MINUTES from DAYS; daily difference is minutes across the day-index span.",
+            "models": "Phone: mood_score~previous_mood+elapsed_minutes+hour_sin+hour_cos+phone_minutes. App: end_score~start_score+phone_minutes+elapsed_minutes+app_minutes. Redundant control columns are dropped deterministically; the focal coefficient must be identifiable. Covariance follows retained terms, in original units.",
+            "findings": "App difference is extra mood change for replacing comparison_value minutes of other app time, holding total time, starting score and elapsed time fixed. Phone difference is mood change across comparison_value additional active minutes, holding previous mood, elapsed time and time of day fixed. comparison_unit is always MINUTES.",
             "consistency": "Fraction of leave-day/session-out refits retaining direction and nontrivial size; not a confidence probability. Null means insufficient blocks. HC3 does not resolve serial dependence.",
             "app_comparison": "Other apps form an aggregate reference, not each individual app. Compare only within observed support. Overall average includes the target app and is not its other-app baseline.",
             "provenance": "One snapshot; overlapping 1/7/30-day exports repeat stable observation IDs. Deduplicate before pooling. Default settings apply until overridden; configuration_events includes the last known change before context per setting plus changes through snapshot. Values preserve recorded strings. System packages are also excluded by the app filter.",
