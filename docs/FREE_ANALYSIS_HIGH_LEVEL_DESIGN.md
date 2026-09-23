@@ -2,7 +2,7 @@
 
 *Chinese version: [FREE_ANALYSIS_HIGH_LEVEL_DESIGN.zh-CN.md](FREE_ANALYSIS_HIGH_LEVEL_DESIGN.zh-CN.md)*
 
-Status: shipped in Android 1.4.0. Last updated 2026-09-06. The three models, the analysis page and
+Status: shipped in Android 1.4.0. Last updated 2026-09-09. The two models, the analysis page and
 the single-file JSON export are all implemented. The released fields are governed by
 [Export 2.0](PERIOD_EXPORT_SCHEMA.md), and the released parameters by
 [Analysis Policy 1.0](ANALYSIS_POLICY_V1.md). What follows preserves the design reasoning;
@@ -19,8 +19,8 @@ The user opens the analysis page and sees, directly, the insights the app has de
 existing phone-use records and mood ratings. The page supports rolling 7 and 30 days, each
 containing:
 
-1. Total phone use, daily average, typical range, and the daily trend.
-2. The tendency of mood to change as continuous use lengthens **within one session**.
+1. Total phone use, daily average and typical range.
+2. The tendency of mood to change with more active phone minutes before a rating.
 3. At most three sufficiently supported apps and their extra mood change relative to other apps.
 
 Computation, filtering and interpretation all run locally: descriptive statistics / basic
@@ -101,7 +101,7 @@ analysis/
   model/             PeriodSnapshot, PeriodRecord, AnalysisRow, AnalysisState
   data/              SnapshotReader, PeriodDatasetBuilder, CoverageResolver
   statistics/        RegressionSolver, CovarianceEstimator, MultipleTesting
-  models/            DailyTrendModel, WithinSessionMoodModel, AppExtraChangeModel
+  models/            PhoneMoodModel, AppExtraChangeModel
   rules/             AnalysisPolicy, FindingRuleEngine, InsightTemplateMapper
   cache/             AnalysisCache
   AnalysisCoordinator.kt
@@ -137,7 +137,7 @@ collections.
 ### 5.2 Revision semantics
 
 The current `sourceRevision` changes on every successful poll, which makes it unsuitable for
-driving a recomputation every 10 seconds. The design keeps the snapshot's `sourceRevision` as a
+driving a recomputation on every poll. The design keeps the snapshot's `sourceRevision` as a
 source identifier, and lets the coordination layer decide the trigger reason and the throttling.
 
 At implementation time, every write that feeds analysis is audited uniformly: answers, event
@@ -202,18 +202,16 @@ never raises its credibility.**
 
 The descriptive features of `[answer - 30min, answer)` are retained for each actual answer, for
 JSON export; a regression on that window's total use is no longer the free tier's primary model.
-The three models read separately:
+The models read separately:
 
 | Dataset | Sample unit | Principal fields |
 |---|---|---|
-| DailyDataset | One complete finished day | True date index, total active minutes |
-| SessionMoodDataset | One in-period actual answer, grouped by session | observation_id, session_id, answer time, rating, cumulative session active minutes as of the answer |
+| PhoneSampleDataset | A pair of adjacent actual answers | Previous rating, current rating, elapsed minutes, active minutes in the 30 minutes before the answer, local hour |
 | AppTransitionDataset | A pair of adjacent actual answers in the same session | Start/end observation_id, start/end ratings, mood_delta, start/end times, elapsed_ms, total active time in the interval, per-app time, non-counted active time, coverage, inclusion status and reason |
 
 The app TransitionBuilder may construct change only from real before/after answers. It must not
 invent a baseline from a checkpoint that was never answered, and must not explain a longer
-interval's rating change with the last 30 minutes of use. The continuous-use model does not require
-two ratings to be exactly 30 minutes apart.
+interval's rating change with the last 30 minutes of use.
 
 Segments and answers are sorted by time first and accumulated with a scan/window index, avoiding a
 repeated full-history traversal per answer. Window boundaries are clipped and deduplicated; no
@@ -238,6 +236,9 @@ zero. It is an auxiliary export feature, and no switching-factor leaderboard is 
 
 ### 8.1 Shared execution flow
 
+The daily-use-trend and within-session models described here were removed after they proved never
+to reach the analysis page; section numbering is kept so that references to 8.4 stay valid.
+
 Modelling uses only recorded data, or data derivable with certainty. There is no measured "natural
 mood for the day", sleep, stress, offline activity or in-app content, so none of these are treated
 as known covariates. **Any intercept is a statistical parameter, not a natural mood in the absence
@@ -258,75 +259,6 @@ The reference's HC3 for 7–19 days and day clustering from 20 days upward are c
 only: **HC3 does not automatically solve within-day correlation, and 7 days must not be labelled
 stable merely because the run succeeded.** The specific small-sample corrections, degrees of
 freedom and display thresholds go into pre-release numerical validation.
-
-### 8.2 Daily use trend: simple least squares
-
-With active minutes on complete day *d* as U_d and the true date index as x_d:
-
-```text
-U_d = alpha + beta * x_d + error_d
-beta_hat = sum((x_d - mean(x)) * (U_d - mean(U)))
-           / sum((x_d - mean(x))^2)
-period_change = beta_hat * (max(x) - min(x))
-```
-
-Output is beta (minutes per day) and period_change (minutes) across the fitted span. Missing days
-keep their true distance; today, being unfinished, does not join the fit. Three complete days are
-enough to attempt a preliminary trend — it does not depend on 20 mood ratings.
-
-Direction is judged from period_change against a preset minimum display magnitude, so floating-point
-error is never written up as a trend. The candidate threshold under discussion is
-`max(15 minutes, 0.1 × median daily use)` — a product parameter still to be finalized, **not a
-statistical theorem**. An interval crossing zero does not by itself block an early tendency.
-Day-by-day deletion refits check whether one day dominates.
-
-### 8.3 Continuous use and mood: within-session regression
-
-Goal: within one continuous use, how does the mood rating typically move as cumulative use time
-increases? Differences in starting mood *between* sessions must never be explained as a decline
-*within* one session.
-
-For the *j*-th answer in session *s*, with rating y_sj and cumulative active minutes L_sj:
-
-```text
-y_sj = alpha_s + beta * L_sj + error_sj
-centered_y_sj = y_sj - mean_y_s
-centered_L_sj = L_sj - mean_L_s
-w_s = 1 / n_s
-
-beta_hat = sum_s(w_s * sum_j(centered_L_sj * centered_y_sj))
-           / sum_s(w_s * sum_j(centered_L_sj^2))
-```
-
-alpha_s is absorbed by within-session centring. It is a session-specific statistical intercept —
-not a measured starting mood, and not a "natural mood". n_s is the number of in-period observations
-from that session actually entering the fit. The weight gives every session the same total weight
-in the squared loss; it is a product-defined session-balancing weight, **not an assumption that it
-equals the inverse error variance**. A session spanning a wider duration range may still contribute
-more slope information, which is why session-deletion checks are run.
-
-The entry condition is at least 20 valid ratings in the period. A session with only one rating, with
-constant cumulative duration, or with unavailable cumulative behaviour, provides no slope
-information, and its exclusion reason is recorded. The actual contributing rating count, session
-count and denominator must be reported separately. No additional fixed 20 pairs are required, and
-no claim is made that 20 ratings are necessarily enough to estimate.
-
-Output is `session_mood_change(h) = h * beta_hat` in rating points. Where the actual within-session
-span supports it, h = 30 minutes may be used; otherwise only a pre-defined comparison quantity that
-the actual span supports is used, with **no extrapolation to long use**. When the sample comes from
-one period or a handful of sessions, the copy says so plainly.
-
-Fixed template sketch:
-
-```text
-SESSION_MOOD_LOWER_EARLY:
-Within one continuous use, when use time lengthens by about {minutes} minutes,
-your mood rating tends to be about {points} points lower.
-```
-
-This is a within-session association. It cannot rule out fatigue, time of day and other factors
-occurring in the same session. It is **not** "how much it dropped from before you started",
-because there is not necessarily a starting rating before the first prompt.
 
 ### 8.4 An app's extra mood change relative to other apps
 
@@ -489,16 +421,15 @@ recorded separately. When the sensitivity model has not run, no claim is made th
 slow trend has been controlled for. v1 introduces no day fixed effects and never interprets a date
 intercept as natural mood.
 
-### 8.5 The deterministic influence check shared by all three models
+### 8.5 The deterministic influence check shared by both models
 
-The daily trend deletes day by day. The mood models delete day by day when there are at least 3
+The mood models delete day by day when there are at least 3
 actual observation dates; when dates are insufficient but there are at least 3 sessions, they
 delete session by session; when neither suffices, an estimable result is retained and marked as
 lacking cross-block validation.
 
 After each deletion, centring, weights or control projections are rebuilt, but the original
-comparison quantity *h* is held. In the within-session model, a session reduced to a single point
-by deletion no longer contributes a slope. A deletion result that cannot be estimated counts as a
+comparison quantity *h* is held. A deletion result that cannot be estimated counts as a
 failure and must not be removed from the denominator to inflate consistency.
 
 ```text
@@ -508,8 +439,7 @@ R = deletions agreeing in sign with the full sample and exceeding the near-zero 
 
 A candidate R >= 0.8 may be labelled a preliminary tendency with reasonably consistent direction.
 **That value is a product rule still to be fixed — it is not 80% confidence.** Otherwise the fixed
-template "tendency not yet consistent" is used. The near-zero unit is minutes for the daily model
-and rating points for the mood models. BH FDR computed over estimable app contrasts is for internal
+template "tendency not yet consistent" is used. The near-zero unit is rating points. BH FDR computed over estimable app contrasts is for internal
 use and export only, and is never used to block an early result.
 
 Proposed shared states: INSUFFICIENT_DATA, NOT_ESTIMABLE, NO_NOTICEABLE_TENDENCY, MIXED_TENDENCY,
@@ -527,7 +457,7 @@ called "the most harmful app".
 magnitude, support level, display eligibility and a fixed ordering. **The UI never re-judges
 significance or ranking.**
 
-Settled: the three primary models — daily trend, within-session mood regression, per-app extra
+Settled: the two primary models — phone use and mood, per-app extra
 change; the 30-minute recent features retained for export; the app model using the adjacent-answer
 interval; independent periods; at most three apps; no padding when insufficient; non-causal
 interpretation; and all copy localized. The following still need to be fixed centrally before the
@@ -668,8 +598,7 @@ Degradation is mandatory when the source evidence is insufficient.
 ### Phase B: local statistics and rules
 
 Freeze the AnalysisPolicy and numerical methods first, and fix synthetic reference results for the
-three models. New tests: different session baselines with zero within-session variation must yield
-a zero slope; constant total duration with residual app variation must remain estimable; a target
+both models. New tests: constant total duration with residual app variation must remain estimable; a target
 app fully explained by the controls must be inestimable; before/after change and behaviour must
 share the same interval; a missing baseline must construct no transition. Verify that the end-rating
 form and the change form, and the P+G and P+R parameterisations, give the same app contrast; that a

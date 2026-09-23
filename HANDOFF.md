@@ -6,7 +6,11 @@
 in practice, and the real cause is not yet established**. Diagnosis is blocked on the phone not
 connecting over adb. None of the changes are committed.
 
-Last updated: 2026-09-08
+Separately, §3.7 records power and compute work from 2026-09-12 that changed the polling cadence
+and removed the per-poll full table rewrite. **It does not bear on the unsolved mystery in §6.**
+§3.8 (2026-09-23) changes how the long-term app cards are chosen and ordered; also unrelated to §6.
+
+Last updated: 2026-09-23
 
 ---
 
@@ -104,6 +108,8 @@ Supporting changes:
   to 5s so that "prompt immediately on switching away" actually happens within 5 seconds. Note that
   `poll()` replays the entire event history and clears and rebuilds segments every time — **a known
   performance hazard, and a reason not to tighten this further.**
+  **Superseded by §3.7 (2026-09-12)**: this branch has been deleted, and the hazard it warns about
+  has been addressed on the write side.
 - `MoodOverlayController`: when the card is attached over its own app, it no longer writes
   `overlayShownUtc` (visibility cannot be confirmed) and instead records
   `lastOverlayError = "OVERLAY_MAY_BE_COVERED"`, so that exported data carries no false "delivered".
@@ -256,6 +262,135 @@ tells the user which way to look.
 
 ---
 
+## 3.7 Power and compute: a coarser cadence, and writing only what changed (added 2026-09-12)
+
+### Why
+
+Not a bug report — a decision about what the app is for. PhoneMood reports awareness, not stopwatch
+accuracy, so second-level timeliness was being paid for in battery and in writes without buying
+anything a user would notice. Durations are reconstructed from the system's own event timestamps
+rather than from the moment the service happened to look, so polling less often costs prompt
+latency and nothing else: recorded use, app attribution and check-in thresholds are unaffected.
+
+### What was costing
+
+- The loop polled every 10s while the screen was on, and **every 5s whenever a check-in was
+  outstanding** — the most expensive state in the app, entered exactly when the user was already
+  being asked something.
+- Every poll called `rebuild()`, which replays the whole event log and then **cleared and rewrote
+  the entire `UsageSegment` and `PhoneSession` tables**. Between polls only the open tail actually
+  moves — the last segment's end and the running session total — so this expressed an O(1) change
+  as O(N) deletes and inserts, with two indices per segment row, growing for as long as a
+  participant keeps using the app.
+- With the analysis screen open, a 60-second tick recomputed **both** the selected period and the
+  cumulative dataset. The cumulative one carries leave-one-day-out refits whose cost grows as
+  O(days²), and it was being paid every minute to produce an answer that had not changed.
+
+### The change
+
+- `PollingPolicy`: `ACTIVE_MS` 10s → 60s, `POWER_SAVE_MS` 30s → 120s. `PENDING_PROMPT_MS` and its
+  whole branch are **deleted**, along with `pendingCheckpoints()` and the `promptPending` plumbing
+  in `UsageMonitorService`. This item is a net deletion of code.
+- Two constants that were silently tied to the old cadence are now **derived from it**, so the next
+  interval change cannot quietly break them: an event is marked zone-inferred past `2 * ACTIVE_MS`,
+  and the Today countdown interpolates for `ACTIVE_MS + 30s` before freezing.
+- `Repository.rebuild()`: the replay is untouched — it is what lets a late event correct the past.
+  Only the write changed. Stored rows are compared against the reconstruction and just the
+  differences are written; `clearSegments`/`clearSessions` become delete-by-id, which now fires
+  only when late events actually revise history.
+- `AnalysisViewModel`: the minute tick no longer rebuilds the cumulative dataset. A `longTermDirty`
+  flag carries the real signals (`watchAnswerCount`, `watchConfigurationTime`) across the 300ms
+  debounce window, which would otherwise drop a data change that arrived next to a tick.
+- `prepareExport` recomputes a carried-over cumulative half, so the two sections of an exported
+  document still share one `facts` and report one observation time. On screen the reuse is
+  harmless; in a document that states when it was observed, it would not be.
+
+### `DISMISS_GRACE_MS` was left at 30s deliberately
+
+Its comment claimed it existed because pending state pinned polling to the tightest interval, and
+that interval is now gone. But raising it would be worse: dismissing a card also cancels its
+notification, so nothing is left on screen to answer through, and the window now only decides how
+soon the checkpoint is written down as `DISMISSED`. At a 60s cadence, 30s means "the next poll",
+which is the intended behaviour. Only the comment changed.
+
+### What this is, and what it is not
+
+| | Before | After |
+|---|---|---|
+| Screen-on polling | 10s | 60s |
+| Check-in outstanding | **5s** | 60s |
+| Power save | 30s | 120s |
+| Writes per poll | 2N rows deleted and inserted | typically 2 rows |
+| `analyze(cumulative)` | every 60s with the screen open | only on a new answer or setting change |
+
+These are counts and write volumes established from the code. **Battery drain on a device is still
+not measured** — the same gap `BATTERY_STRATEGY.md` has always carried. The replay itself still
+grows with the length of the record and is still unprofiled; bounding it to a sealed horizon was
+considered and deliberately deferred, because it touches the property the whole reconstruction
+rests on.
+
+### Verification
+
+68 JVM unit tests pass, lint reports 0 errors, and both the app and the instrumented test sources
+compile. **The instrumented tests were not run on a device or emulator for this change.**
+`PollingPolicyTest` and `ReminderCountdownTest` were updated to the new constants.
+
+---
+
+## 3.8 Long-term observations: app cards by use, with a full list (added 2026-09-23)
+
+### Why
+
+The user asked which apps the "Long-term observations" section shows and in what order. It used
+the engine's `topAppIds`: apps with `EARLY_HIGHER` / `EARLY_LOWER`, ordered by whether a deletion
+check exists, then `|difference|`, then `n`, then app ID, capped at three. Two problems:
+
+- `difference = beta × h`, where each app has its own `h` (median matched contrast, max 30 min),
+  while the card shows the effect rescaled to 15 minutes. **The ranking could disagree with the
+  numbers on screen.**
+- `n` is the transition count of the whole model, identical for every app, so that tie-break did
+  nothing. In practice the order fell back to package name.
+
+The user wanted: among apps with a clear result, their most-used apps first, with a way to open
+all of them.
+
+### The change (UI only)
+
+- New `clearAppFindings(stats, data)` in `ui/AnalysisScreen.kt`. It keeps `APP_USAGE` findings with
+  status `EARLY_HIGHER` / `EARLY_LOWER`. It sorts by total foreground time summed over
+  `longTermData.daily` (the same cumulative history the findings came from), descending, then by app
+  ID.
+- It shows the first 2 (3 when there is no phone card). If there are more, a button reads "See all
+  N apps with a clear result"; when expanded it reads "Show fewer apps" (`analysis_show_all_apps` /
+  `analysis_hide_all_apps`, en + zh).
+- Flat, mixed and insufficient apps are still never shown. Nothing weaker is padded in.
+- **The statistics engine and the export are unchanged.** `top_app_finding_ids` keeps its old
+  ordering and its cap of three.
+- Docs updated: `ANALYSIS_POLICY_V1`, `FREE_TIER_USER_STORIES` (both languages).
+
+Left alone and worth knowing: the app "flat / mixed / waiting" headlines and the phone "waiting"
+headline in `LongTermCard` are unreachable. Only clear-result apps are rendered, and the phone card
+is hidden when data is insufficient.
+
+### Verification
+
+69 JVM unit tests pass, including the new `test/…/ui/LongTermAppsTest.kt` (ordering and exclusion).
+**Not checked on a device**: the expand/collapse behaviour has not been seen running.
+
+### Packaging mistake this session (fixed)
+
+A plain `assembleDebug` was handed to the user first. It defaulted to `com.phonemood.app` and
+installed as **a second app** (§2.3 again). It was rebuilt with `-PphonemoodApplicationId=com.phonemood`
+and confirmed with `aapt2 dump badging` (`package: name='com.phonemood' versionCode='11'
+versionName='1.4.4'`). The user needs to uninstall the stray `com.phonemood.app` copy; it holds no
+data. Copied to `dist/PhoneMood-1.4.4-long-term-apps-debug.apk`.
+
+Also corrected: the user's phone runs the **debug** build (debug key), not a release build. A release
+APK built from this tree is `com.phonemood.app` with the upload key, so it cannot update the phone
+either.
+
+---
+
 ## 4. Database change 3 → 4
 
 `MoodPromptState` gains three columns, to keep **re-delivery** separate from **first delivery**
@@ -284,6 +419,7 @@ JSON archive from inside the app first is recommended.
 | Full device tests (emulator API 35) | 23/23 pass, **twice in a row** |
 | Data preserved across an in-place install | Verified: 1.4.0 → new build, only one `com.phonemood`, database hash unchanged |
 | **Reverse verification (first version)** | Putting the 1.4.0 logic back does make the new test fail; restoring the fix makes it pass |
+| Power and compute work (2026-09-12) | 68 unit tests pass, lint 0 errors, sources compile; **instrumented tests not run** — see §3.7 |
 
 **Honest note**: device tests failed twice along the way, on **two different tests**. I suspected a
 background service competing for the window, but the emulator's process list was empty, so that
@@ -388,6 +524,31 @@ channel for fullscreen situations does.
 | `scripts/migrate_app_data.sh` | New, package-name migration |
 | `scripts/diagnose_device.sh` | New, on-device forensics |
 
+### Changed in the power and compute work (2026-09-12, §3.7)
+
+| File | What changed |
+|---|---|
+| `monitoring/PollingPolicy.kt` | 60s / 120s; `PENDING_PROMPT_MS` and its branch deleted |
+| `monitoring/UsageMonitorService.kt` | No longer computes or passes `promptPending` |
+| `monitoring/UsageEventReader.kt` | Zone-inferred threshold derived from `ACTIVE_MS` |
+| `monitoring/ReminderCountdown.kt` | Interpolation ceiling derived from `ACTIVE_MS` |
+| `data/Repository.kt` | `rebuild()` writes differences instead of clearing both tables |
+| `data/Database.kt` | `clearSegments`/`clearSessions` → delete-by-id; `pendingCheckpoints()` removed |
+| `mood/OverlayPolicy.kt` | Comment only: the stated reason for `DISMISS_GRACE_MS` no longer holds |
+| `ui/AnalysisScreen.kt` | Minute tick reuses the cumulative half; export recomputes it |
+| `test/…/PollingPolicyTest.kt`, `test/…/ReminderCountdownTest.kt` | Updated to the new constants |
+| `docs/BATTERY_STRATEGY.md` + `.zh-CN` | Rewritten for the new cadence and the write change |
+| `docs/HIGH_LEVEL_DESIGN`, `FREE_ANALYSIS_HIGH_LEVEL_DESIGN`, `FREE_TIER_USER_STORIES` (both languages) | Stale 10s/30s polling figures corrected |
+
+### Changed in the long-term app cards work (2026-09-23, §3.8)
+
+| File | What changed |
+|---|---|
+| `ui/AnalysisScreen.kt` | `clearAppFindings()`; app cards by total use; expand to all clear-result apps |
+| `res/values*/analysis.xml` | `analysis_show_all_apps`, `analysis_hide_all_apps` |
+| `test/…/ui/LongTermAppsTest.kt` | New, untracked |
+| `docs/ANALYSIS_POLICY_V1`, `docs/FREE_TIER_USER_STORIES` (both languages) | Display rule for app cards |
+
 ### Not part of this work (already uncommitted before this session began)
 
 `README.md` · `README.zh-CN.md` · `.gitignore` · `analysis/PeriodDataset.kt` ·
@@ -407,9 +568,10 @@ and the signing configuration were all present before this session; only the
 # Sideload build (updates the com.phonemood already on the user's phone in place)
 ./gradlew assembleDebug -PphonemoodApplicationId=com.phonemood
 # Output: app/build/outputs/apk/debug/app-debug.apk
-# Copied to: dist/PhoneMood-1.4.4-checkin-fix2-debug.apk (64MB, too large to send directly)
+# Latest copy: dist/PhoneMood-1.4.4-long-term-apps-debug.apk (64MB, too large to send directly)
+# Without the flag it builds com.phonemood.app and installs as a second app
 
-./gradlew testDebugUnitTest                                        # 56 tests
+./gradlew testDebugUnitTest                                        # 69 tests
 ./gradlew connectedDebugAndroidTest -PphonemoodApplicationId=com.phonemood   # 23 tests
 
 ADB=~/Library/Android/sdk/platform-tools/adb   # adb is not on PATH

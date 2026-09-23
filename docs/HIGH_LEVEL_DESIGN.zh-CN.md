@@ -172,7 +172,7 @@ read events
 推荐 polling interval：
 
 ```text
-10 seconds
+60 seconds
 ```
 
 这意味着 checkpoint 不保证：

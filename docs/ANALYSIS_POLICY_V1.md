@@ -17,8 +17,7 @@ clinical thresholds.**
 - A mood model is attempted from **20 valid ratings** upward. A rating must fall in 1–10, and the
   answer delay relative to its checkpoint must be 0–5 minutes. A negative delay is preserved and
   flagged as a clock anomaly.
-- The continuous-use model additionally requires complete session coverage up to the answer. The
-  per-app model uses only intervals that lie within one session, whose adjacent actual answers are
+- The per-app model uses only intervals that lie within one session, whose adjacent actual answers are
   (0, 120] minutes apart, whose coverage is complete, and which contain no relevant configuration
   change.
 - No baseline is constructed when there is no preceding answer, and two different sessions are
@@ -28,16 +27,14 @@ clinical thresholds.**
   to complete coverage on the strength of a heartbeat alone. The limitation that Android may drop
   events is stated explicitly and never absorbed.
 
-## The three primary models
+## The two primary models
 
 | Topic | Model and contrast | Display rule |
 |---|---|---|
-| Daily use trend | Over complete finished days, `minutes ~ intercept + actual_day_index`; *h* is the true span between the first and last valid date | ≥3 complete finished days; the change must reach `max(15 min, 0.1 × median daily use)` |
-| Continuous use and mood | Mood and cumulative active minutes centred within each session; WLS with weight `1/n_session` | A session with a single rating, or with no variation in duration, contributes no slope; *h* is the median within-session duration span, capped at 30 minutes |
+| Phone use and mood | Over consecutive answers, `mood_score ~ intercept + previous_mood + elapsed_minutes + hour_sin + hour_cos + phone_minutes` | *h* is the interquartile range of active minutes before the answer and must reach 2 minutes |
 | Per-app extra change | `end_score ~ intercept + start_score + phone_minutes + elapsed_minutes + app_minutes` | Coefficient × *h* expresses the extra change in rating from substituting *h* minutes of other apps with the target app; it is **not** a fixed 30-minute window |
 
-The session intercept is an absorbed session-level mean, **not** a measured "natural mood for the
-day". An app coefficient is a conditional association against a pooled reference group of other
+An app coefficient is a conditional association against a pooled reference group of other
 apps; nothing is inferred about what the user was watching from an app's name.
 
 ## Comparable support for an app
@@ -56,21 +53,20 @@ dropped controls are all exported.
 
 ## Solving, uncertainty and stability
 
-Columns are processed in fixed order: RMS scaling of the weighted columns, two passes of
+Columns are processed in fixed order: RMS scaling of the columns, two passes of
 orthogonalisation, removal of redundant controls at a relative threshold of `1e-9`, then a solve
 by SVD. `X'X` is never inverted. A model is not estimable if the target term is redundant, if the
 condition number exceeds `1e8`, or if the primary model lacks residual degrees of freedom.
 Parameters and covariance are returned in original units.
 
 Below 20 dates, HC3 is used, with an explicit note that it does not address within-day
-correlation. Leverage in the session model includes the absorbed session intercept `1/n_session`,
-and residual degrees of freedom are reduced by the number of sessions. From 20 dates upward,
-day-clustered CR1 is used with the correction `G/(G−1) × (n−1)/(n−p−absorbed_groups)`, and the
+correlation. From 20 dates upward, day-clustered CR1 is used with the correction
+`G/(G−1) × (n−1)/(n−p)`, and the
 *t* degrees of freedom are G−1. HC3 uses residual degrees of freedom. When leverage approaches 1,
 the coefficient is kept rather than an interval being invented.
 
 With ≥3 dates, blocks are deleted day by day; otherwise, with ≥3 sessions, session by session.
-The daily trend is always deleted day by day. *h* is held fixed across refits. Every deleted
+*h* is held fixed across refits. Every deleted
 block, its difference, its estimability, and whether it agrees in sign and is non-trivial are all
 exported. A refit that fails still counts in the denominator. A deletion refit only requires the
 coefficient to be identifiable — not extra residual degrees of freedom.
@@ -95,17 +91,19 @@ not substituted for the primary model.**
 The first version adds no centred-day drift term. This is exported explicitly as
 `NOT_IMPLEMENTED_IN_V1`, and the copy does not claim that slow trends have been controlled for.
 
-Only apps with a preliminary increase or decrease reach the highlighted card. They are ordered by
-whether a deletion check was available, then by absolute contrast difference, then by sample count
-descending, then by app ID ascending — at most three. If fewer than three qualify, fewer are
-shown. Each app's *h* must be displayed alongside its result. **This ordering is not a leaderboard
+Only apps with a preliminary increase or decrease reach the long-term app cards. On screen they
+are ordered by total recorded use over the same cumulative history, most-used first, then by app ID
+ascending. The first two are shown (three when there is no phone card); an expander lists every app
+with a clear result. Nothing weaker is padded in. The export's `top_app_finding_ids` keeps its own
+ordering: whether a deletion check was available, then absolute contrast difference, then sample
+count descending, then app ID ascending — at most three. Each app's *h* must be displayed alongside its result. **This ordering is not a leaderboard
 of causal impact.**
 
 ## Numerical and engineering verification
 
 `AnalysisTest.kt` checks against known results for: constant total duration, perfect
-collinearity, equivalent parameterisations, session baseline absorption, HC3, missing coverage,
-actual answer anchoring, daylight saving, 20 same-day ratings, reproducible export, and a
-three-day trend. `MigrationTest.kt` verifies that upgrading a version 1 or 2 database preserves
+collinearity, equivalent parameterisations, HC3, day-clustered CR1, missing coverage, actual
+answer anchoring, daylight saving, 20 same-day ratings, and reproducible export.
+`MigrationTest.kt` verifies that upgrading a version 1 or 2 database preserves
 facts and fabricates no coverage. The production JSON is checked twice: against the machine schema
 and against cross-field invariants.

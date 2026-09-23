@@ -5,7 +5,11 @@
 **状态**：核心 bug 已定位并修复，但**用户实测仍未收到通知，真正原因尚未查明**。
 诊断卡在手机连不上 adb。所有改动**均未提交**。
 
-最后更新：2026-09-08
+另有 §3.7 记录 2026-09-12 的省电与省运算改动，调整了轮询节奏并去掉了每轮的全表重写。
+**该项与 §6 的未解之谜无关。**
+§3.8（2026-09-23）改了长期观察应用卡片的筛选与排序，同样与 §6 无关。
+
+最后更新：2026-09-23
 
 ---
 
@@ -79,7 +83,8 @@ fun action(now: Long, prompt: Prompt, foregroundPackage: String?): PromptAction
 配套改动：
 
 - `setOnlyAlertOnce(false)`：否则重发只会静默更新通知栏里那条，不会再响
-- `PollingPolicy.PENDING_PROMPT_MS = 5_000`：有待回应提醒时轮询从 10s 收紧到 5s，让「切走立刻提示」实际在 5 秒内。注意 `poll()` 每次都会全量重放事件历史 + 清空重建 segments，**这是已知的性能隐患，不宜再调快**
+- `PollingPolicy.PENDING_PROMPT_MS = 5_000`：有待回应提醒时轮询从 10s 收紧到 5s，让「切走立刻提示」实际在 5 秒内。注意 `poll()` 每次都会全量重放事件历史 + 清空重建 segments，**这是已知的性能隐患，不宜再调快**。
+  **已被 §3.7（2026-09-12）取代**：该分支已删除，其警告的隐患已在写入侧处理
 - `MoodOverlayController`：卡片贴在自己那个 App 上方时不再写 `overlayShownUtc`（无法确认可见），改记 `lastOverlayError = "OVERLAY_MAY_BE_COVERED"`，避免导出数据里出现虚假的「已送达」
 - `Database.lastResume()`：替掉每轮 3 次的 `events()` 全表扫描
 
@@ -188,6 +193,100 @@ fun canPrompt() = areNotificationsEnabled() && channel?.importance != IMPORTANCE
 
 ---
 
+## 3.7 省电与省运算：放宽节奏，只写变化的部分（2026-09-12 新增）
+
+### 为什么
+
+这一节不是 bug 报告，而是一个关于「这个 App 是干什么的」的决定。PhoneMood 提供的是觉察，不是秒表级精度，
+所以秒级的及时性一直在用电量和写入量买单，却换不来用户能察觉的任何东西。使用时长由系统事件自身的时间戳
+重建，而不是由服务恰好查询的时刻决定，因此降低轮询频率只增加提醒延迟：记录的使用时长、应用归属、提醒阈值
+都不受影响。
+
+### 原来贵在哪
+
+- 亮屏时每 10 秒一轮，**有待回应的提醒时每 5 秒一轮**——这是整个 App 最昂贵的状态，而它恰好在用户已经被
+  问了一个问题的时候进入。
+- 每一轮都调 `rebuild()`：重放完整事件日志，然后**清空并重写整张 `UsageSegment` 和 `PhoneSession`**。
+  两次轮询之间真正会变的只有未闭合的尾部——最后一个片段的结束时间和会话累计时长——所以这是把一个 O(1)
+  的变化写成了 O(N) 次删除加插入，每个 segment 行还带两个索引，并且只要参与者继续用就一直增长。
+- 分析页打开时，60 秒的 tick 会**同时**重算选定周期和累计数据集。累计那次带 leave-one-day-out 重拟合，
+  成本按 O(天数²) 增长，而它每分钟付一次，算出来的通常是同一个答案。
+
+### 改法
+
+- `PollingPolicy`：`ACTIVE_MS` 10s → 60s，`POWER_SAVE_MS` 30s → 120s。`PENDING_PROMPT_MS` 及其整条分支
+  **删除**，连同 `pendingCheckpoints()` 和 `UsageMonitorService` 里传 `promptPending` 的管线。这一项是
+  净删除代码。
+- 两个原本悄悄绑定旧节奏的常数改为**由它推导**，使下次调整间隔不会再无声地弄坏它们：事件迟到超过
+  `2 * ACTIVE_MS` 才标记为时区推断；「今天」页倒计时推算 `ACTIVE_MS + 30s` 后冻结。
+- `Repository.rebuild()`：重放一行未动——正是它让迟到事件能修正过去。改的只是写入。已存行与重建结果比对，
+  只写差异；`clearSegments`/`clearSessions` 换成按 id 删除，现在只有迟到事件真正修正历史时才触发。
+- `AnalysisViewModel`：分钟 tick 不再重建累计数据集。用 `longTermDirty` 标志把真正的信号
+  （`watchAnswerCount`、`watchConfigurationTime`）带过 300ms 的 debounce 窗口，否则紧挨着 tick 到达的
+  数据变更会被丢掉。
+- `prepareExport` 在复用过累计部分时重算一次，使导出文档的两半仍共用同一个 `facts`、报告同一个观测时刻。
+  屏幕上复用无害；但在一份写明了观测时间的文档里就不是。
+
+### `DISMISS_GRACE_MS` 特意保持 30s
+
+它的注释声称自己存在是因为待处理状态会把轮询钉在最紧的间隔上，而那个间隔现在已经没了。但提高它反而更糟：
+关闭卡片同时会取消它的通知，屏幕上已经没有任何东西可以作答，这个窗口现在只决定多久把检查点写成
+`DISMISSED`。在 60 秒节奏下，30 秒的含义就是「下一轮」，正是想要的行为。只改了注释。
+
+### 这是什么，不是什么
+
+| | 之前 | 之后 |
+|---|---|---|
+| 亮屏轮询 | 10s | 60s |
+| 有待回应提醒 | **5s** | 60s |
+| 省电模式 | 30s | 120s |
+| 每轮写入 | 2N 行删除加插入 | 通常 2 行 |
+| `analyze(cumulative)` | 页面开着每 60s | 仅新答题或改设置时 |
+
+以上是从代码确定的次数与写入量。**真机耗电仍未测量**——这与 `BATTERY_STRATEGY.md` 一直标注的缺口相同。
+重放本身的开销仍随记录长度增长、仍未 profiling；把它限定到一个封存水位线的方案考虑过并**特意推迟**，
+因为那会动到整个重建所依赖的性质。
+
+### 验证
+
+68 项 JVM 单测全过，lint 0 errors，应用与仪器测试源码均可编译。**本次改动未在设备或模拟器上运行仪器
+测试。** `PollingPolicyTest` 与 `ReminderCountdownTest` 已按新常数更新。
+
+---
+
+## 3.8 长期观察：应用卡片按使用时长排序，可展开全部（2026-09-23 新增）
+
+### 为什么
+
+用户问「长期观察」显示哪些应用、按什么顺序。原来用的是引擎的 `topAppIds`：只收 `EARLY_HIGHER` / `EARLY_LOWER` 的应用，依次按有无逐块删除检查、`|difference|`、`n`、App ID 排序，最多 3 个。有两个问题：
+
+- `difference = beta × h`，每个应用的 `h` 不同（匹配差值的中位数，最长 30 分钟），卡片上显示的却是换算到 15 分钟的效应。**排序可能和屏幕上的数字对不上。**
+- `n` 是整个模型的 transition 数，所有应用都一样，这一级排序不起作用，实际相当于按包名排。
+
+用户希望：在有明确结果的应用里，自己最常用的排在前面，并且可以点开查看全部。
+
+### 改法（只改 UI）
+
+- `ui/AnalysisScreen.kt` 新增 `clearAppFindings(stats, data)`：保留状态为 `EARLY_HIGHER` / `EARLY_LOWER` 的 `APP_USAGE` 发现，按 `longTermData.daily` 上累计的总前台时长降序、App ID 升序排序。`longTermData` 和这些发现来自同一段累计历史。
+- 默认显示前 2 个（没有手机卡片时 3 个）。超出时出现「查看全部 N 个有明确结果的应用」，展开后按钮变为「收起应用」（`analysis_show_all_apps` / `analysis_hide_all_apps`，中英文）。
+- 看不出差别、说不准和数据不足的应用仍然不显示，也不用弱结果补位。
+- **统计引擎和导出都没改**，`top_app_finding_ids` 保持原排序，最多 3 个。
+- 已更新文档：`ANALYSIS_POLICY_V1`、`FREE_TIER_USER_STORIES`（两种语言）。
+
+没动但值得知道：`LongTermCard` 里应用的「看不出 / 说不准 / 记录不够」标题，以及手机的「还在攒记录」标题，都不可达。因为只渲染有明确结果的应用，而手机数据不足时整张卡片隐藏。
+
+### 验证
+
+69 项 JVM 单测全过，其中包括新增的 `test/…/ui/LongTermAppsTest.kt`（检查排序与排除）。**未在真机上看过**，展开和收起没有实际运行验证。
+
+### 本次打包失误（已纠正）
+
+第一次给用户的包是不带参数的 `assembleDebug`，默认包名 `com.phonemood.app`，结果**装成了第二个 App**（即 §2.3 的问题再现）。已加 `-PphonemoodApplicationId=com.phonemood` 重新打包，并用 `aapt2 dump badging` 确认（`package: name='com.phonemood' versionCode='11' versionName='1.4.4'`）。用户需要卸载多出来的 `com.phonemood.app`，它没有数据。已复制到 `dist/PhoneMood-1.4.4-long-term-apps-debug.apk`。
+
+另外更正：用户手机上跑的是 **debug** 包（调试密钥），不是 release。本仓库打出的 release APK 是 `com.phonemood.app` + 上传密钥，同样不能原地更新手机上的 App。
+
+---
+
 ## 4. 数据库变更 3 → 4
 
 `MoodPromptState` 新增三列，用于把**重发**和**首次送达**分开记录（`MoodCheckpoint.notifiedUtc` 保持首次送达语义，是导出证据）：
@@ -214,6 +313,7 @@ val notifiedPackage: String? = null
 | 完整设备测试（模拟器 API 35） | 23/23 全过，**连跑两轮** |
 | 覆盖安装保数据 | 已实测：1.4.0 → 新包，只有一个 `com.phonemood`，数据库哈希不变 |
 | **反向验证（第一版）** | 把 1.4.0 逻辑放回去，新测试确实失败；改回即通过 |
+| 省电与省运算（2026-09-12） | 68 项单测全过、lint 0 errors、源码可编译；**仪器测试未运行**——见 §3.7 |
 
 **诚实说明**：中途出现过两次设备测试失败，两次挂的是**不同的测试**。我怀疑过后台服务抢窗口，但查模拟器进程列表是空的，该猜测不成立。我做了三件事——给 `OverlayTest` 里唯一一处不等界面就数窗口的断言补上 `device.wait`（先天竞态）、把轮询从 3s 放宽到 5s、清掉残留进程——之后两轮全过。**这只是「没复现」，不等于「已根除」。**
 
@@ -289,6 +389,31 @@ val notifiedPackage: String? = null
 | `scripts/migrate_app_data.sh` | 新增，包名迁移 |
 | `scripts/diagnose_device.sh` | 新增，真机取证 |
 
+### 省电与省运算改动（2026-09-12，§3.7）
+
+| 文件 | 改了什么 |
+|---|---|
+| `monitoring/PollingPolicy.kt` | 60s / 120s；`PENDING_PROMPT_MS` 及其分支删除 |
+| `monitoring/UsageMonitorService.kt` | 不再计算和传 `promptPending` |
+| `monitoring/UsageEventReader.kt` | 时区推断阈值改由 `ACTIVE_MS` 推导 |
+| `monitoring/ReminderCountdown.kt` | 推算上限改由 `ACTIVE_MS` 推导 |
+| `data/Repository.kt` | `rebuild()` 只写差异，不再清空两张表 |
+| `data/Database.kt` | `clearSegments`/`clearSessions` → 按 id 删除；移除 `pendingCheckpoints()` |
+| `mood/OverlayPolicy.kt` | 仅注释：`DISMISS_GRACE_MS` 原本陈述的理由已不成立 |
+| `ui/AnalysisScreen.kt` | 分钟 tick 复用累计部分；导出时重算 |
+| `test/…/PollingPolicyTest.kt`、`test/…/ReminderCountdownTest.kt` | 按新常数更新 |
+| `docs/BATTERY_STRATEGY.md` + `.zh-CN` | 按新节奏与写入改动重写 |
+| `docs/HIGH_LEVEL_DESIGN`、`FREE_ANALYSIS_HIGH_LEVEL_DESIGN`、`FREE_TIER_USER_STORIES`（两种语言） | 修正过时的 10s/30s 轮询数字 |
+
+### 长期观察应用卡片改动（2026-09-23，§3.8）
+
+| 文件 | 改了什么 |
+|---|---|
+| `ui/AnalysisScreen.kt` | `clearAppFindings()`；应用卡片按总使用时长排序；可展开全部有明确结果的应用 |
+| `res/values*/analysis.xml` | `analysis_show_all_apps`、`analysis_hide_all_apps` |
+| `test/…/ui/LongTermAppsTest.kt` | 新增，untracked |
+| `docs/ANALYSIS_POLICY_V1`、`docs/FREE_TIER_USER_STORIES`（两种语言） | 应用卡片的显示规则 |
+
 ### 非本次改动（进入本次会话前就已未提交）
 
 `README.md` · `README.zh-CN.md` · `.gitignore` · `analysis/PeriodDataset.kt` · `analysis/PeriodExport.kt` · `analysis/StatisticalEngine.kt` · `ui/AnalysisScreen.kt` · `ui/PeriodMoodSummary.kt` · `res/values*/analysis.xml` · `test/…/AnalysisTest.kt` · `androidTest/…/AnalysisFeatureTest.kt` · `docs/` 下若干
@@ -303,9 +428,10 @@ val notifiedPackage: String? = null
 # 侧载测试包（原地更新用户手机上的 com.phonemood）
 ./gradlew assembleDebug -PphonemoodApplicationId=com.phonemood
 # 产物：app/build/outputs/apk/debug/app-debug.apk
-# 已复制到：dist/PhoneMood-1.4.4-checkin-fix2-debug.apk（64MB，超过 30MiB 无法直接发送）
+# 最新副本：dist/PhoneMood-1.4.4-long-term-apps-debug.apk（64MB，超过 30MiB 无法直接发送）
+# 不带参数会打成 com.phonemood.app，装成第二个 App
 
-./gradlew testDebugUnitTest                                        # 56 项
+./gradlew testDebugUnitTest                                        # 69 项
 ./gradlew connectedDebugAndroidTest -PphonemoodApplicationId=com.phonemood   # 23 项
 
 ADB=~/Library/Android/sdk/platform-tools/adb   # adb 不在 PATH 上

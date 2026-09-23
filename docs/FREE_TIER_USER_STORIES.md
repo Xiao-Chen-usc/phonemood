@@ -318,8 +318,9 @@ Acceptance criteria:
    baseline. A pair belongs to the period containing its ending answer, and boundary-crossing
    context does not enter period totals. Day-by-day and session-by-session deletion refits check
    whether the direction is driven by a handful of records.
-5. At most three sufficiently supported apps are shown; one, two or none are all acceptable. Weak
-   results are never displayed to fill the list.
+5. Apps with a clear result are shown most-used first: two by default (three without a phone card),
+   with an expander for all of them; one, two or none are all acceptable. Weak results are never
+   displayed to fill the list.
 6. Early tendencies are filtered by a computable, non-trivial rating difference and basic contrast
    support — **not** by statistical significance or FDR as a hard display gate. Uncertainty and
    multiple-app testing feed internal records and a "to be confirmed" note; a preliminary result is
@@ -354,7 +355,7 @@ Acceptance criteria:
 6. Computation happens on a background thread on demand, on first entry to the analysis page or
    when data changes; a cache hit displays immediately. Switching periods must never briefly label
    the old period's results as the new period's.
-7. Statistical regression is not added to the 10/30-second monitoring loop and adds no screen-off
+7. Statistical regression is not added to the 60/120-second monitoring loop and adds no screen-off
    timed queries. A new answer or a catch-up read invalidates the relevant cache.
 8. Computing, no data, insufficient data, model not estimable, success, and stale-cache-awaiting-
    update all have explicit interface states. No crash and no indefinite wait.

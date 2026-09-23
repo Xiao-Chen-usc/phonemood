@@ -35,7 +35,7 @@
 
 UTC时间用ISO-8601，区间为 `[start_utc,end_utc_exclusive)`；所有 `*_ms` 是毫秒，模型项名字中的 minutes 是分钟。按报告时区分自然日，因此夏令时日可以是23／25小时。
 
-今天只截至生成时刻。每日趋势、日均及分位数只使用覆盖完整的结束日；周期总量是已记录用时，不意味着覆盖不全时仍知道完整真实用时。
+今天只截至生成时刻。日均及分位数只使用覆盖完整的结束日；周期总量是已记录用时，不意味着覆盖不全时仍知道完整真实用时。
 
 覆盖明确区分 `VERIFIED`、`UNKNOWN` 和 `NOT_MONITORED`，分别汇总为 verified／unknown／not_monitored毫秒。三者之和等于区间长度。成功查询链有状态锚点并扣除缺口后才能提供覆盖证据；旧版本没有这种证据的记录保持UNKNOWN。
 
@@ -55,14 +55,13 @@ UTC时间用ISO-8601，区间为 `[start_utc,end_utc_exclusive)`；所有 `*_ms`
 
 ## 模型、对比量与解释
 
-每个模型导出 `outcome`、`status`、`sample_ids`、保留 `terms`、原单位 `coefficients`、协方差矩阵、自由度、标准误方法、删除控制项和警示。模型无法估计时不填零系数。每日模型引用日期，会话模型引用回答ID，App模型引用transition ID。
+每个模型导出 `outcome`、`status`、`sample_ids`、保留 `terms`、原单位 `coefficients`、协方差矩阵、自由度、标准误方法、删除控制项和警示。模型无法估计时不填零系数。手机用量模型引用回答ID，App模型引用transition ID。
 
 发现明确区分：
 
 | kind | contrast_outcome | comparison_unit | difference |
 |---|---|---|---|
-| DAILY_USE_TREND | DAILY_MINUTES_CHANGE | DAYS | h天跨度内拟合日用时变化（分钟） |
-| SESSION_LENGTH | WITHIN_SESSION_MOOD_CHANGE | MINUTES | 同会话累计使用多h分钟对应的评分变化 |
+| PHONE_USAGE | EXTRA_MOOD_CHANGE | MINUTES | 前次评分、间隔时长、时段相同时，回答前多h主动分钟对应的评分变化 |
 | APP_USAGE | EXTRA_MOOD_CHANGE | MINUTES | 总主动用时、间隔、起始评分相同时，以目标App替换其他App h分钟对应的额外变化 |
 
 h存为 `comparison_value`，不是固定窗口。App主模型的 `outcome=END_MOOD_SCORE` 与发现的 `EXTRA_MOOD_CHANGE` 分开表达。

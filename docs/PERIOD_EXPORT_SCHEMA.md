@@ -46,7 +46,7 @@ UTC times use ISO-8601, and intervals are `[start_utc, end_utc_exclusive)`. Ever
 milliseconds; "minutes" inside model term names means minutes. Calendar days are cut in the
 reporting time zone, so a daylight-saving day can be 23 or 25 hours long.
 
-Today runs only up to the moment of generation. The daily trend, daily averages and quantiles use
+Today runs only up to the moment of generation. The daily averages and quantiles use
 **only complete finished days**. A period total is recorded use; where coverage is incomplete it
 does not imply that the true total is known.
 
@@ -96,15 +96,13 @@ simply `response = null`.
 Every model exports `outcome`, `status`, `sample_ids`, retained `terms`, `coefficients` in
 original units, the covariance matrix, degrees of freedom, the standard-error method, dropped
 controls and warnings. **A model that cannot be estimated does not get zero-filled coefficients.**
-The daily model references dates, the session model references answer IDs, and the app model
-references transition IDs.
+The phone model references answer IDs and the app model references transition IDs.
 
 Findings are explicitly typed:
 
 | kind | contrast_outcome | comparison_unit | difference |
 |---|---|---|---|
-| DAILY_USE_TREND | DAILY_MINUTES_CHANGE | DAYS | Fitted change in daily use (minutes) across an *h*-day span |
-| SESSION_LENGTH | WITHIN_SESSION_MOOD_CHANGE | MINUTES | Change in rating for *h* more cumulative minutes within the same session |
+| PHONE_USAGE | EXTRA_MOOD_CHANGE | MINUTES | Change in rating for *h* more active minutes before the answer, holding the previous rating, elapsed time and time of day equal |
 | APP_USAGE | EXTRA_MOOD_CHANGE | MINUTES | Extra change from substituting *h* minutes of other apps with the target app, holding total active use, gap and starting rating equal |
 
 *h* is stored as `comparison_value`; it is not a fixed window. The app primary model's

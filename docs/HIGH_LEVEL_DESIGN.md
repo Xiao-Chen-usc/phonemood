@@ -172,7 +172,7 @@ read events
 Recommended polling interval:
 
 ```text
-10 seconds
+60 seconds
 ```
 
 This means a checkpoint is not guaranteed to fire at:
