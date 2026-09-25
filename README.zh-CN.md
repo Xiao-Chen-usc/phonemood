@@ -4,7 +4,7 @@
 
 **手机使用、情绪与日常自我反思**
 
-[全部文档](docs/README.zh-CN.md) · [文献综述](docs/LITERATURE_REVIEW.zh-CN.md) · [下载 Android 原型](https://github.com/Xiao-Chen-usc/phonemood/raw/main/PhoneMood-1.4.0-debug.apk)
+[全部文档](docs/README.zh-CN.md) · [文献综述](docs/LITERATURE_REVIEW.zh-CN.md) · [在 Google Play 获取 PhoneMood](https://play.google.com/store/apps/details?id=com.phonemood.app)
 
 ## 目录
 
@@ -118,9 +118,11 @@ PhoneMood 是一个 Android 原型，把自动记录的手机及 App 使用情�
 
 ## 下载、构建与数据隐私
 
-[下载 PhoneMood 1.4.0 debug APK](https://github.com/Xiao-Chen-usc/phonemood/raw/main/PhoneMood-1.4.0-debug.apk)。适用于 Android 10/API 29 或更高版本。记录使用情况需要 Usage Access，通知提醒需要通知权限，悬浮卡片需要“显示在其他应用上层”权限。下载的 APK 是打包快照，可能与当前源码的后续修改不同。
+[在 Google Play 获取 PhoneMood](https://play.google.com/store/apps/details?id=com.phonemood.app)。适用于 Android 10/API 29 或更高版本。记录使用情况需要 Usage Access，通知提醒需要通知权限，悬浮卡片需要“显示在其他应用上层”权限。Play 版包名为 `com.phonemood.app`，与旧的 `com.phonemood` 侧载 debug 版会分别安装，本地数据不会自动转移。
 
-构建需要 JDK 17+、Android SDK 35，以及 Android 10+ 模拟器或设备：
+旧版 [PhoneMood 1.4.0 debug APK](https://github.com/Xiao-Chen-usc/phonemood/raw/main/PhoneMood-1.4.0-debug.apk) 仍保留，供查看历史原型快照。
+
+构建需要 JDK 17+、Android SDK 36，以及 Android 10+ 模拟器或设备：
 
 ```bash
 ./gradlew :app:assembleDebug

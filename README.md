@@ -2,7 +2,7 @@
 
 **Smartphone Use, Mood, and Everyday Self-Reflection**
 
-[中文介绍](README.zh-CN.md) · [All documents](docs/README.md) · [Literature review](docs/LITERATURE_REVIEW.md) · [Download Android prototype](https://github.com/Xiao-Chen-usc/phonemood/raw/main/PhoneMood-1.4.0-debug.apk)
+[中文介绍](README.zh-CN.md) · [All documents](docs/README.md) · [Literature review](docs/LITERATURE_REVIEW.md) · [Get PhoneMood on Google Play](https://play.google.com/store/apps/details?id=com.phonemood.app)
 
 ## Contents
 
@@ -116,9 +116,11 @@ This README and the accompanying literature review were prepared with AI assista
 
 ## Try, build, and inspect
 
-[Download PhoneMood 1.4.0 debug APK](https://github.com/Xiao-Chen-usc/phonemood/raw/main/PhoneMood-1.4.0-debug.apk). Requires Android 10/API 29 or newer. Enable Usage Access for tracking, notifications for notification prompts, and Display over other apps if using floating cards. The downloadable APK is a packaged snapshot; current source changes may differ.
+[Get PhoneMood on Google Play](https://play.google.com/store/apps/details?id=com.phonemood.app). Requires Android 10/API 29 or newer. Enable Usage Access for tracking, notifications for notification prompts, and Display over other apps if using floating cards. The Play app uses the package name `com.phonemood.app`; it installs separately from older sideloaded debug builds using `com.phonemood`, and their local data does not transfer automatically.
 
-To build from source, use JDK 17+, Android SDK 35, and an Android 10+ emulator or device:
+The older [PhoneMood 1.4.0 debug APK](https://github.com/Xiao-Chen-usc/phonemood/raw/main/PhoneMood-1.4.0-debug.apk) remains available as a historical prototype snapshot.
+
+To build from source, use JDK 17+, Android SDK 36, and an Android 10+ emulator or device:
 
 ```bash
 ./gradlew :app:assembleDebug
