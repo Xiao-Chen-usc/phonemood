@@ -69,6 +69,7 @@ The central methodological choice is **automatic recording of behavior alongside
 - Requests a 1–10 mood rating after configurable amounts of active use.
 - Offers notification and optional floating-card check-ins, snoozing, dismissal, and pause controls.
 - Supports daily and period review, exploratory associations, and JSON export.
+- Shows app time in a compact 64-dot day view, with the five most-used apps and an "other apps" group; period and long-term views show an average day alongside recorded totals.
 - Includes reconciliation logic for interrupted monitoring and late responses.
 - Runs locally, with English and Chinese interfaces and no account or server.
 
@@ -126,6 +127,8 @@ To build from source, use JDK 17+, Android SDK 36, and an Android 10+ emulator o
 ./gradlew :app:assembleDebug
 ./gradlew :app:testDebugUnitTest
 ./gradlew :app:lintDebug
+# To update an older sideloaded debug install while retaining its local data:
+./gradlew :app:assembleDebug -PphonemoodApplicationId=com.phonemood
 ```
 
 APK output: `app/build/outputs/apk/debug/app-debug.apk`. Device scenarios are documented in the [testing checklist](docs/DEVICE_TESTING.md). For the committed 1.4.0 release source, see [`45d9037`](https://github.com/Xiao-Chen-usc/phonemood/commit/45d9037); record the actual commit and local changes when reporting new checks.

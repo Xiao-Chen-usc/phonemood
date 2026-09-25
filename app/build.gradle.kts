@@ -28,7 +28,7 @@ android {
     // Play Console locks the uploaded package name, so releases stay com.phonemood.app.
     // Sideloaded test builds can override it to update an existing install in place:
     //   ./gradlew assembleDebug -PphonemoodApplicationId=com.phonemood
-    defaultConfig { applicationId = (findProperty("phonemoodApplicationId") as String? ?: "com.phonemood.app"); minSdk = 29; targetSdk = 36; versionCode = 12; versionName = "1.4.5"; testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner" }
+    defaultConfig { applicationId = (findProperty("phonemoodApplicationId") as String? ?: "com.phonemood.app"); minSdk = 29; targetSdk = 36; versionCode = 13; versionName = "1.4.6"; testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner" }
     buildFeatures { compose = true }
     compileOptions { sourceCompatibility = JavaVersion.VERSION_17; targetCompatibility = JavaVersion.VERSION_17 }
     kotlinOptions { jvmTarget = "17" }

@@ -11,6 +11,12 @@
     <string name="analysis_coverage">%1$d completed days with full records · %2$d ratings · Updated %3$s</string>
     <string name="analysis_ongoing">Today is excluded from the daily average. Grey bars show today or days with incomplete records.</string>
     <string name="analysis_daily">Phone use</string>
+    <string name="usage_dots_day_title">Where 24 hours went</string>
+    <string name="usage_dots_average_title">An average 24-hour day</string>
+    <string name="usage_dots_other">Other apps</string>
+    <string name="usage_dots_note">Each dot ≈ 22.5 min/day. Grey = other time or no record. Listed times are more precise.</string>
+    <string name="usage_dots_accessibility">Recorded phone use: %1$s across %2$d days</string>
+    <string name="usage_dots_record_span">%1$s – %2$s · %3$d calendar days</string>
     <string name="analysis_session">Session length &amp; mood</string>
     <string name="analysis_apps">App use and mood changes</string>
     <string name="analysis_duration">%1$d h %2$d min</string>

@@ -193,6 +193,12 @@ fun PhoneMoodScreen() {
                     } }
                     item { DailyObservation(todayRatings,todaySegments,day) }
                     item { MoodHistoryChart(todayRatings) }
+                    item {
+                        val apps = todaySegments.groupBy { it.packageName }
+                            .mapValues { (_, values) -> values.sumOf { DayWindow.overlap(it.startUtc, it.endUtc, day) } }
+                        val names = todaySegments.associate { it.packageName to it.appName }
+                        SoftCard { UsageDots(apps, names, 1) }
+                    }
                     item { AppUsage(todaySegments,day) }
                     item { OutlinedButton(onClick={tab=1}, modifier=Modifier.fillMaxWidth()) { Text(context.getString(R.string.explore_trends)) } }
                 }

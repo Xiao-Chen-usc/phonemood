@@ -242,11 +242,28 @@ fun AnalysisScreen(vm: AnalysisViewModel = viewModel()) {
                 }
             }
             item {
+                val apps = data.daily.flatMap { it.apps.entries }.groupBy({ it.key }, { it.value })
+                    .mapValues { (_, durations) -> durations.sum() }
+                SoftCard { UsageDots(apps, data.names, data.days) }
+            }
+            item {
                 Spacer(Modifier.height(8.dp))
                 Text(context.getString(R.string.analysis_long_term),style=MaterialTheme.typography.headlineSmall)
                 Text(context.getString(R.string.analysis_long_term_basis),style=MaterialTheme.typography.bodySmall,color=Muted)
             }
             val longStats=content.longTermStats
+            item {
+                val history = content.longTermData
+                val apps = history.daily.flatMap { it.apps.entries }.groupBy({ it.key }, { it.value })
+                    .mapValues { (_, durations) -> durations.sum() }
+                SoftCard {
+                    Text(context.getString(R.string.analysis_total, formatAnalysisDuration(history.daily.sumOf { it.activeMs })),
+                        style = MaterialTheme.typography.titleMedium)
+                    Text(context.getString(R.string.usage_dots_record_span, history.daily.first().date, history.daily.last().date, history.days),
+                        color = Muted, style = MaterialTheme.typography.bodySmall)
+                    UsageDots(apps, history.names, history.days)
+                }
+            }
             val phoneFinding=longStats.findings.firstOrNull { it.kind=="PHONE_USAGE" && it.status!="INSUFFICIENT_DATA" }
             val clearApps=clearAppFindings(longStats,content.longTermData)
             val preview=if(phoneFinding==null) 3 else 2

@@ -11,6 +11,12 @@
     <string name="analysis_coverage">%1$d 天已结束且记录完整 · %2$d 次评分 · 更新于 %3$s</string>
     <string name="analysis_ongoing">今天尚未结束，暂不计入日均。灰色柱表示今天或记录不完整的日期。</string>
     <string name="analysis_daily">手机使用时长</string>
+    <string name="usage_dots_day_title">一天 24 小时去了哪里</string>
+    <string name="usage_dots_average_title">平均一天的 24 小时</string>
+    <string name="usage_dots_other">其他应用</string>
+    <string name="usage_dots_note">每点约 22.5 分钟／天；灰色表示其他时间或无记录。时长以右侧文字为准。</string>
+    <string name="usage_dots_accessibility">%2$d 天内记录的手机使用时长：%1$s</string>
+    <string name="usage_dots_record_span">%1$s—%2$s · 共 %3$d 个日历日</string>
     <string name="analysis_session">本次使用时长与心情</string>
     <string name="analysis_apps">不同应用与心情变化</string>
     <string name="analysis_duration">%1$d 小时 %2$d 分钟</string>

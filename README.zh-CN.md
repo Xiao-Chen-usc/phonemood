@@ -71,6 +71,7 @@ PhoneMood 是一个 Android 原型，把自动记录的手机及 App 使用情�
 - 按可配置的累计活跃使用时长触发 1–10 分情绪自评。
 - 支持通知、可选悬浮卡片、稍后提醒、关闭和暂停。
 - 支持单日和周期回顾、探索性关联分析及 JSON 导出。
+- 用紧凑的 64 点方阵展示 App 用时，只区分使用最多的五个 App 与“其他应用”；周期和长期视图同时显示平均一天的分布与已记录的总时长。
 - 包含监测中断后的数据核对与迟答处理逻辑。
 - 本地运行，提供中英界面，无需账号或服务器。
 
@@ -128,6 +129,8 @@ PhoneMood 是一个 Android 原型，把自动记录的手机及 App 使用情�
 ./gradlew :app:assembleDebug
 ./gradlew :app:testDebugUnitTest
 ./gradlew :app:lintDebug
+# 更新旧版侧载 Debug App 并保留本地数据：
+./gradlew :app:assembleDebug -PphonemoodApplicationId=com.phonemood
 ```
 
 输出：`app/build/outputs/apk/debug/app-debug.apk`。[设备检查清单](docs/DEVICE_TESTING.zh-CN.md) 列出测试场景。已提交的 1.4.0 发布源码见 [`45d9037`](https://github.com/Xiao-Chen-usc/phonemood/commit/45d9037)；报告新测试时应记录实际提交与本地改动。
